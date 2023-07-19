@@ -1,0 +1,100 @@
+<?php
+
+namespace App\Console\Commands;
+
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+use App\Models\Department;
+use Carbon\Carbon;
+use App\Models\Report;
+use App\Models\Task;
+use App\Models\Logs;
+use App\Models\ReportCenter;
+use Illuminate\Support\Facades\Session;
+
+class StockScheduler extends Command
+{
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'daily:report';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Reports';
+
+    /**
+     * Execute the console command.
+     *
+     * @return int
+     */
+    public function handle()
+    {
+        $startDate = Carbon::now()->startOfWeek();
+        $endDate = Carbon::now()->endOfWeek();
+        $endDate2 = Carbon::now()->setISODate(Carbon::now()->year, Carbon::now()->isoWeek(), 5)->setTime(16, 0, 0);
+
+        $reportCenter = ReportCenter::whereBetween('created_at', [$startDate, $endDate2])->get();
+        
+        if(!$reportCenter->isEmpty()){
+            \Log::info("Tổn tại báo cáo tuần ... !".$startDate);
+            exit();
+        }
+       
+        $records = Logs::whereBetween('created_at', [$startDate, $endDate])->get();
+        if ($records->count() > 0) {
+            $dataByDepartment = [];
+        
+            foreach ($records as $record) {
+                $values = json_decode($record->values, true);
+            
+                $departmentId = $record->department_id;
+            
+                // Tạo một mảng mới cho phòng ban nếu chưa tồn tại
+                if (!isset($dataByDepartment[$departmentId])) {
+                    $departmentName = Department::find($departmentId);
+                    $dataByDepartment[$departmentId] = [
+                        'DepartmentId' => $departmentId,
+                        'DepartmentName' => $departmentName->name,
+                        'WorkDone' => [],
+                        'ExpectedWork' => [],
+                        'Request' => null,
+                    ];
+                }
+            
+                // Tổng hợp dữ liệu từ WorkDone
+                if (isset($values['WorkDone'])) {
+                    $dataByDepartment[$departmentId]['WorkDone'] = array_merge($dataByDepartment[$departmentId]['WorkDone'], $values['WorkDone']);
+                }
+            
+                // Tổng hợp dữ liệu từ ExpectedWork
+                if (isset($values['ExpectedWork'])) {
+                    $dataByDepartment[$departmentId]['ExpectedWork'] = array_merge($dataByDepartment[$departmentId]['ExpectedWork'], $values['ExpectedWork']);
+                }
+            
+                // Lưu giá trị từ Request (nếu có)
+                if (isset($values['Request'])) {
+                    $dataByDepartment[$departmentId]['Request'] = $values['Request'];
+                }
+            }
+            
+            $jsonData = json_encode(array_values($dataByDepartment));
+            ReportCenter::create([
+                'values' => $jsonData,
+                'created_at' => $endDate2,
+            ]);
+            \Log::info("Testing Cron is Running ... !".$jsonData);
+            $this->info('Daily report has been sent successfully!');
+            return 'Daily report has been sent successfully!';
+        }
+        \Log::info("Not Fonnd Report ");
+        exit();
+      
+    }
+}
