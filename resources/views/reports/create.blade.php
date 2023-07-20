@@ -118,6 +118,14 @@
             display: flex;
             margin: 10px 0;
         }
+
+        .alert-success{
+                background: #c4e8c0;
+                padding: 10px;
+            }
+        .alert-danger{
+            padding: 10px;
+        }
     </style>
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -128,6 +136,8 @@
                             {{ session('success') }}
                         </div>
                     @endif
+                    <div id="error" class="alert alert-danger">
+                    </div>
                     @php
                         $rowCount = 1;
                     @endphp
@@ -185,7 +195,14 @@
 
     <script>
         var rowCount = 1;
-
+        const errorSpan = document.getElementById('error');
+        function hideErrorMessage() {
+            // Xóa nội dung thông báo và đặt màu nền thành mặc định
+            console.log(errorSpan);
+            const error = errorSpan.querySelector('span');
+            error.remove();
+            errorSpan.style.backgroundColor = 'transparent';
+    }
         function addNewRow(containerId) {
 
             var container = document.getElementById(containerId);
@@ -196,6 +213,7 @@
             newRow.innerHTML = `
             <div class="header-report form-group">
                 <span class="cong-viec-stt">${rowCount}.</span>
+            <label  for="cong_viec_da_lam">Tiêu đề:</label> 
             <input style="flex: 4" type="text" name="cong_viec_da_lam[]" placeholder="Tiêu đề công việc" class="form-control" required>
             <div class="form-check" style="margin-top: 0; flex: 2;">
             <input type="checkbox" name="cong_viec_da_lam_completed[]" class="form-check-input" onchange="handleCongViecDaLamChange(this)">
@@ -204,6 +222,7 @@
             </div>
             </div>
             <div class="content-report form-group" >
+                <label  for="noi_dung_cong_viec">Nội dung:</label> 
                 <textarea required style="width: 67%; height: 200px;" name="noi_dung_cong_viec[]" placeholder="Nhập nội dung tiêu đề" class="form-control" style="margin-bottom: 10px;"></textarea>
                 <div class="content-date">
                     <div >
@@ -346,8 +365,18 @@
             var hasText = workDone.value.trim() !== '';
             // console.log(hasText);
             if (!hasText || !startDate || !descriptionWork || !endDate || !workStatus ) {
-                alert("Vui lòng nhập text");
+                // document.getElementById('error').innerText = 'Vui lòng nhập dữ liệu.';
+                const errorMessage = 'Vui lòng nhập dữ liệu.';
+                errorSpan.style.backgroundColor = '#f1c9c9';
+                // Thêm nội dung vào thẻ span và đặt màu cho nội dung
+                errorSpan.innerHTML = '<span>' + errorMessage + '</span>';
                 checkbox.checked = true;
+                
+                // Thiết lập thời gian chờ (đơn vị là miliseconds, 2000ms = 2s)
+                const delayTime = 2000; // 3 giây
+
+                // Gọi hàm hideErrorMessage sau khoảng thời gian delayTime
+                setTimeout(hideErrorMessage, delayTime);
                 return;
             }
             //  console.log("hasText");
@@ -393,97 +422,111 @@
             `;
                newCongViecTuanToiRow.setAttribute('data-row-id', row.getAttribute('data-row-id'));
                congViecTuanToiContainer.appendChild(newCongViecTuanToiRow);
-            function handleCongViecDaLamChange(checkbox) {
-    var row = checkbox.parentNode.parentNode.parentNode;
-    var congViecInput = row.querySelector('input[name="cong_viec_da_lam[]"]');
-    var startDateInput = row.querySelector('input[name="start_date[]"]');
-    var endDateInput = row.querySelector('input[name="end_date[]"]');
-    var trangThaiCongViecInput = row.querySelector('input[name="trangthai_congviec[]"]');
-    var noiDungCongViecTextarea = row.querySelector('textarea');
+ 
+    function handleCongViecDaLamChange(checkbox) {
+            var row = checkbox.parentNode.parentNode.parentNode;
+            var workDone = row.querySelector('input[name="cong_viec_da_lam[]"]');
+            var startDate = row.querySelector('input[name="start_date[]"]');
+            var endDate = row.querySelector('input[name="end_date[]"]');
+            var workStatus = row.querySelector('input[name="trangthai_congviec[]"]');
+            var descriptionWork = row.querySelector('textarea');
+            // var workDone = row.querySelector('input[name="cong_viec_da_lam[]"]');
 
-    // Check if the congViecInput has text
-    var startDateValue = startDateInput.value.trim() !== '';
-    var endDateValue = endDateInput.value.trim() !== '';
-    var noiDungCongViecValue = noiDungCongViecTextarea.value.trim() !== '';
-    var trangThaiCongViecValue = trangThaiCongViecInput.value.trim() !== '';
-    var congViecInputValue = congViecInput.value.trim() !== '';
+            // Check if the workDone has text
+            var startDate = startDate.value.trim() !== '';
+            var endDate = endDate.value.trim() !== '';
+            var descriptionWork = descriptionWork.value.trim() !== '';
+            var workStatus = workStatus.value.trim() !== '';
+            var hasText = workDone.value.trim() !== '';
 
-    if (!congViecInputValue || !startDateValue || !noiDungCongViecValue || !endDateValue || !trangThaiCongViecValue) {
-        alert("Vui lòng nhập text");
-        checkbox.checked = true;
-        return;
-    }
+            const errorSpan = document.getElementById('error');
+            if (!hasText || !startDate || !descriptionWork || !endDate || !workStatus ) {
+                // document.getElementById('error').innerText = 'Vui lòng nhập dữ liệu.';
+                const errorMessage = 'Vui lòng nhập dữ liệu.';
+                errorSpan.style.backgroundColor = '#f1c9c9';
+                // Thêm nội dung vào thẻ span và đặt màu cho nội dung
+                errorSpan.innerHTML = '<span>' + errorMessage + '</span>';
+                checkbox.checked = true;
+                
+                // Thiết lập thời gian chờ (đơn vị là miliseconds, 2000ms = 2s)
+                const delayTime = 500; // 3 giây
 
-    var congViecTuanToiContainer = document.getElementById('cong-viec-tuan-toi-container');
-    var congViecTuanToiRows = congViecTuanToiContainer.getElementsByClassName('cong-viec-tuan-toi-row');
-    var hiddenInput = row.querySelector('input[name="cong_viec_da_lam_values[]"]');
-
-    if (!checkbox.checked) {
-        var rowCount = congViecTuanToiRows.length + 1;
-        checkbox.checked = false;
-        hiddenInput.value = 0;
-        var newCongViecTuanToiRow = document.createElement('div');
-        newCongViecTuanToiRow.className = 'form-group cong-viec-tuan-toi-row';
-        newCongViecTuanToiRow.innerHTML = `
-            <div class="header-report form-group">
-                <span class="cong-viec-stt">${rowCount}.</span>
-                <input disabled type="text" name="cong_viec_tuan_toi[]" style="flex:4" value="${congViecInputValue}" class="form-control custom-input" readonly>
-                <span style="flex:2"></span>
-            </div>
-            <div class="content-report form-group">
-                <textarea disabled style="width: 67%; height: 200px;" name="noi_dung_cong_viec[]" placeholder="Nhập nội dung" class="form-control" style="margin-bottom: 10px;">${noiDungCongViecValue}</textarea>
-                <div class="content-date">
-                    <div>
-                        <label for="ngay_sinh">Ngày bắt đầu:</label>
-                        <input disabled type="date" name="start_date[]" value="${startDateValue}" class="form-control" value="{{ old('start_date[]') }}">
-                    </div>
-                    <div style="margin-left: 10px;">
-                        <label for="ngay_sinh">Kết thúc:</label>
-                        <input disabled type="date" name="end_date[]" value="${endDateValue}" class="form-control" value="{{ old('end_date[]') }}">
-                    </div>
-                </div>
-            </div>
-            <div class="form-group style-note">
-                <label for="trangthai_congviec">Tiến độ:</label> 
-                <input style="flex:4" type="text" value="${trangThaiCongViecValue}" name="trangthai_congviec[]" placeholder="Tiêu đề công việc" class="form-control" required>
-                <div class="form-check" style="margin-top: 0; flex: 2;"></div>
-            </div>
-        `;
-        newCongViecTuanToiRow.setAttribute('data-row-id', row.getAttribute('data-row-id'));
-        congViecTuanToiContainer.appendChild(newCongViecTuanToiRow);
-        congViecInput.setAttribute('disabled', 'disabled');
-        startDateInput.setAttribute('disabled', 'disabled');
-        endDateInput.setAttribute('disabled', 'disabled');
-        noiDungCongViecTextarea.setAttribute('disabled', 'disabled');
-        trangThaiCongViecInput.setAttribute('disabled', 'disabled');
-
-        // Cập nhật lại số thứ tự của các dòng còn lại
-        for (var i = 0; i < congViecTuanToiRows.length; i++) {
-            var sttSpan = congViecTuanToiRows[i].querySelector('.cong-viec-stt');
-            sttSpan.innerText = i + 1 + '.';
-        }
-    } else {
-        checkbox.checked = true;
-        hiddenInput.value = 1;
-        var rowId = row.getAttribute('data-row-id');
-        var congViecTuanToiRow = congViecTuanToiContainer.querySelector(`[data-row-id="${rowId}"]`);
-        if (congViecTuanToiRow) {
-            congViecTuanToiContainer.removeChild(congViecTuanToiRow);
-
-            // Cập nhật lại số thứ tự của các dòng còn lại
-            for (var i = 0; i < congViecTuanToiRows.length; i++) {
-                var sttSpan = congViecTuanToiRows[i].querySelector('.cong-viec-stt');
-                sttSpan.innerText = i + 1 + '.';
+                // Gọi hàm hideErrorMessage sau khoảng thời gian delayTime
+                setTimeout(hideErrorMessage(errorSpan), delayTime);
+                return;
             }
-        }
-    }
-}
+
+            var congViecTuanToiContainer = document.getElementById('cong-viec-tuan-toi-container');
+            var congViecTuanToiRows = congViecTuanToiContainer.getElementsByClassName('cong-viec-tuan-toi-row');
+            var hiddenInput = row.querySelector('input[name="cong_viec_da_lam_values[]"]');
+
+            if (!checkbox.checked) {
+                var rowCount = congViecTuanToiRows.length + 1;
+                checkbox.checked = false;
+                hiddenInput.value = 0;
+                var newCongViecTuanToiRow = document.createElement('div');
+                newCongViecTuanToiRow.className = 'form-group cong-viec-tuan-toi-row';
+                newCongViecTuanToiRow.innerHTML = `
+                    <div class="header-report form-group">
+                        <span class="cong-viec-stt">${rowCount}.</span>
+                        <input disabled type="text" name="cong_viec_tuan_toi[]" style="flex:4" value="${congViecInputValue}" class="form-control custom-input" readonly>
+                        <span style="flex:2"></span>
+                    </div>
+                    <div class="content-report form-group">
+                        <textarea disabled style="width: 67%; height: 200px;" name="noi_dung_cong_viec[]" placeholder="Nhập nội dung" class="form-control" style="margin-bottom: 10px;">${noiDungCongViecValue}</textarea>
+                        <div class="content-date">
+                            <div>
+                                <label for="ngay_sinh">Ngày bắt đầu:</label>
+                                <input disabled type="date" name="start_date[]" value="${startDateValue}" class="form-control" value="{{ old('start_date[]') }}">
+                            </div>
+                            <div style="margin-left: 10px;">
+                                <label for="ngay_sinh">Kết thúc:</label>
+                                <input disabled type="date" name="end_date[]" value="${endDateValue}" class="form-control" value="{{ old('end_date[]') }}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group style-note">
+                        <label for="trangthai_congviec">Tiến độ:</label> 
+                        <input style="flex:4" type="text" value="${trangThaiCongViecValue}" name="trangthai_congviec[]" placeholder="Tiêu đề công việc" class="form-control" required>
+                        <div class="form-check" style="margin-top: 0; flex: 2;"></div>
+                    </div>
+                `;
+                newCongViecTuanToiRow.setAttribute('data-row-id', row.getAttribute('data-row-id'));
+                congViecTuanToiContainer.appendChild(newCongViecTuanToiRow);
+
+
+                congViecInput.setAttribute('disabled', 'disabled');
+                startDateInput.setAttribute('disabled', 'disabled');
+                endDateInput.setAttribute('disabled', 'disabled');
+                noiDungCongViecTextarea.setAttribute('disabled', 'disabled');
+                trangThaiCongViecInput.setAttribute('disabled', 'disabled');
 
                 // Cập nhật lại số thứ tự của các dòng còn lại
                 for (var i = 0; i < congViecTuanToiRows.length; i++) {
                     var sttSpan = congViecTuanToiRows[i].querySelector('.cong-viec-stt');
                     sttSpan.innerText = i + 1 + '.';
                 }
+        } else {
+            checkbox.checked = true;
+            hiddenInput.value = 1;
+            var rowId = row.getAttribute('data-row-id');
+            var congViecTuanToiRow = congViecTuanToiContainer.querySelector(`[data-row-id="${rowId}"]`);
+            if (congViecTuanToiRow) {
+                congViecTuanToiContainer.removeChild(congViecTuanToiRow);
+
+                // Cập nhật lại số thứ tự của các dòng còn lại
+                for (var i = 0; i < congViecTuanToiRows.length; i++) {
+                    var sttSpan = congViecTuanToiRows[i].querySelector('.cong-viec-stt');
+                    sttSpan.innerText = i + 1 + '.';
+                }
+            }
+        }
+    }
+        // Cập nhật lại số thứ tự của các dòng còn lại
+        for (var i = 0; i < congViecTuanToiRows.length; i++) {
+            var sttSpan = congViecTuanToiRows[i].querySelector('.cong-viec-stt');
+            sttSpan.innerText = i + 1 + '.';
+        }
             } else {
                 checkbox.checked = true;
                 hiddenInput.value = 1;
