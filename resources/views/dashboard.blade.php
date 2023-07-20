@@ -16,7 +16,8 @@
                             @php
                             $id = 0;
                             @endphp
-                            @foreach ($reports as $report)
+                            @if(isset($reports))
+                                @foreach ($reports as $report)
                                 <div class="accordion-item">
                                 
                                     @php
@@ -178,6 +179,10 @@
                                     </div>
                                 </div>
                             @endforeach
+                            @else
+                            <span>Không tồn tại dữ liệu</span>
+                            @endif
+                        
                         </div>
                     </div>
 
