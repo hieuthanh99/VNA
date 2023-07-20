@@ -20,7 +20,7 @@ class ReportCenterController extends Controller
         $startDate = Carbon::now()->startOfWeek();
         $endDateWeek = Carbon::now()->endOfWeek();
         $endDate = Carbon::now()->setISODate(Carbon::now()->year, Carbon::now()->isoWeek(), 5)->setTime(17, 0, 0);
-        $department = Department::get()->toArray();;
+        $department = Department::get()->toArray();
         $data = ReportCenter::whereBetween('created_at', [$startDate, $endDate])->value('values');
         $data = json_decode($data, true) ?? [];
         $mergedArray = [];

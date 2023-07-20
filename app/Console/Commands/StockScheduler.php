@@ -12,6 +12,8 @@ use App\Models\Task;
 use App\Models\Logs;
 use App\Models\ReportCenter;
 use Illuminate\Support\Facades\Session;
+use App\Mail\SendReportEmail;
+use Illuminate\Support\Facades\Mail;
 
 class StockScheduler extends Command
 {
@@ -43,6 +45,8 @@ class StockScheduler extends Command
         $reportCenter = ReportCenter::whereBetween('created_at', [$startDate, $endDate2])->get();
         
         if(!$reportCenter->isEmpty()){
+            Mail::to('n.hieuthanhps@gmail.com')->send(new SendReportEmail());
+
             \Log::info("Tổn tại báo cáo tuần ... !".$startDate);
             exit();
         }
@@ -94,6 +98,8 @@ class StockScheduler extends Command
             return 'Daily report has been sent successfully!';
         }
         \Log::info("Not Fonnd Report ");
+      
+ 
         exit();
       
     }
