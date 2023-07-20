@@ -127,6 +127,7 @@
         }
 
         .alert-danger {
+            /* background: #f1c9c9; */
             padding: 10px;
         }
     </style>
@@ -197,6 +198,7 @@
     </div>
 
     <script>
+       
         var rowCount = 1;
         const errorSpan = document.getElementById('error');
 
@@ -232,12 +234,12 @@
                 <div class="content-date">
                     <div >
                         <label for="ngay_sinh">Ngày bắt đầu:</label>
-                        <input required type="date" name="start_date[]" id="start_date[]" class="form-control" value="{{ old('start_date[]') }}">
+                        <input required type="date" name="start_date[]" id="start_date" class="form-control" value="{{ old('start_date[]') }}">
     
                     </div>
                     <div style="margin-left: 10px;">
                         <label for="ngay_sinh">Kết thúc:</label>
-                        <input required type="date" name="end_date[]" id="end_date[]" class="form-control" value="{{ old('end_date[]') }}">
+                        <input required type="date" name="end_date[]" id="end_date" class="form-control" value="{{ old('end_date[]') }}">
     
                     </div>
                 </div>
@@ -274,12 +276,12 @@
                 <div  class="content-date">
                     <div >
                         <label for="start_date_tuan_toi">Ngày bắt đầu:</label>
-                        <input readonly type="date" name="start_date_tuan_toi[]" id="start_date_tuan_toi[]" value="${row.querySelector('input[name="start_date[]"]').value}" class="form-control">
+                        <input readonly type="date" name="start_date_tuan_toi" id="start_date_tuan_toi[]" value="${row.querySelector('input[name="start_date[]"]').value}" class="form-control">
     
                     </div>
                     <div style="margin-left: 10px;">
                         <label for="end_date_tuan_toi">Kết thúc:</label>
-                        <input readonly type="date" name="end_date_tuan_toi[]" value="${row.querySelector('input[name="end_date[]"]').value}" id="end_date_tuan_toi[]" class="form-control">
+                        <input readonly type="date" name="end_date_tuan_toi" value="${row.querySelector('input[name="end_date[]"]').value}" id="end_date_tuan_toi[]" class="form-control">
     
                     </div>
                 </div>
@@ -392,7 +394,7 @@
                 hiddenInput.value = 0;
                 var newCongViecTuanToiRow = document.createElement('div');
                 newCongViecTuanToiRow.className = 'form-group cong-viec-tuan-toi-row';
-                
+
                 newCongViecTuanToiRow.innerHTML = `
             <div class="header-report form-group">
                 <span class="cong-viec-stt">${rowCount}.</span>
@@ -444,6 +446,7 @@
                 }
             }
         }
+
         function updateSTT() {
             var rows = document.querySelectorAll('.cong-viec-tuan-toi-row');
             rows.forEach(function(row, index) {
@@ -451,5 +454,6 @@
                 sttElement.textContent = (index + 1) + '.';
             });
         }
+        
     </script>
 </x-app-layout>

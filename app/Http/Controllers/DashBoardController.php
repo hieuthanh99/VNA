@@ -22,11 +22,18 @@ class DashBoardController extends Controller
      */
     public function index()
     {
-        $report = new ReportCenter();
-        
-        $report = ReportCenter::all();
         $department = Department::get()->toArray();
-
-        return view('dashboard', ['reports' => $report, 'department' => $department]);
+        $user = Auth::user();
+        if($user->role == 'admin'){
+            $report = ReportCenter::all();
+            return view('dashboard', ['reports' => $report, 'department' => $department, 'array' => []]);
+        }else{
+            $departmentUser = Department::find($user->department);
+            $startDate = Carbon::now()->startOfWeek();
+            $endDate = Carbon::now()->endOfWeek();
+    
+            $array = Logs::Where('department_id', $departmentUser->id)->whereBetween('created_at', [$startDate, $endDate])->first();
+            return view('dashboard', ['array' => $array, 'department' => $department, 'reports' => []]);
+        }     
     }
 }
