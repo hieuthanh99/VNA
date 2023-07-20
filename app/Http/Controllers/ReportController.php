@@ -91,74 +91,121 @@ class ReportController extends Controller
      */
     public function store(Request $request)
     {
-       // dd($request);
-        //User and department
-        $user = Auth::user();
-        $department = Department::find($user->department);
-        $requestData = $request->all();
+        try {
+            //dd($request);
+            // User and department
+            $user = Auth::user();
+            $department = Department::find($user->department);
+            $requestData = $request->all();
 
-        $mapData = [];
-        $workDone = isset($requestData['cong_viec_da_lam'])?$requestData['cong_viec_da_lam']:null;
-        $workDoneValues = isset($requestData['cong_viec_da_lam_values'])?$requestData['cong_viec_da_lam_values']:null;
-        $nextWeekWork = isset($requestData['cong_viec_tuan_toi'])?$requestData['cong_viec_tuan_toi']:null;
-        $note = isset($requestData['kien_nghi'])?$requestData['kien_nghi']:null;
-        if (isset($workDoneValues)) {
-            foreach ($workDone as $index => $value) {
-                $mapData[$index] = [
-                    'work_done' => $value,
-                    'value_of_work' => $workDoneValues[$index] ?? null,
-                ];
+            $mapDataDone = [];
+            $mapDataNextWeek = [];
+
+            $workDone = isset($requestData['cong_viec_da_lam']) ? $requestData['cong_viec_da_lam'] : null;
+            $workDoneValues = isset($requestData['cong_viec_da_lam_values']) ? $requestData['cong_viec_da_lam_values'] : null;
+            $startDate = isset($requestData['start_date']) ? $requestData['start_date'] : null;
+            $endDate = isset($requestData['end_date']) ? $requestData['end_date'] : null;
+            $statusWork = isset($requestData['trangthai_congviec']) ? $requestData['trangthai_congviec'] : null;
+            $noteWork = isset($requestData['noi_dung_cong_viec']) ? $requestData['noi_dung_cong_viec'] : null;
+
+            $nextWeekWork = isset($requestData['cong_viec_tuan_toi']) ? $requestData['cong_viec_tuan_toi'] : null;
+            $nextWeekStartDate = isset($requestData['start_date_tuan_toi']) ? $requestData['start_date_tuan_toi'] : null;
+            $nextWeekEndDate = isset($requestData['end_date_tuan_toi']) ? $requestData['end_date_tuan_toi'] : null;
+            $nextWeekStatusWork = isset($requestData['trangthai_congviec_tuan_toi']) ? $requestData['trangthai_congviec_tuan_toi'] : null;
+            $nextWeekNoteWork = isset($requestData['noi_dung_cong_viec_tuan_toi']) ? $requestData['noi_dung_cong_viec_tuan_toi'] : null;
+            
+            $note = isset($requestData['kien_nghi']) ? $requestData['kien_nghi'] : null;
+
+            if (isset($workDoneValues)) {
+                foreach ($workDone as $index => $value) {
+                    $mapDataDone[$index] = [
+                        'work_done' => $value,
+                        'value_of_work' => $workDoneValues[$index] ?? null,
+                        'start_date' => $startDate[$index] ?? null,
+                        'end_date' => $endDate[$index] ?? null,
+                        'status_work' => $statusWork[$index] ?? null,
+                        'description' => $noteWork[$index] ?? null,
+                    ];
+                }
             }
-        }
-        
-        // Tạo chuỗi JSON
-        $jsonData = json_encode([
-            'WorkDone' => $mapData,
-            'ExpectedWork' => $nextWeekWork,
-            'Request' => $note,
-        ], JSON_PRETTY_PRINT);
-     
-        $jsonData = json_decode($jsonData);
-        $currentDateTime = Carbon::now();
-        $report = Report::create([
-            'department_id' => $department->id,
-            'user_id' => $user->id,
-            'start_date' => $currentDateTime,
-            'end_date' => $currentDateTime,
-            'status' => 1,
-        ]);
-        Logs::create([
-            'department_id' => $department->id,
-            'report_id' => $report->id,
-            'values' => json_encode($jsonData)
-        ]);
-        if (isset($jsonData->WorkDone)) {
-            foreach ($jsonData->WorkDone as $data) {
-                Task::create([
-                    'report_id' => $report->id,
-                    'title' => $data->work_done,
-                    'reports_title' => 'WorkDone',
-                    'status' => $data->value_of_work,
-                ]);
+            if (isset($nextWeekWork)) {
+                foreach ($nextWeekWork as $index => $value) {
+                    $mapDataNextWeek[$index] = [
+                        'next_work' => $value,
+                        'next_start_date' => $nextWeekStartDate[$index] ?? null,
+                        'next_end_date' => $nextWeekEndDate[$index] ?? null,
+                        'next_status_work' => $nextWeekStatusWork[$index] ?? null,
+                        'next_description' => $nextWeekNoteWork[$index] ?? null,
+                    ];
+                }
             }
-        }
-        if (isset($jsonData->ExpectedWork)) {
-            foreach ($jsonData->ExpectedWork as $data) {
-                Task::create([
-                    'report_id' => $report->id,
-                    'title' => $data,
-                    'reports_title' => 'ExpectedWork',
-                ]);
-            }
-        }
-        if (isset($jsonData->Request)) {
-            Task::create([
-                'report_id' => $report->id,
-                'title' => $jsonData->Request,
-                'reports_title' => 'Request',
+            // Tạo chuỗi JSON
+            $jsonData = json_encode([
+                'WorkDone' => $mapDataDone,
+                'ExpectedWork' => $mapDataNextWeek,
+                'Request' => $note,
+            ], JSON_PRETTY_PRINT);
+
+            $jsonData = json_decode($jsonData);
+        //  dd($jsonData);
+            $currentDateTime = Carbon::now();
+
+            $report = Report::create([
+                'department_id' => $department->id,
+                'user_id' => $user->id,
+                'start_date' => $currentDateTime,
+                'end_date' => $currentDateTime,
+                'status' => 1,
             ]);
-        }   
-        return redirect()->route('reports.index')->with(['success' => 'Dữ liệu đã được lưu thành công.']);
+
+            Logs::create([
+                'department_id' => $department->id,
+                'report_id' => $report->id,
+                'values' => json_encode($jsonData)
+            ]);
+
+            if (isset($jsonData->WorkDone)) {
+                foreach ($jsonData->WorkDone as $data) {
+                    Task::create([
+                        'report_id' => $report->id,
+                        'title' => $data->work_done,
+                        'reports_title' => 'WorkDone',
+                        'status' => $data->value_of_work,
+                        'start_date' => Carbon::parse($data->start_date),
+                        'end_date' => Carbon::parse($data->end_date),
+                        'description' => $data->description,
+                        'work_status' => $data->status_work
+                        
+                    ]);
+                }
+            }
+
+            if (isset($jsonData->ExpectedWork)) {
+                foreach ($jsonData->ExpectedWork as $data) {
+                    Task::create([
+                        'report_id' => $report->id,
+                        'title' => $data->next_work,
+                        'reports_title' => 'ExpectedWork',
+                        'start_date' => Carbon::parse($data->next_start_date),
+                        'end_date' => Carbon::parse($data->next_end_date),
+                        'description' => $data->next_description,
+                        'work_status' => $data->next_status_work
+                    ]);
+                }
+            }
+
+            if (isset($jsonData->Request)) {
+                Task::create([
+                    'report_id' => $report->id,
+                    'title' => $jsonData->Request,
+                    'reports_title' => 'Request',
+                ]);
+            }
+
+            return redirect()->route('reports.index')->with(['success' => 'Dữ liệu đã được lưu thành công.']);
+        } catch (QueryException $e) {
+            \Log::info("Error ", $e);
+        }
     }
 
     /**
