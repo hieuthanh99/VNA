@@ -107,6 +107,19 @@
             background: #f1c9c9;
             padding: 10px;
         }
+
+        .btn-PDF {
+            top:50%;
+            background-color:#fff;
+            color: #0a0a23;
+            border-radius:10px; 
+            padding:8px;
+            min-height:30px; 
+            min-width: 120px;
+            border: 1px solid #000;
+            font-size: 14px;
+            float: right;
+        }
     </style>
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -131,6 +144,8 @@
                         <div class="mb-4">
                             <h1 class="mb-2 heading-style" style="text-align: center; font-size: 35px;">
                                 {{ $item['DepartmentName'] }}</h1>
+                                <!-- Trong file view.blade.php -->
+                                <a href="{{ route('exportPDF', ['id' => $id]) }}" class="btn btn-primary">Xuất file PDF</a>
                             <h1 class="mb-2 heading-style">I. Công việc đã thực hiện</h1>
                             <div id="cong-viec-da-lam-container">
                                 @if($item['WorkDone'])

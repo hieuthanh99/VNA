@@ -7,6 +7,7 @@ use App\Models\ReportCenter;
 use App\Models\Logs;
 use Carbon\Carbon;
 use App\Models\Department;
+use Illuminate\Support\Facades\DB;
 
 class ReportCenterController extends Controller
 {
@@ -21,8 +22,18 @@ class ReportCenterController extends Controller
         $endDateWeek = Carbon::now()->endOfWeek();
         $endDate = Carbon::now()->setISODate(Carbon::now()->year, Carbon::now()->isoWeek(), 5)->setTime(17, 0, 0);
         $department = Department::get()->toArray();;
-        $data = ReportCenter::whereBetween('created_at', [$startDate, $endDate])->value('values');
-        $data = json_decode($data, true) ?? [];
+        $data = ReportCenter::whereBetween('created_at', [$startDate, $endDate]);
+        $idData = $data->value('id');
+        $data = json_decode($data->value('values'), true) ?? [];
+        $departmentId = $data[0]['DepartmentId'];
+
+        $reportIds = DB::table('reports')
+            ->select('id')
+            ->where('department_id', $departmentId)
+            ->pluck('id');
+
+        $idReport = $reportIds[0];
+        
         $mergedArray = [];
         $id = 0;
         foreach ($department as $dept) {
@@ -34,6 +45,7 @@ class ReportCenterController extends Controller
         
             if (count($item) > 0) {
                 $mergedArray[] = [
+                    // 'IdReport' => 
                     'DepartmentId' => $item[$id]['DepartmentId'],
                     'DepartmentName' => $dept['name'],
                     'WorkDone' => $item[$id]['WorkDone'],
@@ -54,9 +66,9 @@ class ReportCenterController extends Controller
         
         
         if (empty($data)) {
-            return view('centers.index', ['data' => $data, 'startDate' => $startDate->format('d-m-Y'), 'endDate' => $endDateWeek->format('d-m-Y')]);
-        }        
-        return view('centers.index', ['data' => $mergedArray, 'startDate' => $startDate->format('d-m-Y'), 'endDate' => $endDateWeek->format('d-m-Y')]);
+            return view('centers.index', ['id' => $idReport, 'data' => $data, 'startDate' => $startDate->format('d-m-Y'), 'endDate' => $endDateWeek->format('d-m-Y')]);
+        }       
+        return view('centers.index', ['id' => $idReport ,'data' => $mergedArray, 'startDate' => $startDate->format('d-m-Y'), 'endDate' => $endDateWeek->format('d-m-Y')]);
     }
 
     /**
