@@ -91,27 +91,33 @@ class ReportController extends Controller
      */
     public function store(Request $request)
     {
-
+        dd($request);
         // User and department
         $user = Auth::user();
         $department = Department::find($user->department);
         $requestData = $request->all();
 
-        $mapData = [];
+        $mapDataDone = [];
+        $mapDataNextWeek = [];
+
         $workDone = isset($requestData['cong_viec_da_lam']) ? $requestData['cong_viec_da_lam'] : null;
         $workDoneValues = isset($requestData['cong_viec_da_lam_values']) ? $requestData['cong_viec_da_lam_values'] : null;
-        $nextWeekWork = isset($requestData['cong_viec_tuan_toi']) ? $requestData['cong_viec_tuan_toi'] : null;
-
         $startDate = isset($requestData['start_date']) ? $requestData['start_date'] : null;
         $endDate = isset($requestData['end_date']) ? $requestData['end_date'] : null;
         $statusWork = isset($requestData['trangthai_congviec']) ? $requestData['trangthai_congviec'] : null;
         $noteWork = isset($requestData['noi_dung_cong_viec']) ? $requestData['noi_dung_cong_viec'] : null;
 
+        $nextWeekWork = isset($requestData['cong_viec_tuan_toi']) ? $requestData['cong_viec_tuan_toi'] : null;
+        $nextWeekStartDate = isset($requestData['start_date_tuan_toi']) ? $requestData['start_date_tuan_toi'] : null;
+        $nextWeekEndDate = isset($requestData['end_date_tuan_toi']) ? $requestData['end_date_tuan_toi'] : null;
+        $nextWeekStatusWork = isset($requestData['trangthai_congviec_tuan_toi']) ? $requestData['trangthai_congviec_tuan_toi'] : null;
+        $nextWeekNoteWork = isset($requestData['noi_dung_cong_viec_tuan_toi']) ? $requestData['noi_dung_cong_viec_tuan_toi'] : null;
+        
         $note = isset($requestData['kien_nghi']) ? $requestData['kien_nghi'] : null;
 
         if (isset($workDoneValues)) {
             foreach ($workDone as $index => $value) {
-                $mapData[$index] = [
+                $mapDataDone[$index] = [
                     'work_done' => $value,
                     'value_of_work' => $workDoneValues[$index] ?? null,
                     'start_date' => $startDate[$index] ?? null,
@@ -121,12 +127,23 @@ class ReportController extends Controller
                 ];
             }
         }
+        if (isset($nextWeekWork)) {
+            foreach ($nextWeekWork as $index => $value) {
+                $mapDataNextWeek[$index] = [
+                    'next_work_done' => $value,
+                    'next_start_date' => $startDate[$index] ?? null,
+                    'next_end_date' => $endDate[$index] ?? null,
+                    'next_status_work' => $statusWork[$index] ?? null,
+                    'next_note_work' => $noteWork[$index] ?? null,
+                ];
+            }
+        }
 
-    //    dd($mapData);
+       
 
         // Tạo chuỗi JSON
         $jsonData = json_encode([
-            'WorkDone' => $mapData,
+            'WorkDone' => $mapDataDone,
             'ExpectedWork' => $nextWeekWork,
             'Request' => $note,
         ], JSON_PRETTY_PRINT);
