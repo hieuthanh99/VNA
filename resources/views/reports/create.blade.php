@@ -1,8 +1,8 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <!-- <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Báo cáo ' . $department->name) }}
-        </h2>
+        </h2> -->
     </x-slot>
     <style>
         input[type="text"] {
@@ -129,8 +129,26 @@
         .alert-danger {
             padding: 10px;
         }
+
+        .report-title {
+            position: relative;
+            background-image: linear-gradient(195deg,#006885 0%,#006885 100%);
+            padding: 16px;
+            color: #fff;
+            border-radius: 0.5rem;
+            margin: 0 19%;
+            margin-bottom: -28px;
+        }
+
+        header{
+            display: none;
+        }
+
     </style>
     <div class="py-12">
+        <h2 class="report-title">
+            {{ __('Báo cáo ' . $department->name) }}
+        </h2>
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">

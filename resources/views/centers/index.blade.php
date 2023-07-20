@@ -142,8 +142,25 @@
             font-size: 14px;
             float: right;
         }
+
+        .report-title {
+            position: relative;
+            background-image: linear-gradient(195deg,#006885 0%,#006885 100%);
+            padding: 16px;
+            color: #fff;
+            border-radius: 0.5rem;
+            margin: 0 19%;
+            margin-bottom: -28px;
+        }
+
+        header{
+            display: none;
+        }
     </style>
     <div class="py-12">
+        <h2 class="report-title font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Báo cáo toàn trung tâm (' . $startDate . ' - ' . $endDate . ')') }}
+        </h2>
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 @if (session('success'))
@@ -166,7 +183,6 @@
                         <div class="mb-4">
                             <h1 class="mb-2 heading-style" style="text-align: center; font-size: 35px;">
                                 {{ $item['DepartmentName'] }}</h1>
-                                <a href="{{ route('exportPDF', ['id' => $id]) }}" class="btn btn-primary">Xuất file PDF</a>
                             <h1 class="mb-2 heading-style">I. Công việc đã thực hiện</h1>
                             <div id="cong-viec-da-lam-container">
                                 @if($item['WorkDone'])
