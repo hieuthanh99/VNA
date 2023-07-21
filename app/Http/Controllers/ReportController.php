@@ -92,7 +92,7 @@ class ReportController extends Controller
     public function store(Request $request)
     {
         try {
-            //dd($request);
+           // dd($request);
             // User and department
             $user = Auth::user();
             $department = Department::find($user->department);

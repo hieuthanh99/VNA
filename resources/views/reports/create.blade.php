@@ -127,6 +127,7 @@
         }
 
         .alert-danger {
+            /* background: #f1c9c9; */
             padding: 10px;
         }
 
@@ -171,18 +172,40 @@
                                 @if ($expectedWorkValues)
                                     @foreach ($expectedWorkValues as $key => $value)
                                         <div class="form-group cong-viec-da-lam-row">
-                                            <span class="cong-viec-stt">{{ $rowCount++ }}</span>
-                                            <input style="flex: 4" value="{{ $value }}" type="text"
-                                                name="cong_viec_da_lam[]" placeholder="Tiêu đề công việc"
-                                                class="form-control" required>
+                                            <div class="header-report form-group">
+                                                <span class="cong-viec-stt">{{$rowCount++}}. </span>
+                                            <label  for="cong_viec_da_lam">Tiêu đề:</label> 
+                                            <input  value="{{$value->next_work}}" style="flex: 4" type="text" name="cong_viec_da_lam[]" placeholder="Tiêu đề công việc" class="form-control" required>
                                             <div class="form-check" style="margin-top: 0; flex: 2;">
-                                                <input type="checkbox" checked name="cong_viec_da_lam_completed[]"
-                                                    class="form-check-input" onchange="handleCongViecDaLamChange(this)">
-                                                <input type="hidden" id="hiddenInput" name="cong_viec_da_lam_values[]"
-                                                    value="1">
-                                                <label class="form-check-label">Đã hoàn thành</label>
+                                            <input type="checkbox" checked name="cong_viec_da_lam_completed[]" class="form-check-input" onchange="handleCongViecDaLamChange(this)">
+                                            <input type="hidden" id="hiddenInput" name="cong_viec_da_lam_values[]" value="1">
+                                            <label class="form-check-label">Đã hoàn thành</label>
                                             </div>
+                                            </div>
+                                            <div class="content-report form-group" >
+                                                <label  for="noi_dung_cong_viec">Nội dung:</label> 
+                                                <textarea required style="width: 67%; height: 200px;" name="noi_dung_cong_viec[]" placeholder="Nhập nội dung tiêu đề" class="form-control" style="margin-bottom: 10px;">{{$value->next_description}}</textarea>
+                                                <div class="content-date">
+                                                    <div >
+                                                        <label for="ngay_sinh">Ngày bắt đầu:</label>
+                                                        <input required type="date" name="start_date[]" id="start_date" class="form-control" value="{{$value->next_start_date}}">
+                                    
+                                                    </div>
+                                                    <div style="margin-left: 10px;">
+                                                        <label for="ngay_sinh">Kết thúc:</label>
+                                                        <input required type="date" name="end_date[]" id="end_date" class="form-control" value="{{$value->next_end_date}}">
+                                    
+                                                    </div>
+                                                </div>
+                                              
+                                            </div>
+                                            <div  class="form-group style-note">
+                                                    <label  for="trangthai_congviec">Tiến độ:</label> 
+                                                    <input value="{{$value->next_status_work}}" style="flex:4" type="text"  name="trangthai_congviec[]" placeholder="Tiêu đề công việc" class="form-control" required>
+                                                    <div class="form-check" style="margin-top: 0; flex: 2;">
+                                                </div>
                                         </div>
+                                    </div>
                                     @endforeach
                                 @endif
                             </div>
@@ -215,6 +238,7 @@
     </div>
 
     <script>
+       
         var rowCount = 1;
         const errorSpan = document.getElementById('error');
 
@@ -239,9 +263,10 @@
             <label  for="cong_viec_da_lam">Tiêu đề:</label> 
             <input style="flex: 4" type="text" name="cong_viec_da_lam[]" placeholder="Tiêu đề công việc" class="form-control" required>
             <div class="form-check" style="margin-top: 0; flex: 2;">
-            <input type="checkbox" name="cong_viec_da_lam_completed[]" class="form-check-input" onchange="handleCongViecDaLamChange(this)">
-            <input type="hidden" id="hiddenInput" name="cong_viec_da_lam_values[]">
+            <input type="checkbox" name="cong_viec_da_lam_completed[]" class="form-check-input" value="1" onchange="handleCongViecDaLamChange(this)">
+            <input  type="hidden" id="hiddenInput" name="cong_viec_da_lam_values[]" value="1">
             <label class="form-check-label">Đã hoàn thành</label>
+            <button style="margin-left: 20px; flex: 5;" type="button" class="btn-delete" onclick="deleteCongViecDaLam(this)">Xóa</button>
             </div>
             </div>
             <div class="content-report form-group" >
@@ -250,12 +275,12 @@
                 <div class="content-date">
                     <div >
                         <label for="ngay_sinh">Ngày bắt đầu:</label>
-                        <input required type="date" name="start_date[]" id="start_date[]" class="form-control" value="{{ old('start_date[]') }}">
+                        <input required type="date" name="start_date[]" id="start_date" class="form-control" value="{{ old('start_date[]') }}">
     
                     </div>
                     <div style="margin-left: 10px;">
                         <label for="ngay_sinh">Kết thúc:</label>
-                        <input required type="date" name="end_date[]" id="end_date[]" class="form-control" value="{{ old('end_date[]') }}">
+                        <input required type="date" name="end_date[]" id="end_date" class="form-control" value="{{ old('end_date[]') }}">
     
                     </div>
                 </div>
@@ -292,12 +317,12 @@
                 <div  class="content-date">
                     <div >
                         <label for="start_date_tuan_toi">Ngày bắt đầu:</label>
-                        <input readonly type="date" name="start_date_tuan_toi[]" id="start_date_tuan_toi[]" value="${row.querySelector('input[name="start_date[]"]').value}" class="form-control">
+                        <input readonly type="date" name="start_date_tuan_toi" id="start_date_tuan_toi[]" value="${row.querySelector('input[name="start_date[]"]').value}" class="form-control">
     
                     </div>
                     <div style="margin-left: 10px;">
                         <label for="end_date_tuan_toi">Kết thúc:</label>
-                        <input readonly type="date" name="end_date_tuan_toi[]" value="${row.querySelector('input[name="end_date[]"]').value}" id="end_date_tuan_toi[]" class="form-control">
+                        <input readonly type="date" name="end_date_tuan_toi" value="${row.querySelector('input[name="end_date[]"]').value}" id="end_date_tuan_toi[]" class="form-control">
     
                     </div>
                 </div>
@@ -373,9 +398,19 @@
             row.remove();
             updateSTT();
         }
+        function deleteCongViecDaLam(button) {
+            var row = button.closest('.cong-viec-da-lam-row');
+            var checkbox = row.querySelector('input[name="cong_viec_da_lam_completed[]"]');
+            checkbox.click();
+            // console.log(checkbox);
+            // handleCongViecDaLamChange(checkbox);
+            row.remove();
+            updateSTTDaLam();
+        }
 
         function handleCongViecDaLamChange(checkbox) {
             var row = checkbox.parentNode.parentNode.parentNode;
+            
             //var row2 = checkbox.parentNode.parentNode.parentNode;
             var workDone = row.querySelector('input[name="cong_viec_da_lam[]"]');
             var startDate = row.querySelector('input[name="start_date[]"]');
@@ -385,13 +420,13 @@
             // var workDone = row.querySelector('input[name="cong_viec_da_lam[]"]');
 
             // Check if the workDone has text
-            var startDate = startDate.value.trim() !== '';
-            var endDate = endDate.value.trim() !== '';
-            var descriptionWork = descriptionWork.value.trim() !== '';
-            var workStatus = workStatus.value.trim() !== '';
+            var startDateValue = startDate.value.trim() !== '';
+            var endDateValue = endDate.value.trim() !== '';
+            var descriptionWorkValue = descriptionWork.value.trim() !== '';
+            var workStatusValue = workStatus.value.trim() !== '';
             var hasText = workDone.value.trim() !== '';
             const errorSpan = document.getElementById('error');
-            if (!hasText || !startDate || !descriptionWork || !endDate || !workStatus) {
+            if (!hasText || !startDateValue || !descriptionWorkValue || !endDateValue || !workStatusValue) {
                 const errorMessage = 'Vui lòng nhập dữ liệu.';
                 errorSpan.style.backgroundColor = '#f1c9c9';
                 errorSpan.innerHTML = '<span>' + errorMessage + '</span>';
@@ -410,37 +445,46 @@
                 hiddenInput.value = 0;
                 var newCongViecTuanToiRow = document.createElement('div');
                 newCongViecTuanToiRow.className = 'form-group cong-viec-tuan-toi-row';
-                
+
                 newCongViecTuanToiRow.innerHTML = `
             <div class="header-report form-group">
                 <span class="cong-viec-stt">${rowCount}.</span>
                 <label  for="cong_viec_tuan_toi">Tiêu đề:</label> 
-                <input readonly type="text" name="cong_viec_tuan_toi[]" style="flex:4" value="${row.querySelector('input[name="cong_viec_da_lam[]"]').value}" class="form-control custom-input" readonly> <span style="flex:2"></span>
+                <input type="text" name="cong_viec_tuan_toi[]" style="flex:4" value="${row.querySelector('input[name="cong_viec_da_lam[]"]').value}" class="form-control custom-input"> <span style="flex:2"></span>
             </div>
             <div class="content-report form-group" >
                 <label  for="noi_dung_cong_viec">Nội dung:</label> 
-                <textarea readonly style="width: 67%; height: 200px;" name="noi_dung_cong_viec_tuan_toi[]" placeholder="Nhập nội dung" class="form-control" style="margin-bottom: 10px;">${row.querySelector('textarea').value}</textarea>
+                <textarea style="width: 67%; height: 200px;" name="noi_dung_cong_viec_tuan_toi[]" placeholder="Nhập nội dung" class="form-control" style="margin-bottom: 10px;">${row.querySelector('textarea').value}</textarea>
                 <div  class="content-date">
                     <div >
                         <label for="ngay_sinh">Ngày bắt đầu:</label>
-                        <input readonly type="date" name="start_date_tuan_toi[]" id="start_date_tuan_toi[]" value="${row.querySelector('input[name="start_date[]"]').value}" class="form-control">
+                        <input type="date" name="start_date_tuan_toi[]" id="start_date_tuan_toi[]" value="${row.querySelector('input[name="start_date[]"]').value}" class="form-control">
                     </div>
                     <div style="margin-left: 10px;">
                         <label for="ngay_sinh">Kết thúc:</label>
-                        <input readonly type="date" name="end_date_tuan_toi[]" value="${row.querySelector('input[name="end_date[]"]').value}" id="end_date[]" class="form-control" >
+                        <input type="date" name="end_date_tuan_toi[]" value="${row.querySelector('input[name="end_date[]"]').value}" id="end_date[]" class="form-control" >
     
                     </div>
                 </div>
             </div>
             <div class="form-group style-note">
                     <label  for="trangthai_congviec">Tiến độ:</label> 
-                    <input readonly style="flex:4" type="text" value="${row.querySelector('input[name="trangthai_congviec[]"]').value}"   name="trangthai_congviec_tuan_toi[]" placeholder="Tiêu đề công việc" class="form-control" required>
+                    <input style="flex:4" type="text" value="${row.querySelector('input[name="trangthai_congviec[]"]').value}"   name="trangthai_congviec_tuan_toi[]" placeholder="Tiêu đề công việc" class="form-control" required>
                     <div class="form-check" style="margin-top: 0; flex: 2;">
                 </div>
             `;
                 newCongViecTuanToiRow.setAttribute('data-row-id', row.getAttribute('data-row-id'));
                 congViecTuanToiContainer.appendChild(newCongViecTuanToiRow);
-
+                // if (workDone && startDate && endDate && workStatus && descriptionWork) {
+                //     // Disabled các trường input và textarea
+                //     workDone.disabled = true;
+                //     startDate.disabled = true;
+                //     endDate.disabled = true;
+                //     workStatus.disabled = true;
+                //     descriptionWork.disabled = true;
+                // } else {
+                //     console.error('Không tìm thấy các trường input và textarea.');
+                // }
                 // Cập nhật lại số thứ tự của các dòng còn lại
                 for (var i = 0; i < congViecTuanToiRows.length; i++) {
                     var sttSpan = congViecTuanToiRows[i].querySelector('.cong-viec-stt');
@@ -462,6 +506,7 @@
                 }
             }
         }
+
         function updateSTT() {
             var rows = document.querySelectorAll('.cong-viec-tuan-toi-row');
             rows.forEach(function(row, index) {
@@ -469,5 +514,13 @@
                 sttElement.textContent = (index + 1) + '.';
             });
         }
+        function updateSTTDaLam() {
+            var rows = document.querySelectorAll('.cong-viec-da-lam-row');
+            rows.forEach(function(row, index) {
+                var sttElement = row.querySelector('.cong-viec-stt');
+                sttElement.textContent = (index + 1) + '.';
+            });
+        }
+        
     </script>
 </x-app-layout>

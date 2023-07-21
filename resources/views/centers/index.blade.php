@@ -1,8 +1,25 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Báo cáo toàn trung tâm (' . $startDate . ' - ' . $endDate . ')') }}
-        </h2>
+        <div style="display: flex;
+        align-items: center;
+        justify-content: space-between;">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                {{ __('Báo cáo toàn trung tâm (' . $startDate . ' - ' . $endDate . ')') }}
+            </h2>
+            <div style="display: flex;">
+                <form style="margin: 0 20px;" action="{{ route('centers.run') }}" method="POST">
+                    @csrf
+                    <button  id="run-cronjob-button" class="custom-button">Run Job</button>
+                </form>
+                @if ($data)
+                    <form action="{{ route('pdf') }}" method="GET">
+                        @csrf
+                        <button id="run-cronjob-button" class="custom-button">PDF</button>
+                    </form>
+                @endif
+            </div>
+         
+        </div>
     </x-slot>
     <style>
         input[type="text"] {
@@ -127,6 +144,7 @@
         }
 
         .alert-danger {
+            background: #f1c9c9;
             padding: 10px;
         }
 
@@ -173,70 +191,80 @@
                         {{ session('error') }}
                     </div>
                 @endif
-                @if($data)
-                @foreach ($data as $item)
-                    <div class="p-6 bg-white border-b border-gray-200">
-                        @php
-                            $rowCount = 1;
-                            $rowCount2 = 1;
-                        @endphp
-                        <div class="mb-4">
-                            <h1 class="mb-2 heading-style" style="text-align: center; font-size: 35px;">
-                                {{ $item['DepartmentName'] }}</h1>
-                            <h1 class="mb-2 heading-style">I. Công việc đã thực hiện</h1>
-                            <div id="cong-viec-da-lam-container">
-                                @if($item['WorkDone'])
-                                    @foreach ($item['WorkDone'] as $key => $value)
-                                        @php
-                                            $workDone = $value['work_done'];
-                                            $valueOfWork = $value['value_of_work'];
-                                            $checked = $valueOfWork == '1' ? 'checked' : '';
-                                        @endphp
-                                        <div class="form-group cong-viec-da-lam-row">
+                @if ($data)
+
+                    @foreach ($data as $item)
+                        <div class="p-6 bg-white border-b border-gray-200">
+                            @php
+                                $rowCount = 1;
+                                $rowCount2 = 1;
+                            @endphp
+                            <div class="mb-4">
+                                <h1 class="mb-2 heading-style" style="text-align: center; font-size: 35px;">
+                                    {{ $item['DepartmentName'] }}</h1>
+                                <h1 class="mb-2 heading-style">I. Công việc đã thực hiện</h1>
+                                <div id="cong-viec-da-lam-container">
+                                    @if ($item['WorkDone'])
+                                        @foreach ($item['WorkDone'] as $key => $value)
+                                            @php
+                                                $workDone = $value['work_done'];
+                                                $valueOfWork = $value['value_of_work'];
+                                                $checked = $valueOfWork == '1' ? 'checked' : '';
+                                            @endphp
                                             <div class="form-group cong-viec-da-lam-row">
-                                                <div class="header-report form-group">
-                                                    <span class="cong-viec-stt">{{$rowCount++}}. </span>
-                                                    <label for="cong_viec_da_lam">Tiêu đề:</label>
-                                                    <input style="flex: 4" type="text" name="cong_viec_da_lam[]" value="{{$value['work_done']}}"
-                                                        placeholder="Tiêu đề công việc" class="form-control" required>
-                                                    <div class="form-check" style="margin-top: 0; flex: 2;">
-                                                        <input {{$checked}}  disabled type="checkbox" name="cong_viec_da_lam_completed[]" value="{{$value['value_of_work']}}" class="form-check-input">
-                                                        <input type="hidden" id="hiddenInput"
-                                                            name="cong_viec_da_lam_values[]">
-                                                        <label class="form-check-label">Đã hoàn thành</label>
-                                                    </div>
-                                                </div>
-                                                <div class="content-report form-group">
-                                                    <label for="noi_dung_cong_viec">Nội dung:</label>
-                                                    <textarea required style="width: 67%; height: 200px;" name="noi_dung_cong_viec[]" placeholder="Nhập nội dung tiêu đề"
-                                                        class="form-control" style="margin-bottom: 10px;">{{$value['description']}}</textarea>
-                                                    <div class="content-date">
-                                                        <div>
-                                                            <label for="ngay_sinh">Ngày bắt đầu:</label>
-                                                            <input required type="date" name="start_date[]"
-                                                                id="start_date[]" class="form-control"
-                                                                value="{{$value['start_date']}}">
-        
-                                                        </div>
-                                                        <div style="margin-left: 10px;">
-                                                            <label for="ngay_sinh">Kết thúc:</label>
-                                                            <input required type="date" name="end_date[]" id="end_date[]"
-                                                                class="form-control"  value="{{$value['end_date']}}">
-        
+                                                <div class="form-group cong-viec-da-lam-row">
+                                                    <div class="header-report form-group">
+                                                        <span class="cong-viec-stt">{{ $rowCount++ }}. </span>
+                                                        <label for="cong_viec_da_lam">Tiêu đề:</label>
+                                                        <input disabled style="flex: 4" type="text"
+                                                            name="cong_viec_da_lam[]" value="{{ $value['work_done'] }}"
+                                                            placeholder="Tiêu đề công việc" class="form-control"
+                                                            required>
+                                                        <div class="form-check" style="margin-top: 0; flex: 2;">
+                                                            <input disabled {{ $checked }} disabled type="checkbox"
+                                                                name="cong_viec_da_lam_completed[]"
+                                                                value="{{ $value['value_of_work'] }}"
+                                                                class="form-check-input disabled">
+                                                            <input disabled type="hidden" id="hiddenInput"
+                                                                name="cong_viec_da_lam_values[]">
+                                                            <label class="form-check-label">Đã hoàn thành</label>
                                                         </div>
                                                     </div>
-        
-                                                </div>
-                                                <div class="form-group style-note">
-                                                    <label for="trangthai_congviec">Tiến độ:</label>
-                                                    <input required style="flex:4" type="text"
-                                                        name="trangthai_congviec[]" placeholder="Tiêu đề công việc"
-                                                        class="form-control" required value="{{$value['status_work']}}">
-                                                    <div class="form-check" style="margin-top: 0; flex: 2;">
+                                                    <div class="content-report form-group">
+                                                        <label for="noi_dung_cong_viec">Nội dung:</label>
+                                                        <textarea disabled required style="width: 67%; height: 200px;" name="noi_dung_cong_viec[]"
+                                                            placeholder="Nhập nội dung tiêu đề" class="form-control" style="margin-bottom: 10px;">{{ $value['description'] }}</textarea>
+                                                        <div class="content-date">
+                                                            <div>
+                                                                <label for="ngay_sinh">Ngày bắt đầu:</label>
+                                                                <input disabled required type="date"
+                                                                    name="start_date[]" id="start_date[]"
+                                                                    class="form-control"
+                                                                    value="{{ $value['start_date'] }}">
+
+                                                            </div>
+                                                            <div style="margin-left: 10px;">
+                                                                <label for="ngay_sinh">Kết thúc:</label>
+                                                                <input disabled required type="date"
+                                                                    name="end_date[]" id="end_date[]"
+                                                                    class="form-control"
+                                                                    value="{{ $value['end_date'] }}">
+
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="form-group style-note">
+                                                        <label for="trangthai_congviec">Tiến độ:</label>
+                                                        <input disabled required style="flex:4" type="text"
+                                                            name="trangthai_congviec[]" placeholder="Tiêu đề công việc"
+                                                            class="form-control" required
+                                                            value="{{ $value['status_work'] }}">
+                                                        <div class="form-check" style="margin-top: 0; flex: 2;">
+                                                        </div>
                                                     </div>
                                                 </div>
-                                        </div>
-                                    @endforeach
+                                        @endforeach
                                     @else
                                         <p>Không có dữ liệu</p>
                                     @endif
@@ -251,26 +279,27 @@
                                                 <div class="header-report form-group">
                                                     <span class="cong-viec-stt">{{ $rowCount2++ }}. </span>
                                                     <label for="cong_viec_tuan_toi">Tiêu đề:</label>
-                                                    <input readonly type="text" name="cong_viec_tuan_toi[]"
+                                                    <input disabled readonly type="text" name="cong_viec_tuan_toi[]"
                                                         style="flex:4" value=" {{ $value['next_work'] }}"
-                                                        class="form-control custom-input" readonly> <span
+                                                        class="form-control custom-input disabled" readonly> <span
                                                         style="flex:2"></span>
                                                 </div>
                                                 <div class="content-report form-group">
                                                     <label for="noi_dung_cong_viec">Nội dung:</label>
-                                                    <textarea readonly style="width: 67%; height: 200px;" name="noi_dung_cong_viec_tuan_toi[]" placeholder="Nhập nội dung"
-                                                        class="form-control" style="margin-bottom: 10px;">{{ $value['next_description'] }}</textarea>
+                                                    <textarea disabled readonly style="width: 67%; height: 200px;" name="noi_dung_cong_viec_tuan_toi[]"
+                                                        placeholder="Nhập nội dung" class="form-control" style="margin-bottom: 10px;">{{ $value['next_description'] }}</textarea>
                                                     <div class="content-date">
                                                         <div>
                                                             <label for="ngay_sinh">Ngày bắt đầu:</label>
-                                                            <input readonly type="date" name="start_date_tuan_toi[]"
-                                                                id="start_date_tuan_toi[]"
+                                                            <input disabled readonly type="date"
+                                                                name="start_date_tuan_toi[]" id="start_date_tuan_toi[]"
                                                                 value="{{ $value['next_start_date'] }}"
                                                                 class="form-control">
                                                         </div>
                                                         <div style="margin-left: 10px;">
                                                             <label for="ngay_sinh">Kết thúc:</label>
-                                                            <input readonly type="date" name="end_date_tuan_toi[]"
+                                                            <input disabled readonly type="date"
+                                                                name="end_date_tuan_toi[]"
                                                                 value="{{ $value['next_end_date'] }}" id="end_date[]"
                                                                 class="form-control">
 
@@ -279,7 +308,7 @@
                                                 </div>
                                                 <div class="form-group style-note">
                                                     <label for="trangthai_congviec">Tiến độ:</label>
-                                                    <input readonly style="flex:4" type="text"
+                                                    <input disabled readonly style="flex:4" type="text"
                                                         value="{{ $value['next_status_work'] }}"
                                                         name="trangthai_congviec_tuan_toi[]"
                                                         placeholder="Tiêu đề công việc" class="form-control" required>
@@ -297,7 +326,8 @@
                                 <h1 class="mb-2 heading-style">III. Kiến nghị</h1>
                                 <div>
                                     @if ($item['Request'])
-                                        <p class="form-control" style="margin-bottom: 10px;">{{ $item['Request'] }}</p>
+                                        <p class="form-control" style="margin-bottom: 10px;">{{ $item['Request'] }}
+                                        </p>
                                     @else
                                         <p>Không có dữ liệu</p>
                                     @endif
