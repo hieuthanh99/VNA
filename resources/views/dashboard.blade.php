@@ -225,12 +225,10 @@
                                 <div class="alert alert-danger">
                                     <span>Không tồn tại dữ liệu</span>
                                 </div>
-
                             @endif
                            @endif
                            @if(auth()->user()->role === 'staff')
                         @if (isset($array) )
-                           
                                 @php
                                     $rowCount = 1;
                                     $rowCount2 = 1;

@@ -3,9 +3,9 @@
         <div style="display: flex;
         align-items: center;
         justify-content: space-between;">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{-- <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('Báo cáo toàn trung tâm (' . $startDate . ' - ' . $endDate . ')') }}
-            </h2>
+            </h2> --}}
             <div style="display: flex;">
                 <form style="margin: 0 20px;" action="{{ route('centers.run') }}" method="POST">
                     @csrf
@@ -171,9 +171,9 @@
             margin-bottom: -28px;
         }
 
-        header{
+        /* header{
             display: none;
-        }
+        } */
 
         .item-report {
             background: #fff none repeat scroll 0 0;
