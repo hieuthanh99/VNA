@@ -17,9 +17,10 @@ class Helper
         $endDateWeek = Carbon::now()->endOfWeek();
         $endDate = Carbon::now()->setISODate(Carbon::now()->year, Carbon::now()->isoWeek(), 5)->setTime(17, 0, 0);
         $department = Department::get()->toArray();
-        $data = ReportCenter::whereBetween('created_at', [$startDate, $endDate])->value('values');
-        
-        $data = json_decode($data, true) ?? [];
+        $data = ReportCenter::whereBetween('created_at', [$startDate, $endDate]);
+        $record = $data->first();
+       
+        $data = json_decode($data->value('values'), true) ?? [];
         $mergedArray = [];
     
         foreach ($department as $dept) {
@@ -55,7 +56,8 @@ class Helper
         return [
             'mergedArray' => $mergedArray,
             'startDate' => $startDate,
-            'endDateWeek' => $endDateWeek
+            'endDateWeek' => $endDateWeek,
+            'record' => $record
         ];
     }
 

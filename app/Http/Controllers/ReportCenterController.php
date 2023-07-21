@@ -22,7 +22,8 @@ class ReportCenterController extends Controller
         $mergedArray = $result['mergedArray'] ?? null;
         $startDate = $result['startDate'] ?? null;
         $endDateWeek = $result['endDateWeek'] ?? null;
-        return view('centers.index', ['data' => $mergedArray, 'startDate' => $startDate->format('d-m-Y'), 'endDate' => $endDateWeek->format('d-m-Y')]);
+        $record = $result['record'] ?? null;
+        return view('centers.index', ['record' => $record,'data' => $mergedArray, 'startDate' => $startDate->format('d-m-Y'), 'endDate' => $endDateWeek->format('d-m-Y')]);
     }
 
     /**

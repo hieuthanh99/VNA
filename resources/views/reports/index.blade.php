@@ -237,7 +237,7 @@
                                         <div class="content-report form-group">
                                             <div class="description-job">
                                                 <label class="item-job description-title" for="noi_dung_cong_viec">Nội dung:</label>
-                                                <textarea disabled required style="width: 67%; height: 200px; margin-left: 30px;" name="noi_dung_cong_viec[]" placeholder="Nhập nội dung tiêu đề"
+                                                <textarea disabled required style="width: 60%; height: 200px; margin-left: 30px;" name="noi_dung_cong_viec[]" placeholder="Nhập nội dung tiêu đề"
                                                     class="form-control" style="margin-bottom: 10px;">{{$value['description']}}</textarea>
                                             </div>
                                             <div class="content-date">
@@ -284,7 +284,7 @@
                             </div>
                             <div class="content-report form-group" >
                                 <label class="item-job" style="vertical-align: top;" for="noi_dung_cong_viec">Nội dung:</label> 
-                                <textarea disabled readonly style="width: 67%; height: 200px;" name="noi_dung_cong_viec_tuan_toi[]" placeholder="Nhập nội dung" class="form-control" style="margin-bottom: 10px;">{{$value['next_description']}}</textarea>
+                                <textarea disabled readonly style="width: 63%; height: 200px;" name="noi_dung_cong_viec_tuan_toi[]" placeholder="Nhập nội dung" class="form-control" style="margin-bottom: 10px;">{{$value['next_description']}}</textarea>
                                 <div  class="content-date">
                                     <div >
                                         <label class="item-job" for="ngay_sinh">Ngày bắt đầu:</label>
