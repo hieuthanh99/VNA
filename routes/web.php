@@ -8,6 +8,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\DashBoardController;
 use App\Http\Controllers\PDFController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\WordController;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,6 +43,7 @@ Route::middleware('auth')->group(function () {
     Route::get('generate-pdf', [PDFController::class, 'generatePDF'])->name('pdf');
     Route::get('delete', [DashBoardController::class, 'deleteDataWeek'])->name('delete.data');
     Route::get('pdf/{id}', [PDFController::class, 'generatePDFDetails'])->name('pdf.details');
+    Route::get('/generate-word', [WordController::class, 'generateWord'])->name('word');
 });
 
 require __DIR__.'/auth.php';
