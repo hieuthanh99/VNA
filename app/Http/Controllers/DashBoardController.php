@@ -35,7 +35,7 @@ class DashBoardController extends Controller
             $startDate = Carbon::now()->startOfWeek();
             $endDate = Carbon::now()->endOfWeek();
     
-            $array = Logs::Where('department_id', $departmentUser->id)->whereBetween('created_at', [$startDate, $endDate])->first();
+            $array = Logs::Where('department_id', $departmentUser->id)->whereBetween('created_at', [$startDate, $endDate])->get();
             return view('dashboard', ['array' => $array, 'department' => $department, 'reports' => []]);
         }     
     }
@@ -49,7 +49,6 @@ class DashBoardController extends Controller
         $endDate = Carbon::parse($request->end_date);
         $array = Logs::Where('department_id', $departmentUser->id)->whereBetween('created_at', [$startDate, $endDate])->get();
 
-      //  dd($array);
         return view('dashboard', ['array' => $array, 'department' => $department, 'reports' => []]);
     }
     public function run()
