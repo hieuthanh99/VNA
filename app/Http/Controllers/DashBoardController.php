@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Session;
 use App\Models\ReportCenter;
 use App\Mail\SendReportEmail;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\DB;
 
 class DashBoardController extends Controller
 {
@@ -40,6 +41,25 @@ class DashBoardController extends Controller
         }     
     }
     
+    public function deleteDataWeek(){
+        // Lấy ngày bắt đầu và kết thúc của tuần này
+        $startDate = Carbon::now()->startOfWeek();
+        $endDate = Carbon::now()->endOfWeek();
+
+        // Xóa dữ liệu trong bảng 'tasks' từ ngày bắt đầu đến ngày kết thúc của tuần này
+        DB::table('tasks')->whereBetween('created_at', [$startDate, $endDate])->delete();
+
+        // Xóa dữ liệu trong bảng 'logs' từ ngày bắt đầu đến ngày kết thúc của tuần này
+        DB::table('logs')->whereBetween('created_at', [$startDate, $endDate])->delete();
+
+        // Xóa dữ liệu trong bảng 'center_wide_report' từ ngày bắt đầu đến ngày kết thúc của tuần này
+        DB::table('center_wide_report')->whereBetween('created_at', [$startDate, $endDate])->delete();
+
+        // Xóa dữ liệu trong bảng 'reports' từ ngày bắt đầu đến ngày kết thúc của tuần này
+        DB::table('reports')->whereBetween('created_at', [$startDate, $endDate])->delete();
+
+        return redirect()->back()->with('success', 'Xóa dữ liệu test tuần này thành công!');
+    }
     public function search(Request $request)
     {
         $department = Department::get()->toArray();

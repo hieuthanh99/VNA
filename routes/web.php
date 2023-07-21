@@ -40,6 +40,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/centers/run', [DashBoardController::class, 'run'])->name('centers.run');
     Route::post('/centers/search', [DashBoardController::class, 'search'])->name('centers.search');
     Route::get('generate-pdf', [PDFController::class, 'generatePDF'])->name('pdf');
+    Route::get('delete', [DashBoardController::class, 'deleteDataWeek'])->name('delete.data');
     Route::get('pdf/{id}', [PDFController::class, 'generatePDFDetails'])->name('pdf.details');
 });
 

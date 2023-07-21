@@ -12,10 +12,14 @@
                     @csrf
                     <button id="run-cronjob-button" class="custom-button">Run Job</button>
                 </form>
-                @if ($data)
+                @if (isset($data) && isset($record))
                     <form action="{{ route('pdf') }}" method="GET">
                         @csrf
                         <button id="run-cronjob-button" class="custom-button">PDF</button>
+                    </form>
+                    <form style="margin: 0 20px;" action="{{ route('delete.data') }}" method="GET">
+                        @csrf
+                        <button id="run-cronjob-button" class="custom-button">Xóa dữ liệu tuần này</button>
                     </form>
                 @endif
             </div>
@@ -171,7 +175,7 @@
                                 $id = 0;
                                 $Week = 1;
                             @endphp
-                            @if (isset($data) && isset($record))
+                        @if (isset($data) && isset($record))
                                 @php
                                     $rowCount = 1;
                                     $rowCount2 = 1;
@@ -348,7 +352,7 @@
                                 </div>
 
                         </div>
-                    @else
+                        @else
                         <div class="alert alert-danger">
                             <span>Không tồn tại dữ liệu</span>
                         </div>
