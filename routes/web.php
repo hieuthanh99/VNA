@@ -8,7 +8,6 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\DashBoardController;
 use App\Http\Controllers\PDFController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\PdfController;
 
 /*
 |--------------------------------------------------------------------------

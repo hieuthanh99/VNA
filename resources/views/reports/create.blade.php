@@ -138,11 +138,39 @@
             color: #fff;
             border-radius: 0.5rem;
             margin: 0 19%;
-            margin-bottom: -28px;
+            margin-bottom: -13px;
         }
 
         header{
             display: none;
+        }
+
+        main {
+	        background: #f1f1f1;
+        }
+
+        .notification {
+            padding: 0;
+            border: none;
+        }
+
+        .alert-danger {
+            padding: 0;
+        }
+
+        #report-form {
+            margin-top: 0;
+            background: #f1f1f1;
+        }
+
+        .mb-4 {
+            background: #fff none repeat scroll 0 0;
+            border: 1px solid #ede9e9;
+            border-radius: 15px;
+            display: inline-block;
+            width: 100%;
+            margin-bottom: 20px;
+            padding: 20px;
         }
 
     </style>
@@ -151,8 +179,8 @@
             {{ __('Báo cáo ' . $department->name) }}
         </h2>
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 bg-white border-b border-gray-200">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg" style="box-shadow:none;">
+                <div class="notification p-6 bg-white border-b border-gray-200">
                     @if (session('success'))
                         <div class="alert alert-success">
                             {{ session('success') }}
@@ -212,14 +240,14 @@
                             <button type="button" class="btn btn-primary"
                                 onclick="addNewRow('cong-viec-da-lam-container')">Thêm</button>
                         </div>
-                        <hr>
+                        <hr style="border: none;">
                         <div class="mb-4">
                             <h1 class="mb-2 heading-style">II. Công việc dự kiến</h1>
                             <div id="cong-viec-tuan-toi-container"></div>
                             <button type="button" style="margin-top: 5px;" class="btn btn-primary"
                                 onclick="validateAndAddCongViecTuanToi()">Thêm</button>
                         </div>
-                        <hr>
+                        <hr style="border: none;">
                         <div class="mb-4">
                             <h1 class="mb-2 heading-style">III. Kiến nghị</h1>
                             <div>
@@ -228,7 +256,7 @@
                             </div>
 
                         </div>
-                        <hr>
+                        <hr style="border: none;">
                         <button @if (Session::get('cronJobCompleted')) disabled @endif type="submit" style="margin: 20px 0;"
                             class="custom-button">Gửi báo cáo</button>
                     </form>

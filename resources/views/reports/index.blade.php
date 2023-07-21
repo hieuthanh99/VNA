@@ -138,7 +138,7 @@
             color: #fff;
             border-radius: 0.5rem;
             margin: 0 19%;
-            margin-bottom: -28px;
+            margin-bottom: -13px;
         }
 
         header{

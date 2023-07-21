@@ -174,13 +174,24 @@
         header{
             display: none;
         }
+
+        .item-report {
+            background: #fff none repeat scroll 0 0;
+            border: 1px solid #ede9e9;
+            border-radius: 15px;
+            display: inline-block;
+            width: 100%;
+            margin-bottom: 20px;
+            padding: 20px;
+        }
+
     </style>
     <div class="py-12">
         <h2 class="report-title font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Báo cáo toàn trung tâm (' . $startDate . ' - ' . $endDate . ')') }}
         </h2>
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg" style="background: rgb(243 244 246 / var(--tw-bg-opacity)); box-shadow: none;">
                 @if (session('success'))
                     <div class="alert alert-success">
                         {{ session('success') }}
@@ -194,7 +205,7 @@
                 @if ($data)
 
                     @foreach ($data as $item)
-                        <div class="p-6 bg-white border-b border-gray-200">
+                        <div class="item-report p-6 bg-white border-b border-gray-200">
                             @php
                                 $rowCount = 1;
                                 $rowCount2 = 1;
