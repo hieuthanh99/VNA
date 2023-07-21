@@ -1,15 +1,16 @@
 <x-app-layout>
     <x-slot name="header">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
         <div style="display: flex;
         align-items: center;
         justify-content: space-between;">
-            {{-- <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('Báo cáo toàn trung tâm (' . $startDate . ' - ' . $endDate . ')') }}
-            </h2> --}}
+            </h2>
             <div style="display: flex;">
                 <form style="margin: 0 20px;" action="{{ route('centers.run') }}" method="POST">
                     @csrf
-                    <button  id="run-cronjob-button" class="custom-button">Run Job</button>
+                    <button id="run-cronjob-button" class="custom-button">Run Job</button>
                 </form>
                 @if ($data)
                     <form action="{{ route('pdf') }}" method="GET">
@@ -18,7 +19,7 @@
                     </form>
                 @endif
             </div>
-         
+
         </div>
     </x-slot>
     <style>
@@ -139,46 +140,18 @@
         }
 
         .alert-success {
+            margin-top: 30px;
             background: #c4e8c0;
             padding: 10px;
         }
 
         .alert-danger {
+            margin-top: 30px;
             background: #f1c9c9;
             padding: 10px;
         }
-
-        .btn-PDF {
-            top:50%;
-            background-color:#fff;
-            color: #0a0a23;
-            border-radius:10px; 
-            padding:8px;
-            min-height:30px; 
-            min-width: 120px;
-            border: 1px solid #000;
-            font-size: 14px;
-            float: right;
-        }
-
-        .report-title {
-            position: relative;
-            background-image: linear-gradient(195deg,#006885 0%,#006885 100%);
-            padding: 16px;
-            color: #fff;
-            border-radius: 0.5rem;
-            margin: 0 19%;
-            margin-bottom: -28px;
-        }
-
-        /* header{
-            display: none;
-        } */
     </style>
     <div class="py-12">
-        <h2 class="report-title font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Báo cáo toàn trung tâm (' . $startDate . ' - ' . $endDate . ')') }}
-        </h2>
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 @if (session('success'))
@@ -191,158 +164,201 @@
                         {{ session('error') }}
                     </div>
                 @endif
-                @if ($data)
-
-                    @foreach ($data as $item)
-                        <div class="p-6 bg-white border-b border-gray-200">
+                <div class="p-6 text-gray-900">
+                    <div class="container mt-4">
+                        <div class="accordion" id="reportsAccordion">
                             @php
-                                $rowCount = 1;
-                                $rowCount2 = 1;
+                                $id = 0;
+                                $Week = 1;
                             @endphp
-                            <div class="mb-4">
-                                <h1 class="mb-2 heading-style" style="text-align: center; font-size: 35px;">
-                                    {{ $item['DepartmentName'] }}</h1>
-                                <h1 class="mb-2 heading-style">I. Công việc đã thực hiện</h1>
-                                <div id="cong-viec-da-lam-container">
-                                    @if ($item['WorkDone'])
-                                        @foreach ($item['WorkDone'] as $key => $value)
+                            @if (isset($data) && isset($record))
+                                @php
+                                    $rowCount = 1;
+                                    $rowCount2 = 1;
+                                @endphp
+
+                                <div class="accordion-item">
+
+                                    @php
+                                        $Week = 1;
+                                        
+                                        $createdDate = \Carbon\Carbon::parse($record->created_at);
+                                        // dd($createdDate);
+                                        $weekNumber = $createdDate->weekOfYear;
+                                        $startDateOfWeek = $createdDate->startOfWeek()->format('d-m-Y');
+                                        $endDateOfWeek = $createdDate->endOfWeek()->format('d-m-Y');
+                                        
+                                    @endphp
+                                    <h2 class="accordion-header" id="heading{{ $record->id }}">
+                                        <button class="accordion-button collapsed" type="button"
+                                            data-bs-toggle="collapse" data-bs-target="#collapse{{ $record->id }}"
+                                            aria-expanded="false" aria-controls="collapse{{ $record->id }}">
+                                            <span style="font-size: 20px;">Báo cáo tuần (Từ
+                                                ngày
+                                                {{ $startDateOfWeek }} đến {{ $endDateOfWeek }})</span>
+
+                                        </button>
+                                    </h2>
+                                    <div id="collapse{{ $record->id }}" class="accordion-collapse collapse"
+                                        style="visibility: unset" aria-labelledby="heading{{ $record->id }}"
+                                        data-bs-parent="#reportsAccordion">
+                                        @foreach ($data as $array)
                                             @php
-                                                $workDone = $value['work_done'];
-                                                $valueOfWork = $value['value_of_work'];
-                                                $checked = $valueOfWork == '1' ? 'checked' : '';
+                                                $workDone = !empty($array['WorkDone']) ? $array['WorkDone'] : [];
+                                                $expectedWork = !empty($array['ExpectedWork']) ? $array['ExpectedWork'] : [];
+                                                $requestWork = !empty($array['Request']) ? $array['Request'] : [];
+                                                
+                                                $STT = 1;
+                                                $STT_NEXT = 1;
+                                                $nameDepartment = $array['DepartmentName'] ?? '';
                                             @endphp
-                                            <div class="form-group cong-viec-da-lam-row">
-                                                <div class="form-group cong-viec-da-lam-row">
-                                                    <div class="header-report form-group">
-                                                        <span class="cong-viec-stt">{{ $rowCount++ }}. </span>
-                                                        <label for="cong_viec_da_lam">Tiêu đề:</label>
-                                                        <input disabled style="flex: 4" type="text"
-                                                            name="cong_viec_da_lam[]" value="{{ $value['work_done'] }}"
-                                                            placeholder="Tiêu đề công việc" class="form-control"
-                                                            required>
-                                                        <div class="form-check" style="margin-top: 0; flex: 2;">
-                                                            <input disabled {{ $checked }} disabled type="checkbox"
-                                                                name="cong_viec_da_lam_completed[]"
-                                                                value="{{ $value['value_of_work'] }}"
-                                                                class="form-check-input disabled">
-                                                            <input disabled type="hidden" id="hiddenInput"
-                                                                name="cong_viec_da_lam_values[]">
-                                                            <label class="form-check-label">Đã hoàn thành</label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="content-report form-group">
-                                                        <label for="noi_dung_cong_viec">Nội dung:</label>
-                                                        <textarea disabled required style="width: 67%; height: 200px;" name="noi_dung_cong_viec[]"
-                                                            placeholder="Nhập nội dung tiêu đề" class="form-control" style="margin-bottom: 10px;">{{ $value['description'] }}</textarea>
-                                                        <div class="content-date">
+                                            <div class="accordion-body">
+
+                                                <h2 style="text-align: center">{{ $nameDepartment }}</h2>
+                                                <!-- Hiển thị thông tin về công việc đã làm (Mục I) -->
+                                                {{-- {{dd($item)}} --}}
+                                                <h3>Mục I: Công việc đã làm</h3>
+                                                @if (!empty($workDone))
+                                                    @foreach ($workDone as $work)
+                                                        <div style="padding: 10px;">
                                                             <div>
-                                                                <label for="ngay_sinh">Ngày bắt đầu:</label>
-                                                                <input disabled required type="date"
-                                                                    name="start_date[]" id="start_date[]"
-                                                                    class="form-control"
-                                                                    value="{{ $value['start_date'] }}">
-
+                                                                <span
+                                                                    style="font-size:  20px; font-weight: bold">{{ $STT++ }}.
+                                                                    <span>{{ $work['work_done'] }}</span>
+                                                                </span>
                                                             </div>
-                                                            <div style="margin-left: 10px;">
-                                                                <label for="ngay_sinh">Kết thúc:</label>
-                                                                <input disabled required type="date"
-                                                                    name="end_date[]" id="end_date[]"
-                                                                    class="form-control"
-                                                                    value="{{ $value['end_date'] }}">
+                                                            {{-- value_of_work --}}
+                                                            <div style="display: flex; margin: 10px">
+                                                                <div
+                                                                    style="display: flex; flex: 2; align-items: center">
+                                                                    <span
+                                                                        style="font-size:  18px; font-weight: bold">Ngày
+                                                                        bắt
+                                                                        đầu:</span>
+                                                                    <div style="padding-left: 10px;">
+                                                                        {{ $work['start_date'] }}
+                                                                    </div>
+                                                                </div>
+                                                                <div
+                                                                    style="display: flex; flex: 2; align-items: center">
+                                                                    <span
+                                                                        style="font-size:  18px; font-weight: bold">Ngày
+                                                                        kết
+                                                                        thúc:</span>
 
+                                                                    <div style="padding-left: 10px;">
+                                                                        {{ $work['end_date'] }}
+                                                                    </div>
+                                                                </div>
                                                             </div>
-                                                        </div>
+                                                            <div style="display: flex; margin: 10px">
 
-                                                    </div>
-                                                    <div class="form-group style-note">
-                                                        <label for="trangthai_congviec">Tiến độ:</label>
-                                                        <input disabled required style="flex:4" type="text"
-                                                            name="trangthai_congviec[]" placeholder="Tiêu đề công việc"
-                                                            class="form-control" required
-                                                            value="{{ $value['status_work'] }}">
-                                                        <div class="form-check" style="margin-top: 0; flex: 2;">
+                                                                <span style="font-size:  18px; font-weight: bold">Tiến
+                                                                    độ:</span>
+
+                                                                <div style="padding-left: 10px;">
+                                                                    {{ $work['status_work'] }}
+                                                                </div>
+                                                            </div>
+                                                            <div style="display: flex; margin: 10px">
+
+                                                                <span style="font-size:  18px; font-weight: bold">Nội
+                                                                    dung:</span>
+
+                                                                <div style="padding-left: 10px;">
+                                                                    {{ $work['description'] }}
+                                                                </div>
+                                                            </div>
+
                                                         </div>
-                                                    </div>
-                                                </div>
+                                                    @endforeach
+                                                @else
+                                                    <span>Không tồn tại dữ liệu</span>
+                                                @endif
+                                                <!-- Hiển thị thông tin về công việc tuần tới (Mục II) -->
+                                                <h3>Mục II: Công việc tuần tới</h3>
+                                                @if (!empty($expectedWork))
+                                                    @foreach ($expectedWork as $work)
+                                                        <div style="padding: 10px;">
+                                                            <div>
+                                                                <span
+                                                                    style="font-size:  20px; font-weight: bold">{{ $STT_NEXT++ }}.
+                                                                    <span>{{ $work['next_work'] }}</span>
+                                                                </span>
+                                                            </div>
+                                                            {{-- value_of_work --}}
+                                                            <div style="display: flex; margin: 10px">
+                                                                <div
+                                                                    style="display: flex; flex: 2; align-items: center">
+                                                                    <span
+                                                                        style="font-size:  18px; font-weight: bold">Ngày
+                                                                        bắt
+                                                                        đầu:</span>
+                                                                    <div style="padding-left: 10px;">
+                                                                        {{ $work['next_start_date'] }}
+                                                                    </div>
+                                                                </div>
+                                                                <div
+                                                                    style="display: flex; flex: 2; align-items: center">
+                                                                    <span
+                                                                        style="font-size:  18px; font-weight: bold">Ngày
+                                                                        kết
+                                                                        thúc:</span>
+
+                                                                    <div style="padding-left: 10px;">
+                                                                        {{ $work['next_end_date'] }}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div style="display: flex; margin: 10px">
+
+                                                                <span style="font-size:  18px; font-weight: bold">Tiến
+                                                                    độ:</span>
+
+                                                                <div style="padding-left: 10px;">
+                                                                    {{ $work['next_status_work'] }}
+                                                                </div>
+                                                            </div>
+                                                            <div style="display: flex; margin: 10px">
+
+                                                                <span style="font-size:  18px; font-weight: bold">Nội
+                                                                    dung:</span>
+
+                                                                <div style="padding-left: 10px;">
+                                                                    {{ $work['next_description'] }}
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    @endforeach
+                                                @else
+                                                    <span>Không tồn tại dữ liệu</span>
+                                                @endif
+                                                <!-- Hiển thị thông tin về kiến nghị (Mục III) -->
+                                                <h3>Mục III: Kiến nghị</h3>
+                                                @if (!empty($requestWork))
+                                                    <p style="padding: 20px">{{ $requestWork }}</p>
+                                                @else
+                                                    <span>Không tồn tại dữ liệu</span>
+                                                @endif
+                                            </div>
                                         @endforeach
-                                    @else
-                                        <p>Không có dữ liệu</p>
-                                    @endif
-                                </div>
-                            </div>
-                            <div class="mb-4">
-                                <h1 class="mb-2 heading-style">II. Công việc dự kiến</h1>
-                                <div id="cong-viec-tuan-toi-container">
-                                    @if ($item['ExpectedWork'])
-                                        @foreach ($item['ExpectedWork'] as $key => $value)
-                                            <div class="form-group  cong-viec-tuan-toi-row">
-                                                <div class="header-report form-group">
-                                                    <span class="cong-viec-stt">{{ $rowCount2++ }}. </span>
-                                                    <label for="cong_viec_tuan_toi">Tiêu đề:</label>
-                                                    <input disabled readonly type="text" name="cong_viec_tuan_toi[]"
-                                                        style="flex:4" value=" {{ $value['next_work'] }}"
-                                                        class="form-control custom-input disabled" readonly> <span
-                                                        style="flex:2"></span>
-                                                </div>
-                                                <div class="content-report form-group">
-                                                    <label for="noi_dung_cong_viec">Nội dung:</label>
-                                                    <textarea disabled readonly style="width: 67%; height: 200px;" name="noi_dung_cong_viec_tuan_toi[]"
-                                                        placeholder="Nhập nội dung" class="form-control" style="margin-bottom: 10px;">{{ $value['next_description'] }}</textarea>
-                                                    <div class="content-date">
-                                                        <div>
-                                                            <label for="ngay_sinh">Ngày bắt đầu:</label>
-                                                            <input disabled readonly type="date"
-                                                                name="start_date_tuan_toi[]" id="start_date_tuan_toi[]"
-                                                                value="{{ $value['next_start_date'] }}"
-                                                                class="form-control">
-                                                        </div>
-                                                        <div style="margin-left: 10px;">
-                                                            <label for="ngay_sinh">Kết thúc:</label>
-                                                            <input disabled readonly type="date"
-                                                                name="end_date_tuan_toi[]"
-                                                                value="{{ $value['next_end_date'] }}" id="end_date[]"
-                                                                class="form-control">
-
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="form-group style-note">
-                                                    <label for="trangthai_congviec">Tiến độ:</label>
-                                                    <input disabled readonly style="flex:4" type="text"
-                                                        value="{{ $value['next_status_work'] }}"
-                                                        name="trangthai_congviec_tuan_toi[]"
-                                                        placeholder="Tiêu đề công việc" class="form-control" required>
-                                                    <div class="form-check" style="margin-top: 0; flex: 2;">
-                                                    </div>
-                                                </div>
-                                        @endforeach
-                                    @else
-                                        <p>Không có dữ liệu</p>
-                                    @endif
+                                    </div>
 
                                 </div>
-                            </div>
-                            <div class="mb-4">
-                                <h1 class="mb-2 heading-style">III. Kiến nghị</h1>
-                                <div>
-                                    @if ($item['Request'])
-                                        <p class="form-control" style="margin-bottom: 10px;">{{ $item['Request'] }}
-                                        </p>
-                                    @else
-                                        <p>Không có dữ liệu</p>
-                                    @endif
-                                </div>
-
-                            </div>
 
                         </div>
-                    @endforeach
-                @else
-                    <div class="alert alert-danger">
-                        <p>Không tồn tại dữ liệu</p>
+                    @else
+                        <div class="alert alert-danger">
+                            <span>Không tồn tại dữ liệu</span>
+                        </div>
+                        @endif
                     </div>
-                @endif
+                </div>
+
             </div>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
 </x-app-layout>
