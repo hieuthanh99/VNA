@@ -12,35 +12,35 @@
 
              
                 <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                <div class="nav-item hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
                 </div>
                 @if(auth()->user()->role === 'staff')
-                    <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                    <div class="nav-item hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                         <x-nav-link :href="route('reports.create')" :active="request()->routeIs('reports.create')">
                             {{ __('Báo Cáo') }}
                         </x-nav-link>
                     </div>
-                    {{-- <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                    {{-- <div class="nav-item hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                         <x-nav-link :href="route('reports.index')" :active="request()->routeIs('reports.index')">
                             {{ __('Báo Cáo index') }}
                         </x-nav-link>
                     </div> --}}
                 @endif
                 @if(auth()->user()->role === 'admin')
-                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                <div class="nav-item hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                     <x-nav-link :href="route('departments.index')" :active="request()->routeIs('departments.index')">
                         {{ __('Phòng Ban') }}
                     </x-nav-link>
                 </div>
-                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                <div class="nav-item hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                     <x-nav-link :href="route('centers.index')" :active="request()->routeIs('centers.index')">
                         {{ __('Báo Cáo Tổng') }}
                     </x-nav-link>
                 </div>
-                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                <div class="nav-item hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                     <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.index')">
                         {{ __('Tổ Chức') }}
                     </x-nav-link>
@@ -53,10 +53,10 @@
             <div class="hidden sm:flex sm:items-center sm:ml-6">
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
-                        <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                            <div>{{ Auth::user()->name }}</div>
+                        <button class="name-user inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
+                            <div class="name">{{ Auth::user()->name }}</div>
 
-                            <div class="ml-1">
+                            <div class="dropdown-user ml-1" style= "color: #fff;">
                                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
                                 </svg>
@@ -129,3 +129,45 @@
         </div>
     </div>
 </nav>
+<style>
+    .name-user {
+        background-color: unset;
+    }
+    
+    .name {
+        color: #fff;
+    }
+    .bg-white .name-user {
+        background-color: unset;
+    }
+    .name:hover {
+        opacity: 0.5;
+    }
+
+    .dropdown-user {
+        color: #fff;
+    }
+
+    .dropdown-user:hover {
+        opacity: 0.5;
+    }
+
+    nav {
+        background-image: linear-gradient(195deg,#006885 0%,#006885 100%);
+    }
+
+    .bg-white.name-user {
+        background-color: unset !important;
+        border: none !important;
+    }
+
+    .nav-item a {
+        color: #fff;
+        text-decoration: none;
+    }
+
+    .nav-item a:hover{
+        opacity: 0.5;
+        color: #fff;
+    }
+</style>

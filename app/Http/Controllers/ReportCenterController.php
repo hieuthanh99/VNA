@@ -18,14 +18,10 @@ class ReportCenterController extends Controller
      */
     public function index()
     {
-       
         $result = Helper::reportWeeked();
         $mergedArray = $result['mergedArray'] ?? null;
         $startDate = $result['startDate'] ?? null;
         $endDateWeek = $result['endDateWeek'] ?? null;
-        // if (empty($mergedArray['WorkDone']) && empty($mergedArray['ExpectedWork'])) {
-        //     return view('centers.index', ['data' => [], 'startDate' => $startDate->format('d-m-Y'), 'endDate' => $endDateWeek->format('d-m-Y')]);
-        // }        
         return view('centers.index', ['data' => $mergedArray, 'startDate' => $startDate->format('d-m-Y'), 'endDate' => $endDateWeek->format('d-m-Y')]);
     }
 

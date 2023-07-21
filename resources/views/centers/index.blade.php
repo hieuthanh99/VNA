@@ -147,8 +147,38 @@
             background: #f1c9c9;
             padding: 10px;
         }
+
+        .btn-PDF {
+            top:50%;
+            background-color:#fff;
+            color: #0a0a23;
+            border-radius:10px; 
+            padding:8px;
+            min-height:30px; 
+            min-width: 120px;
+            border: 1px solid #000;
+            font-size: 14px;
+            float: right;
+        }
+
+        .report-title {
+            position: relative;
+            background-image: linear-gradient(195deg,#006885 0%,#006885 100%);
+            padding: 16px;
+            color: #fff;
+            border-radius: 0.5rem;
+            margin: 0 19%;
+            margin-bottom: -28px;
+        }
+
+        header{
+            display: none;
+        }
     </style>
     <div class="py-12">
+        <h2 class="report-title font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Báo cáo toàn trung tâm (' . $startDate . ' - ' . $endDate . ')') }}
+        </h2>
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 @if (session('success'))
