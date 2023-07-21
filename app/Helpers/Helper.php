@@ -8,6 +8,8 @@ use App\Models\ReportCenter;
 use App\Models\Logs;
 use Carbon\Carbon;
 use App\Models\Department;
+use PhpOffice\PhpWord\PhpWord;
+use PhpOffice\PhpWord\IOFactory;
 
 class Helper
 {
@@ -112,9 +114,9 @@ class Helper
     public static function pdf()
     {
         $data = Helper::reportWeeked();
-        //dd($data);
+        //dd($data);      
         $pdf = PDF::loadView('pdf.template',['department' => $data['mergedArray']]);
-        
+
         return $pdf->download('report.pdf');
     }
 
@@ -127,4 +129,59 @@ class Helper
         return $pdf->download('report.pdf');
     }
   
+    public static function word() {
+        // Truyền dữ liệu vào để in ra bản Word
+        $data = Helper::reportWeeked();
+        $phpWord = new PhpWord();
+        $section = $phpWord->addSection();
+        // Lặp qua mảng dữ liệu và thêm từng dòng vào tài liệu Word
+        $data = $data['mergedArray'];
+        foreach ($data as $item) {
+            // Thêm thông tin về phòng
+            $section->addText($item['DepartmentName'], ['size' => 16, 'bold' => true]);
+            if(!empty($item['WorkDone'])) {
+
+            
+                // Thêm thông tin về công việc đã làm
+                $section->addText("Công việc đã thực hiện:", ['size' => 16, 'bold' => true]);
+                foreach ($item['WorkDone'] as $workDone) {
+                    $section->addText("Công việc đã thực hiện: " . $workDone['work_done'], ['size' => 14, 'bold' => false]);
+                    $section->addText("Nội dung: " . $workDone['description'], ['size' => 14, 'bold' => false]);
+                    $section->addText("Ngày bắt đầu: " . $workDone['start_date'], ['size' => 14, 'bold' => false]);
+                    $section->addText("Ngày kết thúc: " . $workDone['end_date'], ['size' => 14, 'bold' => false]);
+                    $section->addText("Tiến độ: " . $workDone['status_work'], ['size' => 14, 'bold' => false]);
+                    $section->addTextBreak(1);
+                }
+
+                 // Thêm thông tin về công việc dự kiến
+                $section->addText("Công việc dự kiến:", ['size' => 16, 'bold' => true]);
+                foreach ($item['ExpectedWork'] as $expectedWork) {
+                    $section->addText("Tiêu đề: " . $expectedWork['next_work'], ['size' => 14, 'bold' => false]);
+                    $section->addText("Nội dung: " . $expectedWork['next_description'], ['size' => 14, 'bold' => false]);
+                    $section->addText("Ngày bắt đầu: " . $expectedWork['next_start_date'], ['size' => 14, 'bold' => false]);
+                    $section->addText("Ngày kết thúc: " . $expectedWork['next_end_date'], ['size' => 14, 'bold' => false]);
+                    $section->addText("Tiến độ: " . $expectedWork['next_status_work'], ['size' => 14, 'bold' => false]);
+                    $section->addTextBreak(1);
+                }
+        
+                $section->addText("Kiến nghị: " . $item['Request'], ['size' => 14, 'bold' => false]);
+        
+                // Thêm khoảng trắng giữa các phần
+                $section->addTextBreak(1);
+            } else {
+                $section->addText("Công việc đã thực hiện: Không có dữ liệu", ['size' => 14, 'bold' => false]);
+                $section->addText("Công việc dự kiến: Không có dữ liệu", ['size' => 14, 'bold' => false]);
+                $section->addText("Kiến nghị: " . 'Không có dữ liệu', ['size' => 14, 'bold' => false]);
+                $section->addTextBreak(1);
+            }
+        }
+
+        // Save the document as a Word file
+        $filePath = storage_path('app/public/report-word.docx');
+
+        $phpWord->save($filePath);
+
+        // Return the generated Word file for download
+        return response()->download($filePath)->deleteFileAfterSend(true);
+    }
 }

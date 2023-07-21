@@ -15,7 +15,11 @@
                 @if (isset($data) && isset($record))
                     <form action="{{ route('pdf') }}" method="GET">
                         @csrf
-                        <button id="run-cronjob-button" class="custom-button">PDF</button>
+                        <button id="run-cronjob-button" class="custom-button">In PDF</button>
+                    </form>
+                    <form style="margin: 0 20px;" action="{{ route('word') }}" method="GET">
+                        @csrf
+                        <button id="run-cronjob-button" class="custom-button">In Word</button>
                     </form>
                     <form style="margin: 0 20px;" action="{{ route('delete.data') }}" method="GET">
                         @csrf

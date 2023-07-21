@@ -3,7 +3,7 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
         <!-- Include Bootstrap JS and dependencies -->
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Danh sách báo cáo') }}
+            {{ __('Danh sách công việc') }}
         </h2>
         <style>
         </style>
@@ -259,7 +259,7 @@
                                         <button class="accordion-button collapsed" type="button"
                                             data-bs-toggle="collapse" data-bs-target="#collapse{{ $array->id }}"
                                             aria-expanded="false" aria-controls="collapse{{ $array->id }}">
-                                            <span style="font-size: 20px;">Báo cáo tuần {{ $Week++ }} (Từ ngày
+                                            <span style="font-size: 20px;">Công việc tuần {{ $Week++ }} (Từ ngày
                                                 {{ $startDateOfWeek }} đến {{ $endDateOfWeek }})</span>
 
                                         </button>
