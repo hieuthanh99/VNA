@@ -28,6 +28,7 @@
         .heading-style {
             margin: 10px 0;
             font-size: 21px;
+            padding-top: 25px;
         }
 
         .mb-4 {
@@ -51,7 +52,7 @@
         }
 
         .content-report {
-            padding-left: 10px;
+            padding-left: 25px;
         }
 
         .form-check {
@@ -109,7 +110,8 @@
             display: flex;
             align-items: center;
             margin: 10px 0;
-            padding-left: 10px;
+            padding-left: 25px;
+            padding-bottom: 20px;
         }
 
         .custom-button:hover {
@@ -119,6 +121,8 @@
         .content-date {
             display: flex;
             margin: 10px 0;
+            padding-top:15px;
+            padding-bottom: 15px;
         }
 
         .alert-success {
@@ -138,21 +142,55 @@
             color: #fff;
             border-radius: 0.5rem;
             margin: 0 19%;
-            margin-bottom: -28px;
+            margin-bottom: -13px;
         }
 
         header{
             display: none;
         }
 
+        .notification {
+            padding: 0;
+            border: none;
+        }
+
+        .alert-danger {
+            padding: 0;
+            position: relative;
+            border-radius: 0.2rem;
+            margin-bottom: -45px;
+            margin-top: 17px;
+            margin-left: 2%;
+            margin-right: 2%;
+            padding-left: 15px;
+        }
+
+        #report-form {
+            margin-top: 0;
+            background-color: rgb(243 244 246 / var(--tw-bg-opacity));
+        }
+
+        .mb-4 {
+            background: #fff none repeat scroll 0 0;
+            border: 1px solid #ede9e9;
+            border-radius: 15px;
+            display: inline-block;
+            width: 100%;
+            margin-bottom: 20px;
+            padding: 20px;
+        }
+
+        .item-job {
+            font-weight: 500;
+        }
     </style>
     <div class="py-12">
         <h2 class="report-title">
             {{ __('Báo cáo ' . $department->name) }}
         </h2>
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 bg-white border-b border-gray-200">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg" style="box-shadow:none;">
+                <div class="notification p-6 bg-white border-b border-gray-200">
                     @if (session('success'))
                         <div class="alert alert-success">
                             {{ session('success') }}
@@ -174,8 +212,8 @@
                                         <div class="form-group cong-viec-da-lam-row">
                                             <div class="header-report form-group">
                                                 <span class="cong-viec-stt">{{$rowCount++}}. </span>
-                                            <label  for="cong_viec_da_lam">Tiêu đề:</label> 
-                                            <input  value="{{$value->next_work}}" style="flex: 4" type="text" name="cong_viec_da_lam[]" placeholder="Tiêu đề công việc" class="form-control" required>
+                                            <label class="item-job"  style="padding-left: 15px;" for="cong_viec_da_lam">Tiêu đề:</label> 
+                                            <input  value="{{$value->next_work}}" style="flex: 4;margin-left: 46px" type="text" name="cong_viec_da_lam[]" placeholder="Tiêu đề công việc" class="form-control" required>
                                             <div class="form-check" style="margin-top: 0; flex: 2;">
                                             <input type="checkbox" checked name="cong_viec_da_lam_completed[]" class="form-check-input" onchange="handleCongViecDaLamChange(this)">
                                             <input type="hidden" id="hiddenInput" name="cong_viec_da_lam_values[]" value="1">
@@ -183,16 +221,16 @@
                                             </div>
                                             </div>
                                             <div class="content-report form-group" >
-                                                <label  for="noi_dung_cong_viec">Nội dung:</label> 
-                                                <textarea required style="width: 67%; height: 200px;" name="noi_dung_cong_viec[]" placeholder="Nhập nội dung tiêu đề" class="form-control" style="margin-bottom: 10px;">{{$value->next_description}}</textarea>
+                                                <label class="item-job" style="vertical-align: top;"  for="noi_dung_cong_viec">Nội dung:</label> 
+                                                <textarea required style="width: 62%; height: 200px; margin-left:30px;" name="noi_dung_cong_viec[]" placeholder="Nhập nội dung tiêu đề" class="form-control" style="margin-bottom: 10px;">{{$value->next_description}}</textarea>
                                                 <div class="content-date">
                                                     <div >
-                                                        <label for="ngay_sinh">Ngày bắt đầu:</label>
+                                                        <label class="item-job" for="ngay_sinh">Ngày bắt đầu:</label>
                                                         <input required type="date" name="start_date[]" id="start_date" class="form-control" value="{{$value->next_start_date}}">
                                     
                                                     </div>
-                                                    <div style="margin-left: 10px;">
-                                                        <label for="ngay_sinh">Kết thúc:</label>
+                                                    <div style="margin-left: 50px;">
+                                                        <label class="item-job" for="ngay_sinh">Kết thúc:</label>
                                                         <input required type="date" name="end_date[]" id="end_date" class="form-control" value="{{$value->next_end_date}}">
                                     
                                                     </div>
@@ -200,8 +238,8 @@
                                               
                                             </div>
                                             <div  class="form-group style-note">
-                                                    <label  for="trangthai_congviec">Tiến độ:</label> 
-                                                    <input value="{{$value->next_status_work}}" style="flex:4" type="text"  name="trangthai_congviec[]" placeholder="Tiêu đề công việc" class="form-control" required>
+                                                    <label class="item-job" for="trangthai_congviec">Tiến độ:</label> 
+                                                    <input value="{{$value->next_status_work}}" style="flex:4; margin-left: 46px" type="text"  name="trangthai_congviec[]" placeholder="Tiêu đề công việc" class="form-control" required>
                                                     <div class="form-check" style="margin-top: 0; flex: 2;">
                                                 </div>
                                         </div>
@@ -212,23 +250,23 @@
                             <button type="button" class="btn btn-primary"
                                 onclick="addNewRow('cong-viec-da-lam-container')">Thêm</button>
                         </div>
-                        <hr>
+                        <hr style="border: none;">
                         <div class="mb-4">
                             <h1 class="mb-2 heading-style">II. Công việc dự kiến</h1>
                             <div id="cong-viec-tuan-toi-container"></div>
                             <button type="button" style="margin-top: 5px;" class="btn btn-primary"
                                 onclick="validateAndAddCongViecTuanToi()">Thêm</button>
                         </div>
-                        <hr>
+                        <hr style="border: none;">
                         <div class="mb-4">
                             <h1 class="mb-2 heading-style">III. Kiến nghị</h1>
                             <div>
-                                <textarea style="width: 70%; height: 200px;" name="kien_nghi" placeholder="Nhập ý kiến" class="form-control"
+                                <textarea style="width: 70%; height: 200px; margin-left:30px;" name="kien_nghi" placeholder="Nhập ý kiến" class="form-control"
                                     style="margin-bottom: 10px;"></textarea>
                             </div>
 
                         </div>
-                        <hr>
+                        <hr style="border: none;">
                         <button @if (Session::get('cronJobCompleted')) disabled @endif type="submit" style="margin: 20px 0;"
                             class="custom-button">Gửi báo cáo</button>
                     </form>
@@ -259,9 +297,9 @@
             newRow.className = 'form-group cong-viec-da-lam-row';
             newRow.innerHTML = `
             <div class="header-report form-group">
-                <span class="cong-viec-stt">${rowCount}.</span>
-            <label  for="cong_viec_da_lam">Tiêu đề:</label> 
-            <input style="flex: 4" type="text" name="cong_viec_da_lam[]" placeholder="Tiêu đề công việc" class="form-control" required>
+                <span class="item-job" class="cong-viec-stt">${rowCount}.</span>
+            <label class="item-job" style="padding-left: 15px;" for="cong_viec_da_lam">Tiêu đề:</label> 
+            <input style="flex: 4; margin-left: 46px" type="text" name="cong_viec_da_lam[]" placeholder="Tiêu đề công việc" class="form-control" required>
             <div class="form-check" style="margin-top: 0; flex: 2;">
             <input type="checkbox" name="cong_viec_da_lam_completed[]" class="form-check-input" value="1" onchange="handleCongViecDaLamChange(this)">
             <input  type="hidden" id="hiddenInput" name="cong_viec_da_lam_values[]" value="1">
@@ -270,16 +308,16 @@
             </div>
             </div>
             <div class="content-report form-group" >
-                <label  for="noi_dung_cong_viec">Nội dung:</label> 
-                <textarea required style="width: 67%; height: 200px;" name="noi_dung_cong_viec[]" placeholder="Nhập nội dung tiêu đề" class="form-control" style="margin-bottom: 10px;"></textarea>
+                <label class="item-job" style="vertical-align: top;"  for="noi_dung_cong_viec">Nội dung:</label> 
+                <textarea required style="width: 62%; height: 200px; margin-left:30px;" name="noi_dung_cong_viec[]" placeholder="Nhập nội dung tiêu đề" class="form-control" style="margin-bottom: 10px;"></textarea>
                 <div class="content-date">
                     <div >
-                        <label for="ngay_sinh">Ngày bắt đầu:</label>
+                        <label class="item-job" for="ngay_sinh">Ngày bắt đầu:</label>
                         <input required type="date" name="start_date[]" id="start_date" class="form-control" value="{{ old('start_date[]') }}">
     
                     </div>
-                    <div style="margin-left: 10px;">
-                        <label for="ngay_sinh">Kết thúc:</label>
+                    <div style="margin-left: 50px;">
+                        <label class="item-job" for="ngay_sinh">Kết thúc:</label>
                         <input required type="date" name="end_date[]" id="end_date" class="form-control" value="{{ old('end_date[]') }}">
     
                     </div>
@@ -287,8 +325,8 @@
               
             </div>
             <div  class="form-group style-note">
-                    <label  for="trangthai_congviec">Tiến độ:</label> 
-                    <input required style="flex:4" type="text"  name="trangthai_congviec[]" placeholder="Tiêu đề công việc" class="form-control" required>
+                    <label class="item-job" for="trangthai_congviec">Tiến độ:</label> 
+                    <input required style="flex:4; margin-left: 46px" type="text"  name="trangthai_congviec[]" placeholder="Tiêu đề công việc" class="form-control" required>
                     <div class="form-check" style="margin-top: 0; flex: 2;">
                 </div>
         `;
@@ -307,21 +345,21 @@
                 newCongViecTuanToiRow.className = 'form-group cong-viec-tuan-toi-row';
                 newCongViecTuanToiRow.innerHTML = `
                 <div class="header-report form-group">
-                <span class="cong-viec-stt">${rowCount}.</span>
-                <label  for="cong_viec_tuan_toi">Tiêu đề:</label> 
+                <span class="item-job" class="cong-viec-stt">${rowCount}.</span>
+                <label class="item-job" style="padding-left: 15px;" for="cong_viec_tuan_toi">Tiêu đề:</label> 
                 <input readonly type="text" name="cong_viec_tuan_toi[]" style="flex:4" value="${row.querySelector('input[name="cong_viec_da_lam[]"]').value}" class="form-control custom-input" readonly> <span style="flex:2"></span>
             </div>
             <div class="content-report form-group" >
-                <label  for="noi_dung_cong_viec">Nội dung:</label> 
-                <textarea readonly style="width: 67%; height: 200px;" name="noi_dung_cong_viec_tuan_toi[]" placeholder="Nhập nội dung" class="form-control" style="margin-bottom: 10px;">${row.querySelector('textarea').value}</textarea>
+                <label class="item-job" style="vertical-align: top;"  for="noi_dung_cong_viec">Nội dung:</label> 
+                <textarea readonly style="width: 55%; height: 200px; margin-left:30px;" name="noi_dung_cong_viec_tuan_toi[]" placeholder="Nhập nội dung" class="form-control" style="margin-bottom: 10px;">${row.querySelector('textarea').value}</textarea>
                 <div  class="content-date">
                     <div >
-                        <label for="start_date_tuan_toi">Ngày bắt đầu:</label>
+                        <label class="item-job" for="start_date_tuan_toi">Ngày bắt đầu:</label>
                         <input readonly type="date" name="start_date_tuan_toi" id="start_date_tuan_toi[]" value="${row.querySelector('input[name="start_date[]"]').value}" class="form-control">
     
                     </div>
-                    <div style="margin-left: 10px;">
-                        <label for="end_date_tuan_toi">Kết thúc:</label>
+                    <div style="margin-left: 50px;">
+                        <label class="item-job" for="end_date_tuan_toi">Kết thúc:</label>
                         <input readonly type="date" name="end_date_tuan_toi" value="${row.querySelector('input[name="end_date[]"]').value}" id="end_date_tuan_toi[]" class="form-control">
     
                     </div>
@@ -330,8 +368,8 @@
            
             </div>
             <div class="form-group style-note">
-                    <label  for="trangthai_congviec">Tiến độ:</label> 
-                    <input readonly style="flex:4" type="text" value="${row.querySelector('input[name="trangthai_congviec[]"]').value}"   name="trangthai_congviec_tuan_toi[]" placeholder="Tiêu đề công việc" class="form-control" required>
+                    <label class="item-job" for="trangthai_congviec">Tiến độ:</label> 
+                    <input readonly style="flex:4; margin-left: 46px" type="text" value="${row.querySelector('input[name="trangthai_congviec[]"]').value}"   name="trangthai_congviec_tuan_toi[]" placeholder="Tiêu đề công việc" class="form-control" required>
                     <div class="form-check" style="margin-top: 0; flex: 2;">
                 </div>
             `;
@@ -360,22 +398,22 @@
             newRow.className = 'form-group  cong-viec-tuan-toi-row';
             newRow.innerHTML = `
         <div class="header-report form-group">
-            <span class="cong-viec-stt">${rowCount}.</span>
-            <label  for="cong_viec_tuan_toi">Tiêu đề:</label> 
-            <input style="flex: 4" type="text" name="cong_viec_tuan_toi[]" class="form-control" required> 
+            <span class="item-job" class="cong-viec-stt">${rowCount}.</span>
+            <label class="item-job" style="padding-left: 15px;" for="cong_viec_tuan_toi">Tiêu đề:</label> 
+            <input style="flex: 4; margin-left: 46px" type="text" name="cong_viec_tuan_toi[]" placeholder="Tiêu đề công việc" class="form-control" required> 
             <button style="margin-left: 20px; flex: 5;" type="button" class="btn-delete" onclick="deleteCongViecTuanToi(this)">Xóa</button>
         </div>
         <div class="content-report form-group" >
-            <label  for="noi_dung_cong_viec">Nội dung:</label> 
-                <textarea required style="width: 67%; height: 200px;" name="noi_dung_cong_viec_tuan_toi[]" placeholder="Nhập nội dung" class="form-control" style="margin-bottom: 10px;"></textarea>
+            <label class="item-job" style="vertical-align: top;"  for="noi_dung_cong_viec">Nội dung:</label> 
+                <textarea required style="width: 55%; height: 200px; margin-left:30px;" name="noi_dung_cong_viec_tuan_toi[]" placeholder="Nhập nội dung" class="form-control" style="margin-bottom: 10px;"></textarea>
                 <div class="content-date">
                     <div >
-                        <label for="ngay_sinh">Ngày bắt đầu:</label>
+                        <label class="item-job" for="ngay_sinh">Ngày bắt đầu:</label>
                         <input required type="date" name="start_date_tuan_toi[]" id="start_date_tuan_toi[]" class="form-control" value="{{ old('start_date[]') }}">
     
                     </div>
-                    <div style="margin-left: 10px;">
-                        <label for="ngay_sinh">Kết thúc:</label>
+                    <div style="margin-left: 50px;">
+                        <label class="item-job" for="ngay_sinh">Kết thúc:</label>
                         <input required type="date" name="end_date_tuan_toi[]" id="end_date_tuan_toi[]" class="form-control" value="{{ old('end_date[]') }}">
     
                     </div>
@@ -384,8 +422,8 @@
          
         </div>
         <div class="form-group style-note">
-                    <label  for="trangthai_congviec">Tiến độ:</label> 
-                    <input required style="flex:4" type="text"  name="trangthai_congviec_tuan_toi[]" placeholder="Tiêu đề công việc" class="form-control" required>
+                    <label class="item-job" for="trangthai_congviec">Tiến độ:</label> 
+                    <input required style="flex:4; margin-left: 46px" type="text"  name="trangthai_congviec_tuan_toi[]" placeholder="Tiêu đề công việc" class="form-control" required>
                     <div class="form-check" style="margin-top: 0; flex: 2;">
                 </div>
         `;
@@ -448,28 +486,28 @@
 
                 newCongViecTuanToiRow.innerHTML = `
             <div class="header-report form-group">
-                <span class="cong-viec-stt">${rowCount}.</span>
-                <label  for="cong_viec_tuan_toi">Tiêu đề:</label> 
-                <input type="text" name="cong_viec_tuan_toi[]" style="flex:4" value="${row.querySelector('input[name="cong_viec_da_lam[]"]').value}" class="form-control custom-input"> <span style="flex:2"></span>
+                <span class="item-job" class="cong-viec-stt">${rowCount}.</span>
+                <label class="item-job" style="padding-left: 15px;" for="cong_viec_tuan_toi">Tiêu đề:</label> 
+                <input type="text" name="cong_viec_tuan_toi[]" style="flex:4;" value="${row.querySelector('input[name="cong_viec_da_lam[]"]').value}" class="form-control custom-input"> <span style="flex:2"></span>
             </div>
             <div class="content-report form-group" >
-                <label  for="noi_dung_cong_viec">Nội dung:</label> 
-                <textarea style="width: 67%; height: 200px;" name="noi_dung_cong_viec_tuan_toi[]" placeholder="Nhập nội dung" class="form-control" style="margin-bottom: 10px;">${row.querySelector('textarea').value}</textarea>
+                <label class="item-job" style="vertical-align: top;"  for="noi_dung_cong_viec">Nội dung:</label> 
+                <textarea style="width: 55%; height: 200px; margin-left:30px;" name="noi_dung_cong_viec_tuan_toi[]" placeholder="Nhập nội dung" class="form-control" style="margin-bottom: 10px;">${row.querySelector('textarea').value}</textarea>
                 <div  class="content-date">
                     <div >
-                        <label for="ngay_sinh">Ngày bắt đầu:</label>
+                        <label class="item-job" for="ngay_sinh">Ngày bắt đầu:</label>
                         <input type="date" name="start_date_tuan_toi[]" id="start_date_tuan_toi[]" value="${row.querySelector('input[name="start_date[]"]').value}" class="form-control">
                     </div>
-                    <div style="margin-left: 10px;">
-                        <label for="ngay_sinh">Kết thúc:</label>
+                    <div style="margin-left: 50px;">
+                        <label class="item-job" for="ngay_sinh">Kết thúc:</label>
                         <input type="date" name="end_date_tuan_toi[]" value="${row.querySelector('input[name="end_date[]"]').value}" id="end_date[]" class="form-control" >
     
                     </div>
                 </div>
             </div>
             <div class="form-group style-note">
-                    <label  for="trangthai_congviec">Tiến độ:</label> 
-                    <input style="flex:4" type="text" value="${row.querySelector('input[name="trangthai_congviec[]"]').value}"   name="trangthai_congviec_tuan_toi[]" placeholder="Tiêu đề công việc" class="form-control" required>
+                    <label class="item-job" for="trangthai_congviec">Tiến độ:</label> 
+                    <input style="flex:4; margin-left: 46px" type="text" value="${row.querySelector('input[name="trangthai_congviec[]"]').value}"   name="trangthai_congviec_tuan_toi[]" placeholder="Tiêu đề công việc" class="form-control" required>
                     <div class="form-check" style="margin-top: 0; flex: 2;">
                 </div>
             `;

@@ -28,6 +28,7 @@
         .heading-style {
             margin: 10px 0;
             font-size: 21px;
+            padding-top: 7px;
         }
 
         .mb-4 {
@@ -45,13 +46,33 @@
             margin-bottom: 0.5rem;
         }
 
+        .item-job-done {
+            background: #fff none repeat scroll 0 0;
+            border: 1px solid #ede9e9;
+            border-radius: 15px;
+            display: inline-block;
+            width: 100%;
+            margin-bottom: 20px;
+            padding: 20px;
+        }
+
+        .item-job-will-do {
+            background: #fff none repeat scroll 0 0;
+            border: 1px solid #ede9e9;
+            border-radius: 15px;
+            display: inline-block;
+            width: 100%;
+            margin-bottom: 20px;
+            padding: 20px;
+        }
+
         .header-report {
             display: flex;
             align-items: center;
         }
 
         .content-report {
-            padding-left: 10px;
+            padding-left: 30px;
         }
 
         .form-check {
@@ -119,6 +140,7 @@
         .content-date {
             display: flex;
             margin: 10px 0;
+            padding: 15px 0;
         }
 
         .alert-success {
@@ -137,8 +159,8 @@
             padding: 16px;
             color: #fff;
             border-radius: 0.5rem;
-            margin: 0 19%;
-            margin-bottom: -28px;
+            margin: 0 21%;
+            margin-bottom: -13px;
         }
 
         header{
@@ -148,6 +170,22 @@
         .alert.alert-success {
             margin-top: 10px;
             border-radius: 0.5rem;
+        }
+
+        .description-title {
+            vertical-align: top;
+        }
+
+        .item-job {
+            font-weight: 500;
+        }
+
+        .header-report {
+            padding-top: 25px;
+        }
+
+        .date-end {
+            padding-left: 60px;
         }
     </style>
 <div class="py-12">
@@ -183,11 +221,11 @@
                                 $checked = ($valueOfWork == '1') ? 'checked' : '';
                             @endphp
                                 <div class="form-group cong-viec-da-lam-row">
-                                    <div class="form-group cong-viec-da-lam-row">
+                                    <div class="item-job-done form-group cong-viec-da-lam-row">
                                         <div class="header-report form-group">
-                                            <span class="cong-viec-stt">{{$rowCount++}}. </span>
-                                            <label for="cong_viec_da_lam">Tiêu đề:</label>
-                                            <input disabled disabled style="flex: 4" type="text" name="cong_viec_da_lam[]" value="{{$value['work_done']}}"
+                                            <span class="item-job cong-viec-stt">{{$rowCount++}}. </span>
+                                            <label style="padding-left: 20px;" class="item-job" for="cong_viec_da_lam">Tiêu đề:</label>
+                                            <input disabled disabled style="flex: 4; margin-left: 44px;" type="text" name="cong_viec_da_lam[]" value="{{$value['work_done']}}"
                                                 placeholder="Tiêu đề công việc" class="form-control" required>
                                             <div class="form-check" style="margin-top: 0; flex: 2;">
                                                 <input disabled {{$checked}}  disabled type="checkbox" name="cong_viec_da_lam_completed[]" value="{{$value['value_of_work']}}" class="form-check-input disabled">
@@ -197,19 +235,21 @@
                                             </div>
                                         </div>
                                         <div class="content-report form-group">
-                                            <label for="noi_dung_cong_viec">Nội dung:</label>
-                                            <textarea disabled required style="width: 67%; height: 200px;" name="noi_dung_cong_viec[]" placeholder="Nhập nội dung tiêu đề"
-                                                class="form-control" style="margin-bottom: 10px;">{{$value['description']}}</textarea>
+                                            <div class="description-job">
+                                                <label class="item-job description-title" for="noi_dung_cong_viec">Nội dung:</label>
+                                                <textarea disabled required style="width: 60%; height: 200px; margin-left: 30px;" name="noi_dung_cong_viec[]" placeholder="Nhập nội dung tiêu đề"
+                                                    class="form-control" style="margin-bottom: 10px;">{{$value['description']}}</textarea>
+                                            </div>
                                             <div class="content-date">
                                                 <div>
-                                                    <label for="ngay_sinh">Ngày bắt đầu:</label>
+                                                    <label class="item-job" for="ngay_sinh">Ngày bắt đầu:</label>
                                                     <input disabled required type="date" name="start_date[]"
                                                         id="start_date[]" class="form-control"
                                                         value="{{$value['start_date']}}">
 
                                                 </div>
                                                 <div style="margin-left: 10px;">
-                                                    <label for="ngay_sinh">Kết thúc:</label>
+                                                    <label class="item-job date-end" for="ngay_sinh">Kết thúc:</label>
                                                     <input disabled required type="date" name="end_date[]" id="end_date[]"
                                                         class="form-control"  value="{{$value['end_date']}}">
 
@@ -218,8 +258,8 @@
 
                                         </div>
                                         <div class="form-group style-note">
-                                            <label for="trangthai_congviec">Tiến độ:</label>
-                                            <input disabled required style="flex:4" type="text"
+                                            <label style="padding-left: 22px;" class="item-job" for="trangthai_congviec">Tiến độ:</label>
+                                            <input disabled required style="flex:4; margin-left: 44px;" type="text"
                                                 name="trangthai_congviec[]" placeholder="Tiêu đề công việc"
                                                 class="form-control" required value="{{$value['status_work']}}">
                                             <div class="form-check" style="margin-top: 0; flex: 2;">
@@ -230,35 +270,35 @@
                         @endif
                     </div>
                 </div>
-                <hr>
+                <hr style="border: none;">
                 <div class="mb-4">
                     <h1 class="mb-2 heading-style">II. Công việc dự kiến</h1>
                     <div id="cong-viec-tuan-toi-container">
                         @if($array['ExpectedWork'])
                         @forEach($array['ExpectedWork'] as $key => $value)
-                        <div class="form-group  cong-viec-tuan-toi-row">
+                        <div class="item-job-will-do form-group  cong-viec-tuan-toi-row">
                             <div class="header-report form-group">
-                                <span class="cong-viec-stt">{{$rowCount2++}}. </span>
-                                <label  for="cong_viec_tuan_toi">Tiêu đề:</label> 
+                                <span class="item-job cong-viec-stt">{{$rowCount2++}}. </span>
+                                <label style="padding-left: 20px;" class="item-job" for="cong_viec_tuan_toi">Tiêu đề:</label> 
                                 <input disabled readonly type="text" name="cong_viec_tuan_toi[]" style="flex:4" value=" {{$value['next_work']}}" class="form-control custom-input disabled" readonly> <span style="flex:2"></span>
                             </div>
                             <div class="content-report form-group" >
-                                <label  for="noi_dung_cong_viec">Nội dung:</label> 
-                                <textarea disabled readonly style="width: 67%; height: 200px;" name="noi_dung_cong_viec_tuan_toi[]" placeholder="Nhập nội dung" class="form-control" style="margin-bottom: 10px;">{{$value['next_description']}}</textarea>
+                                <label class="item-job" style="vertical-align: top;" for="noi_dung_cong_viec">Nội dung:</label> 
+                                <textarea disabled readonly style="width: 63%; height: 200px;" name="noi_dung_cong_viec_tuan_toi[]" placeholder="Nhập nội dung" class="form-control" style="margin-bottom: 10px;">{{$value['next_description']}}</textarea>
                                 <div  class="content-date">
                                     <div >
-                                        <label for="ngay_sinh">Ngày bắt đầu:</label>
+                                        <label class="item-job" for="ngay_sinh">Ngày bắt đầu:</label>
                                         <input disabled readonly type="date" name="start_date_tuan_toi[]" id="start_date_tuan_toi[]" value="{{$value['next_start_date']}}" class="form-control">
                                     </div>
                                     <div style="margin-left: 10px;">
-                                        <label for="ngay_sinh">Kết thúc:</label>
+                                        <label class="item-job date-end" for="ngay_sinh">Kết thúc:</label>
                                         <input disabled readonly type="date" name="end_date_tuan_toi[]" value="{{$value['next_end_date']}}" id="end_date[]" class="form-control" >
                     
                                     </div>
                                 </div>
                             </div>
                             <div class="form-group style-note">
-                                    <label  for="trangthai_congviec">Tiến độ:</label> 
+                                    <label style="padding-left: 22px;" class="item-job" for="trangthai_congviec">Tiến độ:</label> 
                                     <input disabled readonly style="flex:4" type="text" value="{{$value['next_status_work']}}"   name="trangthai_congviec_tuan_toi[]" placeholder="Tiêu đề công việc" class="form-control" required>
                                     <div class="form-check" style="margin-top: 0; flex: 2;">
                                 </div>
@@ -267,7 +307,7 @@
                     @endif
                     </div>
                 </div>
-                <hr>
+                <hr style="border: none;">
                 <div class="mb-4">
                     <h1 class="mb-2 heading-style">III. Kiến nghị</h1>
                     <div>

@@ -50,6 +50,7 @@
         .heading-style {
             margin: 10px 0;
             font-size: 21px;
+            padding-bottom: 15px;
         }
 
         .mb-4 {
@@ -131,7 +132,8 @@
             display: flex;
             align-items: center;
             margin: 10px 0;
-            padding-left: 10px;
+            padding-left: 30px;
+            margin-bottom: 50px;
         }
 
         .custom-button:hover {
@@ -141,6 +143,7 @@
         .content-date {
             display: flex;
             margin: 10px 0;
+            padding:15px 18px;
         }
 
         .alert-success {
@@ -153,11 +156,42 @@
             margin-top: 30px;
             background: #f1c9c9;
             padding: 10px;
+            position: relative;
+            border-radius: 0.5rem;
+            margin-top: 28px;
+            margin-bottom: -10px;
+        }
+
+        .btn-PDF {
+            top:50%;
+            background-color:#fff;
+            color: #0a0a23;
+            border-radius:10px; 
+            padding:8px;
+            min-height:30px; 
+            min-width: 120px;
+            border: 1px solid #000;
+            font-size: 14px;
+            float: right;
+        }
+
+        .report-title {
+            position: relative;
+            background-image: linear-gradient(195deg,#006885 0%,#006885 100%);
+            padding: 16px;
+            color: #fff;
+            border-radius: 0.5rem;
+            margin: 0 21%;
+            margin-bottom: -28px;
+        }
+
+        .item-job {
+            font-weight: 500;
         }
     </style>
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg" style="background: rgb(243 244 246 / var(--tw-bg-opacity)); box-shadow: none;">
                 @if (session('success'))
                     <div class="alert alert-success">
                         {{ session('success') }}
