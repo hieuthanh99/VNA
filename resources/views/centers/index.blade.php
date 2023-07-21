@@ -45,6 +45,7 @@
         .heading-style {
             margin: 10px 0;
             font-size: 21px;
+            padding-bottom: 15px;
         }
 
         .mb-4 {
@@ -126,7 +127,8 @@
             display: flex;
             align-items: center;
             margin: 10px 0;
-            padding-left: 10px;
+            padding-left: 30px;
+            margin-bottom: 50px;
         }
 
         .custom-button:hover {
@@ -136,6 +138,7 @@
         .content-date {
             display: flex;
             margin: 10px 0;
+            padding:15px 18px;
         }
 
         .alert-success {
@@ -146,6 +149,10 @@
         .alert-danger {
             background: #f1c9c9;
             padding: 10px;
+            position: relative;
+            border-radius: 0.5rem;
+            margin-top: 28px;
+            margin-bottom: -10px;
         }
 
         .btn-PDF {
@@ -167,24 +174,13 @@
             padding: 16px;
             color: #fff;
             border-radius: 0.5rem;
-            margin: 0 19%;
+            margin: 0 21%;
             margin-bottom: -28px;
         }
 
-        /* header{
-            display: none;
-        } */
-
-        .item-report {
-            background: #fff none repeat scroll 0 0;
-            border: 1px solid #ede9e9;
-            border-radius: 15px;
-            display: inline-block;
-            width: 100%;
-            margin-bottom: 20px;
-            padding: 20px;
+        .item-job {
+            font-weight: 500;
         }
-
     </style>
     <div class="py-12">
         <h2 class="report-title font-semibold text-xl text-gray-800 leading-tight">
@@ -205,7 +201,7 @@
                 @if ($data)
 
                     @foreach ($data as $item)
-                        <div class="item-report p-6 bg-white border-b border-gray-200">
+                        <div class="p-6 bg-white border-b border-gray-200">
                             @php
                                 $rowCount = 1;
                                 $rowCount2 = 1;
@@ -224,10 +220,10 @@
                                             @endphp
                                             <div class="form-group cong-viec-da-lam-row">
                                                 <div class="form-group cong-viec-da-lam-row">
-                                                    <div class="header-report form-group">
-                                                        <span class="cong-viec-stt">{{ $rowCount++ }}. </span>
-                                                        <label for="cong_viec_da_lam">Tiêu đề:</label>
-                                                        <input disabled style="flex: 4" type="text"
+                                                    <div class="header-report form-group" style="padding-top: 15px;">
+                                                        <span class="item-job" class="cong-viec-stt">{{ $rowCount++ }}. </span>
+                                                        <label style="padding-left: 20px;" class="item-job" for="cong_viec_da_lam">Tiêu đề:</label>
+                                                        <input disabled style="flex: 4; margin-left: 44px;" type="text"
                                                             name="cong_viec_da_lam[]" value="{{ $value['work_done'] }}"
                                                             placeholder="Tiêu đề công việc" class="form-control"
                                                             required>
@@ -242,20 +238,20 @@
                                                         </div>
                                                     </div>
                                                     <div class="content-report form-group">
-                                                        <label for="noi_dung_cong_viec">Nội dung:</label>
-                                                        <textarea disabled required style="width: 67%; height: 200px;" name="noi_dung_cong_viec[]"
+                                                        <label class="item-job" style="vertical-align: top; padding-left: 20px;" for="noi_dung_cong_viec">Nội dung:</label>
+                                                        <textarea disabled required style="width: 67%; height: 200px; margin-left: 28px" name="noi_dung_cong_viec[]"
                                                             placeholder="Nhập nội dung tiêu đề" class="form-control" style="margin-bottom: 10px;">{{ $value['description'] }}</textarea>
                                                         <div class="content-date">
                                                             <div>
-                                                                <label for="ngay_sinh">Ngày bắt đầu:</label>
+                                                                <label class="item-job" for="ngay_sinh">Ngày bắt đầu:</label>
                                                                 <input disabled required type="date"
                                                                     name="start_date[]" id="start_date[]"
                                                                     class="form-control"
                                                                     value="{{ $value['start_date'] }}">
 
                                                             </div>
-                                                            <div style="margin-left: 10px;">
-                                                                <label for="ngay_sinh">Kết thúc:</label>
+                                                            <div style="margin-left: 50px;">
+                                                                <label class="item-job" for="ngay_sinh">Kết thúc:</label>
                                                                 <input disabled required type="date"
                                                                     name="end_date[]" id="end_date[]"
                                                                     class="form-control"
@@ -266,8 +262,8 @@
 
                                                     </div>
                                                     <div class="form-group style-note">
-                                                        <label for="trangthai_congviec">Tiến độ:</label>
-                                                        <input disabled required style="flex:4" type="text"
+                                                        <label class="item-job" for="trangthai_congviec">Tiến độ:</label>
+                                                        <input disabled required style="flex:4;  margin-left: 44px;" type="text"
                                                             name="trangthai_congviec[]" placeholder="Tiêu đề công việc"
                                                             class="form-control" required
                                                             value="{{ $value['status_work'] }}">
@@ -287,28 +283,28 @@
                                     @if ($item['ExpectedWork'])
                                         @foreach ($item['ExpectedWork'] as $key => $value)
                                             <div class="form-group  cong-viec-tuan-toi-row">
-                                                <div class="header-report form-group">
-                                                    <span class="cong-viec-stt">{{ $rowCount2++ }}. </span>
-                                                    <label for="cong_viec_tuan_toi">Tiêu đề:</label>
+                                                <div class="header-report form-group" style="padding-top: 15px;">
+                                                    <span class="item-job" class="cong-viec-stt">{{ $rowCount2++ }}. </span>
+                                                    <label style="padding-left: 20px;" class="item-job" for="cong_viec_tuan_toi">Tiêu đề:</label>
                                                     <input disabled readonly type="text" name="cong_viec_tuan_toi[]"
-                                                        style="flex:4" value=" {{ $value['next_work'] }}"
+                                                        style="flex:4; margin-left: 44px;" value=" {{ $value['next_work'] }}"
                                                         class="form-control custom-input disabled" readonly> <span
                                                         style="flex:2"></span>
                                                 </div>
                                                 <div class="content-report form-group">
-                                                    <label for="noi_dung_cong_viec">Nội dung:</label>
-                                                    <textarea disabled readonly style="width: 67%; height: 200px;" name="noi_dung_cong_viec_tuan_toi[]"
+                                                    <label class="item-job" style="vertical-align: top; padding-left: 20px;" for="noi_dung_cong_viec">Nội dung:</label>
+                                                    <textarea disabled readonly style="width: 67%; height: 200px; margin-left: 28px" name="noi_dung_cong_viec_tuan_toi[]"
                                                         placeholder="Nhập nội dung" class="form-control" style="margin-bottom: 10px;">{{ $value['next_description'] }}</textarea>
                                                     <div class="content-date">
                                                         <div>
-                                                            <label for="ngay_sinh">Ngày bắt đầu:</label>
+                                                            <label class="item-job" for="ngay_sinh">Ngày bắt đầu:</label>
                                                             <input disabled readonly type="date"
                                                                 name="start_date_tuan_toi[]" id="start_date_tuan_toi[]"
                                                                 value="{{ $value['next_start_date'] }}"
                                                                 class="form-control">
                                                         </div>
-                                                        <div style="margin-left: 10px;">
-                                                            <label for="ngay_sinh">Kết thúc:</label>
+                                                        <div style="margin-left: 50px;">
+                                                            <label class="item-job" for="ngay_sinh">Kết thúc:</label>
                                                             <input disabled readonly type="date"
                                                                 name="end_date_tuan_toi[]"
                                                                 value="{{ $value['next_end_date'] }}" id="end_date[]"
@@ -318,8 +314,8 @@
                                                     </div>
                                                 </div>
                                                 <div class="form-group style-note">
-                                                    <label for="trangthai_congviec">Tiến độ:</label>
-                                                    <input disabled readonly style="flex:4" type="text"
+                                                    <label class="item-job" for="trangthai_congviec">Tiến độ:</label>
+                                                    <input disabled readonly style="flex:4; margin-left: 44px;" type="text"
                                                         value="{{ $value['next_status_work'] }}"
                                                         name="trangthai_congviec_tuan_toi[]"
                                                         placeholder="Tiêu đề công việc" class="form-control" required>
