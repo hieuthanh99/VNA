@@ -39,8 +39,12 @@
 </head>
 <body>
     <div class="container mb-30">
-        @foreach ($department as $department)
-        <h1 class="h1-custom">Báo cáo tuần cho {{ $department['DepartmentName'] }}</h1>
+        <h1 style= "text-align: center; margin-bottom: 10px;" class="h1-custom">Báo cáo tuần </h1>
+        <h2 style= "text-align: center; margin-top: 0px;" class="h2-custom">(Từ ngày{{ $department['startDate']->format('d-m-Y') }} đến {{ $department['endDateWeek']->format('d-m-Y') }})</h2>
+        <br>
+        <br>
+        @foreach ($department['mergedArray'] as $department)
+        <h1 class="h1-custom">{{ $department['DepartmentName'] }}</h1>
 
         <h2 class="h2-custom">I. Công việc đã thực hiện</h2>
         @if (count($department['WorkDone']) > 0)

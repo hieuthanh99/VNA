@@ -113,7 +113,7 @@ class Helper
     {
         $data = Helper::reportWeeked();
         //dd($data);
-        $pdf = PDF::loadView('pdf.template',['department' => $data['mergedArray']]);
+        $pdf = PDF::loadView('pdf.template',['department' => $data]);
         
         return $pdf->download('report.pdf');
     }
@@ -122,7 +122,7 @@ class Helper
     {
         $data = Helper::reportWeekedDetails($id);
         //dd($data);
-        $pdf = PDF::loadView('pdf.template',['department' => $data['mergedArray']]);
+        $pdf = PDF::loadView('pdf.template',['department' => $data]);
         
         return $pdf->download('report.pdf');
     }
