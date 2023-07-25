@@ -116,7 +116,8 @@
         }
 
         .custom-button {
-            background-color: #4CAF50;
+            /* background-color: #4CAF50; */
+            background-image: linear-gradient(195deg,#006885 0%,#006885 100%);
             color: white;
             padding: 10px 20px;
             border: none;
@@ -141,7 +142,7 @@
         }
 
         .custom-button:hover {
-            background-color: #45a049;
+            opacity: 0.75;
         }
 
         .content-date {
