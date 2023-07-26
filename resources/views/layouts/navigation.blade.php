@@ -33,12 +33,12 @@
                 @if(auth()->user()->role === 'admin')
                 <div class="nav-item hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                     <x-nav-link :href="route('departments.index')" :active="request()->routeIs('departments.index')">
-                        {{ __('Phòng Ban') }}
+                        {{ __('Đơn vị') }}
                     </x-nav-link>
                 </div>
                 <div class="nav-item hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                     <x-nav-link :href="route('centers.index')" :active="request()->routeIs('centers.index')">
-                        {{ __('Báo Cáo Tổng') }}
+                        {{ __('Báo cáo Khối dịch vụ') }}
                     </x-nav-link>
                 </div>
                 <div class="nav-item hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">

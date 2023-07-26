@@ -20,7 +20,13 @@
                             @foreach($departments as $department)
                                 <tr>
                                     <td class="py-2 px-4 border-b">{{ $department->id }}</td>
-                                    <td class="py-2 px-4 border-b">{{ $department->name }}</td>
+                                    <td class="py-2 px-4 border-b">
+                                        @if($department->name == 'Ban Dịch vụ hành khách')
+                                            <a href="{{ route('show.units') }}">{{ $department->name }}</a>
+                                        @else 
+                                            <a>{{ $department->name }}</a>
+                                        @endif
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -31,4 +37,7 @@
         </div>
        
     </div>
+    <script>
+        
+    </script>
 </x-app-layout>
