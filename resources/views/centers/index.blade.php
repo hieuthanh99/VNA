@@ -5,7 +5,7 @@
         align-items: center;
         justify-content: space-between;">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Báo cáo toàn trung tâm (' . $startDate . ' - ' . $endDate . ')') }}
+                {{ __('Báo cáo tuần Khối dịch vụ (' . $startDate . ' đến ' . $endDate . ')') }}
             </h2>
             <div style="display: flex;">
                 <form style="margin: 0 20px;" action="{{ route('centers.run') }}" method="POST">
@@ -236,7 +236,7 @@
                                         <button class="accordion-button collapsed" type="button"
                                             data-bs-toggle="collapse" data-bs-target="#collapse{{ $record->id }}"
                                             aria-expanded="false" aria-controls="collapse{{ $record->id }}">
-                                            <span style="font-size: 20px;">Báo cáo tuần (Từ
+                                            <span style="font-size: 20px;">Báo cáo tuần Khối dịch vụ (Từ
                                                 ngày
                                                 {{ $startDateOfWeek }} đến {{ $endDateOfWeek }})</span>
 
@@ -316,7 +316,7 @@
                                                         </div>
                                                     @endforeach
                                                 @else
-                                                    <span>Không tồn tại dữ liệu</span>
+                                                    <span>Chưa báo cáo</span>
                                                 @endif
                                                 <!-- Hiển thị thông tin về công việc tuần tới (Mục II) -->
                                                 <h3>Mục II: Công việc tuần tới</h3>
@@ -375,16 +375,17 @@
                                                         </div>
                                                     @endforeach
                                                 @else
-                                                    <span>Không tồn tại dữ liệu</span>
+                                                    <span>Chưa báo cáo</span>
                                                 @endif
                                                 <!-- Hiển thị thông tin về kiến nghị (Mục III) -->
                                                 <h3>Mục III: Kiến nghị</h3>
                                                 @if (!empty($requestWork))
                                                     <p style="padding: 20px">{{ $requestWork }}</p>
                                                 @else
-                                                    <span>Không tồn tại dữ liệu</span>
+                                                    <span>Chưa báo cáo</span>
                                                 @endif
                                             </div>
+                                            <p style="border-bottom: 1px solid #e5e7eb;"></p>
                                         @endforeach
                                     </div>
 
@@ -393,7 +394,7 @@
                         </div>
                         @else
                         <div class="alert alert-danger">
-                            <span>Không tồn tại dữ liệu</span>
+                            <span>Chưa báo cáo</span>
                         </div>
                         @endif
                     </div>

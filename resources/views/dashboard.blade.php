@@ -57,11 +57,15 @@
                                         <div id="collapse{{ $report->id }}" class="accordion-collapse collapse"
                                             style="visibility: unset" aria-labelledby="heading{{ $report->id }}"
                                             data-bs-parent="#reportsAccordion">
-                                            <div style="width: 100%">
+                                            <div style="width: 100%; display: flex;justify-content: right;  align-items: center;">
                                                 <form style="text-align: right; padding: 20px;"
                                                     action="{{ route('pdf.details', $report->id) }}" method="GET">
                                                     @csrf
-                                                    <button id="run-cronjob-button" class="btn btn-primary">PDF</button>
+                                                    <button id="run-cronjob-button" class="btn btn-primary">In PDF</button>
+                                                </form>
+                                                <form style="margin-right: 20px" action="{{ route('word') }}" method="GET">
+                                                    @csrf
+                                                    <button id="run-cronjob-button" class="btn btn-primary">In Word</button>
                                                 </form>
                                             </div>
 
