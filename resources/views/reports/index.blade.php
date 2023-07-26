@@ -187,6 +187,16 @@
         .date-end {
             padding-left: 60px;
         }
+
+        .report-edit {
+            float: right;
+            padding: 7px 15px;
+            background-image: linear-gradient(195deg,#006885 0%,#006885 100%);
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
     </style>
 <div class="py-12">
     <h2 class="report-title">
@@ -211,6 +221,11 @@
             $rowCount2 = 1;
             @endphp
                 <div class="mb-4">
+                    @if(!isset($dataWideReport))
+                        <a class="report-edit" href="{{ route('reports.edit', ['report' => $report->id]) }}">Chỉnh sửa báo cáo</a>
+                    @else 
+                        <a style="display:none" class="report-edit" href="{{ route('reports.edit', ['report' => $report->id]) }}">Chỉnh sửa báo cáo</a>
+                    @endif
                     <h1 class="mb-2 heading-style">I. Công việc đã thực hiện</h1>
                     <div id="cong-viec-da-lam-container">
                         @if($array['WorkDone'])
