@@ -12,6 +12,7 @@ use App\Models\Task;
 use App\Models\Logs;
 use Illuminate\Support\Facades\Session;
 use App\Models\ReportCenter;
+use Illuminate\Support\Facades\DB;
 
 class ReportController extends Controller
 {
@@ -24,15 +25,16 @@ class ReportController extends Controller
     {
         $user = Auth::user();
         $department = Department::find($user->department);
+        $report = Report::where('department_id', $department->id)->latest()->first();
         $startDate = Carbon::now()->startOfWeek();
         $endDate = Carbon::now()->endOfWeek();
-
+        $dataWideReport = DB::table('center_wide_report')->whereBetween('created_at', [$startDate, $endDate])->first();
         $logs = Logs::Where('department_id', $department->id)->whereBetween('created_at', [$startDate, $endDate])->first();
         if($logs){
             $array = json_decode($logs->values, true);
-            return view('reports.index', ['department' => $department, 'array' => $array]);
+            return view('reports.index', ['department' => $department, 'array' => $array, 'report' => $report, 'dataWideReport' => $dataWideReport]);
         }
-        return view('reports.index', ['department' => $department, 'array' => null]);
+        return view('reports.index', ['department' => $department, 'array' => null, 'report' => $report, 'dataWideReport' => $dataWideReport]);
     }
 
     /**
@@ -227,7 +229,24 @@ class ReportController extends Controller
      */
     public function edit($id)
     {
-        //
+        $itemData = Report::find($id);
+        // dd($$itemData->id);
+        $user = Auth::user();
+        $department = Department::find($user->department);
+        $report = Report::where('department_id', $department->id)->first();
+        
+        $data = Task::where('report_id', $report->id)->get();
+        $startDate = Carbon::now()->startOfWeek();
+        $endDate = Carbon::now()->endOfWeek();
+
+        $logs = Logs::Where('department_id', $department->id)->whereBetween('created_at', [$startDate, $endDate])->first();
+
+        if($logs){
+
+            $array = json_decode($logs->values, true);
+            return view('reports.edit', ['department' => $department, 'array' => $array, 'report' => $report]);
+        }
+        return view('reports.edit', ['department' => $department, 'array' => null, 'report' => $report]);
     }
 
     /**
@@ -239,7 +258,143 @@ class ReportController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        try {
+        // dd($request);
+            // User and department
+            $user = Auth::user();
+            $department = Department::find($user->department);
+            $requestData = $request->all();
+            // dd($requestData);
+
+            $report = Report::find($id);
+            $task = Task::where('report_id', $id)->get();
+
+            foreach ($task as $item) {
+                if($item->reports_title == 'WorkDone') {
+                    $workDone = isset($requestData['cong_viec_da_lam']) ? $requestData['cong_viec_da_lam'] : $item->title;
+                    $workDoneValues = isset($requestData['cong_viec_da_lam_values']) ? $requestData['cong_viec_da_lam_values'] : $item->status;
+                    $startDate = isset($requestData['start_date']) ? $requestData['start_date'] : $item->start_date;
+                    $endDate = isset($requestData['end_date']) ? $requestData['end_date'] : $item->end_date;
+                    $statusWork = isset($requestData['trangthai_congviec']) ? $requestData['trangthai_congviec'] : $item->work_status;
+                    $noteWork = isset($requestData['noi_dung_cong_viec']) ? $requestData['noi_dung_cong_viec'] : $item->description;
+                } 
+                if ($item->reports_title == 'ExpectedWork') {
+                    $nextWeekWork = isset($requestData['cong_viec_tuan_toi']) ? $requestData['cong_viec_tuan_toi'] : $item->title;
+                    $nextWeekStartDate = isset($requestData['start_date_tuan_toi']) ? $requestData['start_date_tuan_toi'] : $item->start_date;
+                    $nextWeekEndDate = isset($requestData['end_date_tuan_toi']) ? $requestData['end_date_tuan_toi'] : $item->end_date;
+                    $nextWeekStatusWork = isset($requestData['trangthai_congviec_tuan_toi']) ? $requestData['trangthai_congviec_tuan_toi'] : $item->work_status;
+                    $nextWeekNoteWork = isset($requestData['noi_dung_cong_viec_tuan_toi']) ? $requestData['noi_dung_cong_viec_tuan_toi'] : $item->description;
+                }
+                if ($item->reports_title == 'Request') {
+                    $note = isset($requestData['kien_nghi']) ? $requestData['kien_nghi'] : $item->title;
+
+                }
+            }
+
+                if (isset($workDoneValues)) {
+                    foreach ($workDone as $index => $value) {
+                        $mapDataDone[$index] = [
+                            'work_done' => $value,
+                            'value_of_work' => $workDoneValues[$index] ?? null,
+                            'start_date' => $startDate[$index] ?? null,
+                            'end_date' => $endDate[$index] ?? null,
+                            'status_work' => $statusWork[$index] ?? null,
+                            'description' => $noteWork[$index] ?? null,
+                        ];
+                    }
+                }
+
+                if (isset($nextWeekWork)) {
+                    foreach ($nextWeekWork as $index => $value) {
+                        $mapDataNextWeek[$index] = [
+                            'next_work' => $value,
+                            'next_start_date' => $nextWeekStartDate[$index] ?? null,
+                            'next_end_date' => $nextWeekEndDate[$index] ?? null,
+                            'next_status_work' => $nextWeekStatusWork[$index] ?? null,
+                            'next_description' => $nextWeekNoteWork[$index] ?? null,
+                        ];
+                    }
+                }
+
+
+                // Tạo chuỗi JSON
+                $jsonData = json_encode([
+                    'WorkDone' => $mapDataDone,
+                    'ExpectedWork' => $mapDataNextWeek,
+                    'Request' => $note,
+                ], JSON_PRETTY_PRINT);
+
+                $jsonData = json_decode($jsonData);
+
+                $currentDateTime = Carbon::now();
+
+                $report = Report::find($id);
+                $report->update($request->start_date);
+                $report->update($request->end_date);
+
+                $dataLogId = Logs::where('report_id', $id)->first();
+
+                $log = Logs::find($dataLogId)->first();
+
+                $log->update([
+                    'values' => json_encode($jsonData)
+                ]);
+
+                $tasks = Task::where('report_id', $id)->get();
+
+                if (isset($jsonData->WorkDone)) {
+                    foreach ($jsonData->WorkDone as $index => $data) {
+                        // Kiểm tra xem bản ghi trong mảng $tasks có tồn tại không
+                        if (isset($tasks[$index])) {
+                            $task = $tasks[$index];
+
+                            $task->update([
+                                'title' => $data->work_done,
+                                'status' => $data->value_of_work,
+                                'start_date' => Carbon::parse($data->start_date),
+                                'end_date' => Carbon::parse($data->end_date),
+                                'description' => $data->description,
+                                'work_status' => $data->status_work
+                            ]);
+                            $task->save();
+                        }
+                    }
+                }
+
+                if (isset($jsonData->ExpectedWork)) {
+                    $tasks = Task::where('reports_title', 'ExpectedWork')->get();
+                    foreach ($jsonData->ExpectedWork as $index => $data) {
+                        if (isset($tasks[$index])) {
+                            $task = $tasks[$index];
+                            $task->update([
+                                'title' => $data->next_work,
+                                'start_date' => Carbon::parse($data->next_start_date),
+                                'end_date' => Carbon::parse($data->next_end_date),
+                                'description' => $data->next_description,
+                                'work_status' => $data->next_status_work
+                            ]);
+                            $task->save();
+                        }
+                    }
+                }
+
+                if (isset($jsonData->Request)) {
+                    $existingTask = Task::where('reports_title', 'Request')->first();
+                        $request = $jsonData->Request;
+                        if($existingTask) {
+                            $existingTask->update([
+                                'title' => $request,
+                            ]);
+                            $existingTask->save();
+                        }
+                }
+                
+
+
+            return redirect()->route('reports.index')->with(['success' => 'Dữ liệu đã được lưu thành công.']);
+        } catch (QueryException $e) {
+            \Log::info("Error ", $e);
+        }
     }
 
     /**

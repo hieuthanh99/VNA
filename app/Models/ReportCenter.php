@@ -14,6 +14,7 @@ class ReportCenter extends Model
     protected $fillable = [
         'values',
         'created_at',
+        'status',
     ];
 
     protected $casts = [
