@@ -71,7 +71,7 @@
             <button type="submit" class="btn btn-primary">Đặt ngày báo cáo</button>
         </form>
 
-        @if ($reportDates->count() > 0)
+        @if (isset($reportDates))
             <div class="show-date">
                 <div class="date">Ngày báo cáo đã đặt:</div>
                 <input style="width: 15%; padding: 4px;" type="date" class="newest-date" value="{{ $reportDates->report_date }}" disabled>
