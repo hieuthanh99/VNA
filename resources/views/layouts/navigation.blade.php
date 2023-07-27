@@ -46,6 +46,11 @@
                         {{ __('Tổ Chức') }}
                     </x-nav-link>
                 </div>
+                <div class="nav-item hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                    <x-nav-link :href="route('report-dates.index')" :active="request()->routeIs('report-dates.index')">
+                        {{ __('Đặt ngày báo cáo') }}
+                    </x-nav-link>
+                </div>
                 @endif
 
             </div>
