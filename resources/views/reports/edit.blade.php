@@ -299,7 +299,7 @@
                                 </div>
                                 <div class="content-report form-group" >
                                     <label class="item-job" style="vertical-align: top;" for="noi_dung_cong_viec">Nội dung:</label> 
-                                    <textarea style="width: 63%; height: 200px;" name="noi_dung_cong_viec_tuan_toi[]" placeholder="Nhập nội dung" class="form-control" style="margin-bottom: 10px;">{{$value['next_description']}}</textarea>
+                                    <textarea style="width: 63%; height: 200px;" name="noi_dung_cong_viec_tuan_toi[]" placeholder="Nhập nội dung công việc" class="form-control" style="margin-bottom: 10px;">{{$value['next_description']}}</textarea>
                                     <div  class="content-date">
                                         <div >
                                             <label class="item-job" for="ngay_sinh">Ngày bắt đầu:</label>
