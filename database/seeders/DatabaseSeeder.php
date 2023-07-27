@@ -23,11 +23,11 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call([
-            UserSeeder::class
+            DepartmentParentSeeder::class
         ]);
 
         $this->call([
-            UnitSeeder::class
+            UserSeeder::class
         ]);
         // \App\Models\User::factory(10)->create();
 

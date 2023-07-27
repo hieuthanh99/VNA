@@ -46,9 +46,9 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($units as $unit)
+                @foreach ($departments as $department)
                     <tr>
-                        <td>{{ $unit->name }}</td>
+                        <td>{{ $department->name }}</td>
                     </tr>
                 @endforeach
             </tbody>
