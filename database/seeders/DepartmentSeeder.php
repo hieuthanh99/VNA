@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Department;
-use App\Models\Role;
+use Illuminate\Support\Facades\DB;
 
 class DepartmentSeeder extends Seeder
 {
@@ -16,19 +16,43 @@ class DepartmentSeeder extends Seeder
      */
     public function run()
     {
-        Department::create([
-            'name' => 'Ban Dịch vụ hành khách',
-            'code' => 'DVHK',
-        ]);
+        $departmentParentDVHK = DB::table('department_parents')->where('code', 'DVHK')->first();
 
-        Department::create([
-            'name' => 'Trung tâm Dịch vụ và Khai thác sân bay',
-            'code' => 'ASOC',
-        ]);
+        $departmentParentASOC = DB::table('department_parents')->where('code', 'ASOC')->first();
 
-        Department::create([
-            'name' => 'Đoàn tiếp viên',
-            'code' => 'ĐTV',
+        $departmentParentĐTV = DB::table('department_parents')->where('code', 'ĐTV')->first();
+
+        DB::table('departments')->insert([
+            [
+                'name' => 'Phòng Dịch vụ mặt đất',
+                'department_parent_id' => $departmentParentDVHK->id,
+                'code' => 'DVMD',
+            ],
+            [
+                'name' => 'Phòng Dịch vụ trên không',
+                'department_parent_id' => $departmentParentDVHK->id,
+                'code' => 'DVTK',
+            ],
+            [
+                'name' => 'Phòng Quản trị chi phí',
+                'department_parent_id' => $departmentParentDVHK->id,
+                'code' => 'QTCP',
+            ],
+            [
+                'name' => 'Phòng Trải nghiệm khách hàng',
+                'department_parent_id' => $departmentParentDVHK->id,
+                'code' => 'TNKH',
+            ],
+            [
+                'name' => 'Trung tâm Dịch vụ và Khai thác sân bay',
+                'department_parent_id' => $departmentParentASOC->id,
+                'code' => 'ASOC',
+            ],
+            [
+                'name' => 'Đoàn tiếp viên',
+                'department_parent_id' => $departmentParentĐTV->id,
+                'code' => 'ĐTV',
+            ],
         ]);
     }
 }
