@@ -4,6 +4,8 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use App\Models\ReportDate;
+use Carbon\Carbon;
 
 class Kernel extends ConsoleKernel
 {
@@ -15,10 +17,19 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('daily:report')->everyMinute();  
-      //  $schedule->command('daily:report')->cron('0 16 * * 5');
+        // $schedule->command('daily:report')->everyMinute();  
+        // $schedule->command('daily:report')->cron('0 16 * * 5');
         // $schedule->command('your:command')->cron('* * * * *');
 
+        $reportDate = ReportDate::latest()->first();
+
+        $reportDate = Carbon::parse($reportDate->report_date); 
+
+        $reportDate->setTime(16, 00);
+
+        $cronExpression = $reportDate->format('i H d m *');
+
+        $schedule->command('daily:report')->cron($cronExpression);
     }
 
     /**
