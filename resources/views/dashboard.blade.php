@@ -217,6 +217,7 @@
                                                     @endif
 
                                                 </div>
+                                                <p style="border-bottom: 1px solid #e5e7eb; margin-bottom: 0;"></p>
                                             @endforeach
 
 
