@@ -26,7 +26,7 @@ class Kernel extends ConsoleKernel
         $date = $reportDate->report_date;
         $carbonDate = Carbon::parse($date);
         $dayOfWeek = $carbonDate->dayOfWeek;
-        $carbonDate->setTime(14, 40);
+        $carbonDate->setTime(16, 00);
 
         $cronExpression = $carbonDate->format("i H d m $dayOfWeek");
         $schedule->command('daily:report')->cron($cronExpression);
