@@ -6,6 +6,7 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use App\Models\ReportDate;
 use Carbon\Carbon;
+use App\Models\ReportCenter;
 
 class Kernel extends ConsoleKernel
 {
@@ -22,13 +23,12 @@ class Kernel extends ConsoleKernel
         // $schedule->command('your:command')->cron('* * * * *');
 
         $reportDate = ReportDate::latest()->first();
+        $date = $reportDate->report_date;
+        $carbonDate = Carbon::parse($date);
+        $dayOfWeek = $carbonDate->dayOfWeek;
+        $carbonDate->setTime(14, 40);
 
-        $reportDate = Carbon::parse($reportDate->report_date); 
-
-        $reportDate->setTime(16, 00);
-
-        $cronExpression = $reportDate->format('i H d m *');
-
+        $cronExpression = $carbonDate->format("i H d m $dayOfWeek");
         $schedule->command('daily:report')->cron($cronExpression);
     }
 
