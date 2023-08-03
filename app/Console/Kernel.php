@@ -27,7 +27,7 @@ class Kernel extends ConsoleKernel
         $reportDate = ReportDate::latest()->first();
         $date = $reportDate->report_date;
         $carbonDate = Carbon::parse($date);
-        $carbonDate->setTime(16, 34);
+        $carbonDate->setTime(16, 00);
         $tz_from = 'Asia/Ho_Chi_Minh'; 
 
         $newDateTime = new DateTime($carbonDate, new DateTimeZone($tz_from)); 
