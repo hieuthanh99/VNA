@@ -24,7 +24,7 @@ class Kernel extends ConsoleKernel
         // $schedule->command('daily:report')->cron('0 16 * * 5');
         // $schedule->command('your:command')->cron('* * * * *');
 
-        $reportDate = ReportDate::latest()->first();
+         $reportDate = ReportDate::latest()->first();
         $date = $reportDate->report_date;
         $carbonDate = Carbon::parse($date);
         $carbonDate->setTime(16, 00);
