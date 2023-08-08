@@ -11,7 +11,7 @@ class ReportDate extends Model
 
     protected $table = 'report_dates';
 
-    protected $fillable = ['report_date'];
+    protected $fillable = ['report_date','report_time'];
 
     public $timestamps = true;
 }

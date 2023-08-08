@@ -21,13 +21,15 @@ class ReportDateController extends Controller
         ]);
 
         $reportDate = $request->input('report_date');
+        $selectedTime = $request->input('report_time');
 
         // Tính toán ngày báo cáo kết thúc sau 7 ngày
         // $endOfWeek = Carbon::createFromFormat('Y-m-d', $reportDate)->addDays(7)->toDateString();
-        ReportDate::create([
+        $data = ReportDate::create([
             'report_date' => $reportDate,
+            'report_time' => $selectedTime
         ]);
 
-        return redirect()->route('report-dates.index', compact('reportDate'))->with('success', 'Ngày báo cáo đã được đặt thành công.');
+        return redirect()->route('report-dates.index', compact('reportDate'))->with('success', 'Ngày giờ báo cáo đã được đặt thành công.');
     }
 }

@@ -67,6 +67,10 @@
                                                     @csrf
                                                     <button id="run-cronjob-button" class="btn btn-primary">In Word</button>
                                                 </form>
+                                                <form style="margin-right: 20px" action="{{ route('excel') }}" method="GET">
+                                                    @csrf
+                                                    <button id="run-cronjob-button" class="btn btn-primary">In Excel</button>
+                                                </form>
                                             </div>
 
                                             @foreach (json_decode($report->values, true) as $repo)

@@ -24,10 +24,16 @@ class Kernel extends ConsoleKernel
         // $schedule->command('daily:report')->cron('0 16 * * 5');
         // $schedule->command('your:command')->cron('* * * * *');
 
-         $reportDate = ReportDate::latest()->first();
+        $reportDate = ReportDate::latest()->first();
         $date = $reportDate->report_date;
+        $time = $reportDate->report_time;
+
+        $hourAndMinute = explode(':', $time);
+        $hour = $hourAndMinute[0];
+        $minute = $hourAndMinute[1];
         $carbonDate = Carbon::parse($date);
-        $carbonDate->setTime(16, 00);
+        $carbonDate->setTime($hour, $minute);
+
         $tz_from = 'Asia/Ho_Chi_Minh'; 
 
         $newDateTime = new DateTime($carbonDate, new DateTimeZone($tz_from)); 
@@ -40,7 +46,6 @@ class Kernel extends ConsoleKernel
 
         $dayOfWeek = $carbonDate->dayOfWeek;
         $cronExpression = "$minute $hour * * $dayOfWeek";
-
         $schedule->command('daily:report')->cron($cronExpression);
     }
 
