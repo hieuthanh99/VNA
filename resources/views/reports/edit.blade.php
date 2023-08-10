@@ -274,9 +274,9 @@
                                             </div>
                                             <div class="form-group style-note">
                                                 <label style="padding-left: 22px;" class="item-job" for="trangthai_congviec">Tiến độ:</label>
-                                                <input required style="flex:4; margin-left: 44px;" type="text"
+                                                <input style="flex:4; margin-left: 44px;" type="text"
                                                     name="trangthai_congviec[]" placeholder="Nhập tiến độ công việc"
-                                                    class="form-control" required value="{{$value['status_work']}}">
+                                                    class="form-control" value="{{$value['status_work']}}">
                                                 <div class="form-check" style="margin-top: 0; flex: 2;">
                                                 </div>
                                             </div>
@@ -314,7 +314,7 @@
                                 </div>
                                 <div class="form-group style-note">
                                         <label style="padding-left: 22px;" class="item-job" for="trangthai_congviec">Tiến độ:</label> 
-                                        <input style="flex:4" type="text" value="{{$value['next_status_work']}}"   name="trangthai_congviec_tuan_toi[]" placeholder="Nhập tiến độ công việc" class="form-control" required>
+                                        <input style="flex:4" type="text" value="{{$value['next_status_work']}}"   name="trangthai_congviec_tuan_toi[]" placeholder="Nhập tiến độ công việc" class="form-control">
                                         <div class="form-check" style="margin-top: 0; flex: 2;">
                                     </div>
                             </div>

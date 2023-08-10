@@ -29,8 +29,8 @@ class DashBoardController extends Controller
         $user = Auth::user();
         if($user->role == 'admin'){
             $report = ReportCenter::all();
-          
-            return view('dashboard', ['reports' => $report, 'department' => $department, 'array' => []]);
+            $departments = Department::all();
+            return view('dashboard', ['reports' => $report, 'departments' => $departments, 'array' => []]);
         }else{
             $departmentUser = Department::find($user->department);
             $startDate = Carbon::now()->startOfWeek();
