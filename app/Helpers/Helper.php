@@ -10,6 +10,8 @@ use Carbon\Carbon;
 use App\Models\Department;
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class Helper
 {
@@ -143,7 +145,7 @@ class Helper
 
             
                 // Thêm thông tin về công việc đã làm
-                $section->addText("Công việc đã thực hiện:", ['size' => 16, 'bold' => true]);
+                $section->addText("Công việc đã thực hiện:", ['size' => 14, 'bold' => true]);
                 foreach ($item['WorkDone'] as $workDone) {
                     $section->addText("Công việc đã thực hiện: " . $workDone['work_done'], ['size' => 14, 'bold' => false]);
                     $section->addText("Nội dung: " . $workDone['description'], ['size' => 14, 'bold' => false]);
@@ -153,8 +155,16 @@ class Helper
                     $section->addTextBreak(1);
                 }
 
-                 // Thêm thông tin về công việc dự kiến
-                $section->addText("Công việc dự kiến:", ['size' => 16, 'bold' => true]);
+                // Thêm khoảng trắng giữa các phần
+                $section->addTextBreak(1);
+            } else {
+                $section->addText("Công việc đã thực hiện: Không có dữ liệu", ['size' => 14, 'bold' => false]);
+                $section->addTextBreak(1);
+            }
+            if(!empty($item['ExpectedWork'])) {
+
+                // Thêm thông tin về công việc dự kiến
+                $section->addText("Công việc dự kiến:", ['size' => 14, 'bold' => true]);
                 foreach ($item['ExpectedWork'] as $expectedWork) {
                     $section->addText("Tiêu đề: " . $expectedWork['next_work'], ['size' => 14, 'bold' => false]);
                     $section->addText("Nội dung: " . $expectedWork['next_description'], ['size' => 14, 'bold' => false]);
@@ -163,17 +173,19 @@ class Helper
                     $section->addText("Tiến độ: " . $expectedWork['next_status_work'], ['size' => 14, 'bold' => false]);
                     $section->addTextBreak(1);
                 }
-        
-                $section->addText("Kiến nghị: " . $item['Request'], ['size' => 14, 'bold' => false]);
-        
-                // Thêm khoảng trắng giữa các phần
-                $section->addTextBreak(1);
+
+                
             } else {
-                $section->addText("Công việc đã thực hiện: Không có dữ liệu", ['size' => 14, 'bold' => false]);
                 $section->addText("Công việc dự kiến: Không có dữ liệu", ['size' => 14, 'bold' => false]);
-                $section->addText("Kiến nghị: " . 'Không có dữ liệu', ['size' => 14, 'bold' => false]);
                 $section->addTextBreak(1);
             }
+
+            if(!empty($item['ExpectedWork'])) {
+                $section->addText("Kiến nghị: " . $item['Request'], ['size' => 14, 'bold' => false]);
+            } else {
+                $section->addText("Kiến nghị: " . 'Không có dữ liệu', ['size' => 14, 'bold' => false]);
+            }
+
         }
 
         // Save the document as a Word file
@@ -183,5 +195,192 @@ class Helper
 
         // Return the generated Word file for download
         return response()->download($filePath)->deleteFileAfterSend(true);
+    }
+
+    public static function generateWordDetail($id) {
+        // Truyền dữ liệu vào để in ra bản Word
+        $data = Helper::reportWeekedDetails($id);
+        $phpWord = new PhpWord();
+        $section = $phpWord->addSection();
+        // Lặp qua mảng dữ liệu và thêm từng dòng vào tài liệu Word
+        $data = $data['mergedArray'];
+        foreach ($data as $item) {
+            // Thêm thông tin về phòng
+            $section->addText($item['DepartmentName'], ['size' => 16, 'bold' => true]);
+            if(!empty($item['WorkDone'])) {
+
+            
+                // Thêm thông tin về công việc đã làm
+                $section->addText("Công việc đã thực hiện:", ['size' => 14, 'bold' => true]);
+                foreach ($item['WorkDone'] as $workDone) {
+                    $section->addText("Công việc đã thực hiện: " . $workDone['work_done'], ['size' => 14, 'bold' => false]);
+                    $section->addText("Nội dung: " . $workDone['description'], ['size' => 14, 'bold' => false]);
+                    $section->addText("Ngày bắt đầu: " . $workDone['start_date'], ['size' => 14, 'bold' => false]);
+                    $section->addText("Ngày kết thúc: " . $workDone['end_date'], ['size' => 14, 'bold' => false]);
+                    $section->addText("Tiến độ: " . $workDone['status_work'], ['size' => 14, 'bold' => false]);
+                    $section->addTextBreak(1);
+                }
+
+                // Thêm khoảng trắng giữa các phần
+                $section->addTextBreak(1);
+            } else {
+                $section->addText("Công việc đã thực hiện: Không có dữ liệu", ['size' => 14, 'bold' => false]);
+                $section->addTextBreak(1);
+            }
+            if(!empty($item['ExpectedWork'])) {
+
+                // Thêm thông tin về công việc dự kiến
+                $section->addText("Công việc dự kiến:", ['size' => 14, 'bold' => true]);
+                foreach ($item['ExpectedWork'] as $expectedWork) {
+                    $section->addText("Tiêu đề: " . $expectedWork['next_work'], ['size' => 14, 'bold' => false]);
+                    $section->addText("Nội dung: " . $expectedWork['next_description'], ['size' => 14, 'bold' => false]);
+                    $section->addText("Ngày bắt đầu: " . $expectedWork['next_start_date'], ['size' => 14, 'bold' => false]);
+                    $section->addText("Ngày kết thúc: " . $expectedWork['next_end_date'], ['size' => 14, 'bold' => false]);
+                    $section->addText("Tiến độ: " . $expectedWork['next_status_work'], ['size' => 14, 'bold' => false]);
+                    $section->addTextBreak(1);
+                }
+
+                
+            } else {
+                $section->addText("Công việc dự kiến: Không có dữ liệu", ['size' => 14, 'bold' => false]);
+                $section->addTextBreak(1);
+            }
+
+            if(!empty($item['ExpectedWork'])) {
+                $section->addText("Kiến nghị: " . $item['Request'], ['size' => 14, 'bold' => false]);
+            } else {
+                $section->addText("Kiến nghị: " . 'Không có dữ liệu', ['size' => 14, 'bold' => false]);
+            }
+
+        }
+
+        // Save the document as a Word file
+        $filePath = storage_path('app/public/report-word.docx');
+
+        $phpWord->save($filePath);
+
+        // Return the generated Word file for download
+        return response()->download($filePath)->deleteFileAfterSend(true);
+    }
+
+    public static function excel() {
+        $data = Helper::reportWeeked();
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+    
+        $sheet->setCellValue('A1', 'Phòng ban');
+        $sheet->setCellValue('B1', 'Công việc đã thực hiện');
+        $sheet->setCellValue('C1', 'Ngày bắt đầu');
+        $sheet->setCellValue('D1', 'Ngày kết thúc');
+        $sheet->setCellValue('E1', 'Tiến độ');
+        $sheet->setCellValue('F1', 'Nội dung');
+        $sheet->setCellValue('G1', 'Công việc dự kiến');
+        $sheet->setCellValue('H1', 'Ngày bắt đầu');
+        $sheet->setCellValue('I1', 'Ngày kết thúc');
+        $sheet->setCellValue('J1', 'Tiến độ');
+        $sheet->setCellValue('K1', 'Nội dung');
+        $sheet->setCellValue('L1', 'Kiến nghị');
+    
+        $row = 2;
+    
+        foreach ($data['mergedArray'] as $item) {
+            $departmentName = $item['DepartmentName'];
+            $sheet->setCellValue('A' . $row, $departmentName);
+
+            if (!empty($item['WorkDone'])) {
+                foreach ($item['WorkDone'] as $workDone) {
+                    $sheet->setCellValue('B' . $row, $workDone['work_done']);
+                    $sheet->setCellValue('C' . $row, $workDone['start_date']);
+                    $sheet->setCellValue('D' . $row, $workDone['end_date']);
+                    $sheet->setCellValue('E' . $row, $workDone['status_work']);
+                    $sheet->setCellValue('F' . $row, $workDone['description']);
+                    $row++;
+                }
+            }
+        
+            if (!empty($item['ExpectedWork'])) {
+                foreach ($item['ExpectedWork'] as $expectedWork) {
+                    $sheet->setCellValue('G' . $row, $expectedWork['next_work']);
+                    $sheet->setCellValue('H' . $row, $expectedWork['next_start_date']);
+                    $sheet->setCellValue('I' . $row, $expectedWork['next_end_date']);
+                    $sheet->setCellValue('J' . $row, $expectedWork['next_status_work']);
+                    $sheet->setCellValue('K' . $row, $expectedWork['next_description']);
+                    $row++;
+                }
+            }
+    
+            $request = $item['Request'];
+            $sheet->setCellValue('L' . $row, $request);
+            $row++;
+        }
+    
+        $writer = new Xlsx($spreadsheet);
+    
+        $fileName = 'example.xlsx';
+        $filePath = storage_path('app/public/') . $fileName;
+        $writer->save($filePath);
+    
+        return response()->download($filePath)->deleteFileAfterSend();
+    }
+
+    public static function excelDetail($id) {
+        $data = Helper::reportWeekedDetails($id);
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+    
+        $sheet->setCellValue('A1', 'Phòng ban');
+        $sheet->setCellValue('B1', 'Công việc đã thực hiện');
+        $sheet->setCellValue('C1', 'Ngày bắt đầu');
+        $sheet->setCellValue('D1', 'Ngày kết thúc');
+        $sheet->setCellValue('E1', 'Tiến độ');
+        $sheet->setCellValue('F1', 'Nội dung');
+        $sheet->setCellValue('G1', 'Công việc dự kiến');
+        $sheet->setCellValue('H1', 'Ngày bắt đầu');
+        $sheet->setCellValue('I1', 'Ngày kết thúc');
+        $sheet->setCellValue('J1', 'Tiến độ');
+        $sheet->setCellValue('K1', 'Nội dung');
+        $sheet->setCellValue('L1', 'Kiến nghị');
+    
+        $row = 2;
+        $a = 2;
+    
+        foreach ($data['mergedArray'] as $item) {
+            $departmentName = $item['DepartmentName'];
+            $sheet->setCellValue('A' . $row, $departmentName);
+
+            if (!empty($item['WorkDone'])) {
+                foreach ($item['WorkDone'] as $workDone) {
+                    $sheet->setCellValue('B' . $row, $workDone['work_done']);
+                    $sheet->setCellValue('C' . $row, $workDone['start_date']);
+                    $sheet->setCellValue('D' . $row, $workDone['end_date']);
+                    $sheet->setCellValue('E' . $row, $workDone['status_work']);
+                    $sheet->setCellValue('F' . $row, $workDone['description']);
+                    $row++;
+                }
+            }
+        
+            if (!empty($item['ExpectedWork'])) {
+                foreach ($item['ExpectedWork'] as $expectedWork) {
+                    $sheet->setCellValue('G' . $row, $expectedWork['next_work']);
+                    $sheet->setCellValue('H' . $row, $expectedWork['next_start_date']);
+                    $sheet->setCellValue('I' . $row, $expectedWork['next_end_date']);
+                    $sheet->setCellValue('J' . $row, $expectedWork['next_status_work']);
+                    $sheet->setCellValue('K' . $row, $expectedWork['next_description']);
+                    $row++;
+                }
+            }
+    
+            $request = $item['Request'];
+            $sheet->setCellValue('L' . $row, $request);
+            // $row++;
+        }
+    
+        $writer = new Xlsx($spreadsheet);
+    
+        $fileName = 'example.xlsx';
+        $filePath = storage_path('app/public/') . $fileName;
+        $writer->save($filePath);
+    
+        return response()->download($filePath)->deleteFileAfterSend();
     }
 }

@@ -10,7 +10,7 @@ use App\Http\Controllers\PDFController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\WordController;
 use App\Http\Controllers\ReportDateController;
-
+use App\Http\Controllers\ExcelController;
 use App\Http\Controllers\UnitController;
 
 /*
@@ -47,9 +47,13 @@ Route::middleware('auth')->group(function () {
     Route::get('delete', [DashBoardController::class, 'deleteDataWeek'])->name('delete.data');
     Route::get('pdf/{id}', [PDFController::class, 'generatePDFDetails'])->name('pdf.details');
     Route::get('/generate-word', [WordController::class, 'generateWord'])->name('word');
+    Route::get('word/{id}', [WordController::class, 'generateWordDetails'])->name('word.details');
+    Route::get('/generate-excel', [ExcelController::class, 'generateExcel'])->name('excel');
+    Route::get('excel/{id}', [ExcelController::class, 'generateExcelDetails'])->name('excel.details');
 
     Route::get('/report-dates', [ReportDateController::class, 'index'])->name('report-dates.index');
     Route::post('/report-dates', [ReportDateController::class, 'store'])->name('report-dates.store');
+    Route::post('/search-report', [ReportDateController::class, 'searchReport'])->name('search.report');
     
     Route::get('/show-units', [UnitController::class, 'showUnits'])->name('show.units');
 });

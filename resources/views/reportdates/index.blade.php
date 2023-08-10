@@ -45,6 +45,14 @@
                 display: flex;
             }
 
+            .show-hour {
+                padding: 20px 0;
+                border-radius: 5px;
+                width: 50%;
+                margin: auto;
+                display: flex;
+            }
+
             .alert-success {
                 width: 50%;
                 margin: auto;
@@ -68,13 +76,21 @@
                 <label for="report_date">Ngày báo cáo:</label>
                 <input type="date" name="report_date" id="report_date" class="form-control">
             </div>
-            <button type="submit" class="btn btn-primary">Đặt ngày báo cáo</button>
+            <div class="form-group">
+                <label for="report_time">Chọn giờ báo cáo:</label>
+                <input class="form-control" type="time" id="report_time" name="report_time">
+            </div>
+            <button type="submit" class="btn btn-primary">Đặt ngày giờ báo cáo</button>
         </form>
 
         @if (isset($reportDates))
             <div class="show-date">
                 <div class="date">Ngày báo cáo đã đặt:</div>
                 <input style="width: 15%; padding: 4px;" type="date" class="newest-date" value="{{ $reportDates->report_date }}" disabled>
+            </div>
+            <div class="show-hour">
+                <div class="date">Giờ báo cáo đã đặt:</div>
+                <input style="width: 15%; padding: 4px;" type="time" class="newest-date" value="{{ $reportDates->report_time }}" disabled>
             </div>
         @endif
     </div>

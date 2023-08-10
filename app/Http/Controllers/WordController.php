@@ -13,4 +13,10 @@ class WordController extends Controller
     {
         return Helper::word();
     }
+
+    public function generateWordDetails($id) 
+    {
+        return Helper::generateWordDetail($id);
+    }
+    
 }

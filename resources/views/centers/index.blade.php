@@ -17,11 +17,15 @@
                         @csrf
                         <button id="run-cronjob-button" class="custom-button">In PDF</button>
                     </form>
-                    <form style="margin: 0 20px;" action="{{ route('word') }}" method="GET">
+                    <form style="margin: 0 10px;" action="{{ route('word') }}" method="GET">
                         @csrf
                         <button id="run-cronjob-button" class="custom-button">In Word</button>
                     </form>
-                    <form style="margin: 0 20px;" action="{{ route('delete.data') }}" method="GET">
+                    <form style="margin: 0 10px;" action="{{ route('excel') }}" method="GET">
+                        @csrf
+                        <button id="run-cronjob-button" class="custom-button">In Excel</button>
+                    </form>
+                    <form style="margin: 0 10px;" action="{{ route('delete.data') }}" method="GET">
                         @csrf
                         <button id="run-cronjob-button" class="custom-button">Xóa dữ liệu tuần này</button>
                     </form>
@@ -294,15 +298,17 @@
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <div style="display: flex; margin: 10px">
+                                                            @if(!empty($work['status_work']))
+                                                                <div style="display: flex; margin: 10px">
 
-                                                                <span style="font-size:  18px; font-weight: bold">Tiến
-                                                                    độ:</span>
+                                                                    <span style="font-size:  18px; font-weight: bold">Tiến
+                                                                        độ:</span>
 
-                                                                <div style="padding-left: 10px;">
-                                                                    {{ $work['status_work'] }}
+                                                                    <div style="padding-left: 10px;">
+                                                                        {{ $work['status_work'] }}
+                                                                    </div>
                                                                 </div>
-                                                            </div>
+                                                            @endif
                                                             <div style="display: flex; margin: 10px">
 
                                                                 <span style="font-size:  18px; font-weight: bold">Nội
@@ -353,15 +359,17 @@
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <div style="display: flex; margin: 10px">
+                                                            @if(!empty($work['next_status_work']))
+                                                                <div style="display: flex; margin: 10px">
 
-                                                                <span style="font-size:  18px; font-weight: bold">Tiến
-                                                                    độ:</span>
+                                                                    <span style="font-size:  18px; font-weight: bold">Tiến
+                                                                        độ:</span>
 
-                                                                <div style="padding-left: 10px;">
-                                                                    {{ $work['next_status_work'] }}
+                                                                    <div style="padding-left: 10px;">
+                                                                        {{ $work['next_status_work'] }}
+                                                                    </div>
                                                                 </div>
-                                                            </div>
+                                                            @endif
                                                             <div style="display: flex; margin: 10px">
 
                                                                 <span style="font-size:  18px; font-weight: bold">Nội

@@ -7,6 +7,8 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use App\Models\ReportDate;
 use Carbon\Carbon;
 use App\Models\ReportCenter;
+use DateTimeZone;
+use DateTime;
 
 class Kernel extends ConsoleKernel
 {
@@ -24,11 +26,26 @@ class Kernel extends ConsoleKernel
 
         $reportDate = ReportDate::latest()->first();
         $date = $reportDate->report_date;
-        $carbonDate = Carbon::parse($date);
-        $dayOfWeek = $carbonDate->dayOfWeek;
-        $carbonDate->setTime(16, 00);
+        $time = $reportDate->report_time;
 
-        $cronExpression = $carbonDate->format("i H * * $dayOfWeek");
+        $hourAndMinute = explode(':', $time);
+        $hour = $hourAndMinute[0];
+        $minute = $hourAndMinute[1];
+        $carbonDate = Carbon::parse($date);
+        $carbonDate->setTime($hour, $minute);
+
+        $tz_from = 'Asia/Ho_Chi_Minh'; 
+
+        $newDateTime = new DateTime($carbonDate, new DateTimeZone($tz_from)); 
+
+        $newDateTime->setTimezone(new DateTimeZone("UTC"));
+        
+        $dateTimeUTC = $newDateTime->format("Y-m-d H:i:s");
+        $hour = Carbon::parse($dateTimeUTC)->hour;
+        $minute = Carbon::parse($dateTimeUTC)->minute;
+
+        $dayOfWeek = $carbonDate->dayOfWeek;
+        $cronExpression = "$minute $hour * * $dayOfWeek";
         $schedule->command('daily:report')->cron($cronExpression);
     }
 

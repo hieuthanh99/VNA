@@ -344,7 +344,7 @@
             </div>
             <div  class="form-group style-note">
                     <label class="item-job" for="trangthai_congviec">Tiến độ:</label> 
-                    <input id="progress" required style="flex:4; margin-left: 46px" type="text"  name="trangthai_congviec[]" placeholder="Nhập tiến độ công việc" class="form-control" onchange="progressInput(this)" required>
+                    <input id="progress" style="flex:4; margin-left: 46px" type="text"  name="trangthai_congviec[]" placeholder="Nhập tiến độ công việc" class="form-control" onchange="progressInput(this)">
                     <div class="form-check" style="margin-top: 0; flex: 2;">
                 </div>
         `;
@@ -445,7 +445,7 @@
         </div>
         <div class="form-group style-note">
                     <label class="item-job" for="trangthai_congviec">Tiến độ:</label> 
-                    <input required style="flex:4; margin-left: 46px" type="text"  name="trangthai_congviec_tuan_toi[]" placeholder="Nhập tiến độ công việc" class="form-control" required>
+                    <input style="flex:4; margin-left: 46px" type="text"  name="trangthai_congviec_tuan_toi[]" placeholder="Nhập tiến độ công việc" class="form-control">
                     <div class="form-check" style="margin-top: 0; flex: 2;">
                 </div>
         `;
