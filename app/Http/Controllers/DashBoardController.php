@@ -126,7 +126,6 @@ class DashBoardController extends Controller
                     'created_at' => $endDate2,
                     'date_start' => $dateStart,
                 ]);
-            dd($data);
 
                 \Log::info("Testing Cron is Running ... !".$jsonData);
                 \Log::info('Daily report has been sent successfully!');
