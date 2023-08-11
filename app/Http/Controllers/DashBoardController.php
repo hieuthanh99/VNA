@@ -120,7 +120,7 @@ class DashBoardController extends Controller
                     }
                 }
                 $jsonData = json_encode(array_values($dataByDepartment));
-                $data = ReportCenter::create([
+                ReportCenter::create([
                     'status' => 1,
                     'values' => $jsonData,
                     'created_at' => $endDate2,
