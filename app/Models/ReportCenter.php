@@ -15,6 +15,7 @@ class ReportCenter extends Model
         'values',
         'created_at',
         'status',
+        'date_start',
     ];
 
     protected $casts = [

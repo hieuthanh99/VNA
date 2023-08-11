@@ -43,23 +43,29 @@ class ReportDateController extends Controller
     {
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
+        
+        $startTime = \Carbon\Carbon::parse($startDate);
+        $endTime = \Carbon\Carbon::parse($endDate);
+
+        $startDateOfWeekInput = $startTime->startOfWeek();
+        $endDateOfWeekInput = $endTime->endOfWeek();
+
+
+
         $reportDates = Logs::whereBetween('created_at', [$startDate, $endDate])->get();
         $reportData = Logs::all();
-        $report = ReportCenter::whereBetween('updated_at', [$startDate, $endDate])->get();
+        $report = ReportCenter::whereBetween('date_start', [$startDateOfWeekInput, $endDateOfWeekInput])->get();
         $departmentId = $request->input('departmentInput');
-        // $dataReportCenter = ReportCenter::all();
         $dataReportCenter = ReportCenter::where('status', '1')->get();
-        $departments = Report::where('department_id', $departmentId)->get();
-
+    
         $departmentList = Department::all();
         $dataDepartment = [];
         $departmentReportDate = [];
-        if(!empty($departmentId)) {
+        if(!empty($departmentId) && empty($startDate) && empty($endDate)) {
             foreach ($dataReportCenter as $reportCenter) {
                 $value = json_decode($reportCenter->values, true);
                 foreach ($value as $item) {
                     $id = $item['DepartmentId'];
-
                     if ($id == $departmentId) {
                        $dataDepartment[] = $item;
                        $createdDate = \Carbon\Carbon::parse($reportCenter->created_at);
@@ -70,13 +76,46 @@ class ReportDateController extends Controller
                        continue;
                     }
                 }
-                   
             }
+            return view('dashboard', ['reportDates' => $reportDates ,'startDate' => $startDate,'endDate' => $endDate ,'departmentReportDate' => $departmentReportDate ,'departmentId' => $departmentId ,'dataDepartment' => $dataDepartment ,'departmentList' => $departmentList ,'dataReportCenter' => $dataReportCenter,'reportData' => $reportData ,'reportCenter' => $report ,'reports' => []]);
+        }
 
-            return view('dashboard', ['reportDates' => $reportDates ,'departmentReportDate' => $departmentReportDate ,'departmentId' => $departmentId ,'dataDepartment' => $dataDepartment ,'departmentList' => $departmentList ,'dataReportCenter' => $dataReportCenter,'reportData' => $reportData ,'reportCenter' => $report ,'reports' => []]);
+        if(!empty($startDate) && !empty($endDate) && !empty($departmentId)) {
+            $reportCen = ReportCenter::whereBetween('date_start', [$startDateOfWeekInput, $endDateOfWeekInput])
+            ->where('status', '1')
+            ->get();
+            $data = [];
+            $name = '';
 
+            foreach($reportCen as  $reportWork) {
+                $resultLog = json_decode($reportWork->values, true);
+
+                foreach ($resultLog as $item) {
+                    $departmentIdLog = $item['DepartmentId'];
+                    if ($departmentIdLog == $departmentId) {
+                        $data[] = $item;
+                        $departmentData = Department::find($departmentId);
+                        $departmentName = $departmentData->name;    
+                        $name = $departmentName;
+
+                        continue;
+                    }
+                }
+            }
+            return view('dashboard', ['reportDates' => $reportDates,
+            'departmentList' => $departmentList ,
+            'reportWork' => $reportWork ,
+            'departmentName' => $name ,
+            'departmentIdLog' => $departmentIdLog ,
+            'departmentReportDate' => $departmentReportDate ,
+            'resultLog' => $data ,
+            'dataReportCenter' => $dataReportCenter,
+            'departmentId' => $departmentId,
+            'startDate' => $startDate,
+            'endDate' => $endDate ,
+            'reportData' => $reportData ,'reports' => []]);
         }
         
-        return view('dashboard', ['reportDates' => $reportDates,'departmentList' => $departmentList ,'reportCenter' => $report ,'reports' => []]);
+        return view('dashboard', ['reportDates' => $reportDates,'startDate' => $startDate,'endDate' => $endDate ,'departmentList' => $departmentList ,'reportCenter' => $report ,'reports' => []]);
     }
 }

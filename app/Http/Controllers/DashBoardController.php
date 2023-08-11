@@ -76,6 +76,7 @@ class DashBoardController extends Controller
         try {
 
             $startDate = Carbon::now()->startOfWeek();
+            $dateStart = Carbon::now();
             $endDate = Carbon::now()->endOfWeek();
             $endDate2 = Carbon::now()->setISODate(Carbon::now()->year, Carbon::now()->isoWeek(), 5)->setTime(16, 0, 0);
 
@@ -119,11 +120,14 @@ class DashBoardController extends Controller
                     }
                 }
                 $jsonData = json_encode(array_values($dataByDepartment));
-                ReportCenter::create([
+                $data = ReportCenter::create([
                     'status' => 1,
                     'values' => $jsonData,
                     'created_at' => $endDate2,
+                    'date_start' => $dateStart,
                 ]);
+            dd($data);
+
                 \Log::info("Testing Cron is Running ... !".$jsonData);
                 \Log::info('Daily report has been sent successfully!');
                 //return 'Daily report has been sent successfully!';
