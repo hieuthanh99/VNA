@@ -120,13 +120,12 @@ class DashBoardController extends Controller
                     }
                 }
                 $jsonData = json_encode(array_values($dataByDepartment));
-                $data = ReportCenter::create([
+                ReportCenter::create([
                     'status' => 1,
                     'values' => $jsonData,
                     'created_at' => $endDate2,
                     'date_start' => $dateStart,
                 ]);
-            dd($data);
 
                 \Log::info("Testing Cron is Running ... !".$jsonData);
                 \Log::info('Daily report has been sent successfully!');
