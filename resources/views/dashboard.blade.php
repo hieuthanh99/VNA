@@ -32,27 +32,48 @@
                                 <form action="{{ route('search.report') }}" method="POST">
                                     @csrf
                                     <label for="start_date">Ngày bắt đầu:</label>
-                                    <input type="date" name="start_date" id="start_date">
+                                    @if(!empty($startDate))
+                                        <input type="date" name="start_date" id="start_date_admin" value="{{ $startDate }}" @if(old('startDate', $startDate) == $startDate) selected="selected" @endif>
+                                    @else
+                                        <input type="date" name="start_date" id="start_date_admin">
+                                    @endif
 
                                     <label for="end_date">Ngày kết thúc:</label>
-                                    <input type="date" name="end_date" id="end_date">
+                                    @if(!empty($endDate))
+                                        <input type="date" name="end_date" id="end_date_admin" value="{{ $endDate }}" @if(old('endDate', $endDate) == $endDate) selected="selected" @endif>
+                                    @else
+                                        <input type="date" name="end_date" id="start_date_admin">
+                                    @endif
 
                                     <label for="department">Đơn vị:</label>
+
                                     <input id="departmentInput" type="hidden" name="departmentInput" value="">
                                     <select id="departmentSelect" onchange="updateHiddenInput()">
                                         @if(!empty($departments) || !empty($departmentList))
-                                            <option value="">--Đơn vị--</option>
-                                            @if(!empty($departmentList)) 
-                                                @foreach ($departmentList as $key => $list)
-                                                    <option value="{{ $list->id }}">{{ $list->name }}</option>
-                                                @endforeach
+                                            @if(empty($departmentId))
+                                                <option value="">--Đơn vị--</option>
+                                                @if(!empty($departmentList)) 
+                                                    @foreach ($departmentList as $key => $list)
+                                                        <option value="{{ $list->id }}">{{ $list->name }}</option>
+                                                    @endforeach
+                                                @elseif (!empty($departments)) 
+                                                    @foreach ($departments as $key => $list)
+                                                        <option value="{{ $list->id }}">{{ $list->name }}</option>
+                                                    @endforeach
+                                                @endif
+                                            @else 
+                                                @if(!empty($departmentList)) 
+                                                    @foreach ($departmentList as $key => $list)
+                                                        <option value="{{ $list->id }}" @if(old('departmentId', $departmentId) == $list->id) selected="selected" @endif>{{ $list->name }}</option>
+                                                    @endforeach
+                                                @elseif (!empty($departments)) 
+                                                    @foreach ($departments as $key => $list)
+                                                        <option value="{{ $list->id }}">{{ $list->name }}</option>
+                                                    @endforeach
+                                                @endif
                                             @endif
-                                            @if(!empty($departments)) 
-                                                @foreach ($departments as $key => $list)
-                                                    <option value="{{ $list->id }}">{{ $list->name }}</option>
-                                                @endforeach
-                                            @endif
-                                       
+                                        @else 
+                                                @dd('!empty($departments) || !empty($departmentList)');
 
                                         @endif
                                     </select>
@@ -67,7 +88,7 @@
                             @endphp
                             @if(auth()->user()->role === 'admin')
                             @if(empty($reports))
-                                @if(!empty($reportCenter))
+                                @if(!empty($reportCenter) && empty($departmentId))
                                     <div id="search-results-date">
                                         @foreach($reportCenter as $i)
                                             @php
@@ -110,7 +131,7 @@
                                                                 </form>
                                                                 <form style="margin-right: 20px" action="{{ route('excel.details', $a->id) }}" method="GET">
                                                                     @csrf
-                                                                    <button id="run-cronjob-button" class="btn btn-primary">In Excel1231</button>
+                                                                    <button id="run-cronjob-button" class="btn btn-primary">In Excel</button>
                                                                 </form>
                                                             </div>
 
@@ -279,47 +300,111 @@
                                     </div>
                                 @endif
 
-                                @if(!empty($departmentId))
+                                @if(!empty($departmentId) && isset($reportCenter))
                                     <div id="search-results-department">
 
                                         @if(!empty($departmentId))
-                                            @foreach ($dataDepartment as $key => $a)
-                                                <div style="border: 1px solid rgb(243 244 246 / var(--tw-bg-opacity));">
-                                                    <h2 class="accordion-header" id="heading{{ $key }}">
+                                            @if(!empty($dataDepartment))
+                                                @foreach ($dataDepartment as $key => $a)
+                                                    <div style="border: 1px solid rgb(243 244 246 / var(--tw-bg-opacity));">
+                                                        <h2 class="accordion-header" id="heading{{ $key }}">
 
-                                                        <button class="accordion-button collapsed" type="button"
-                                                                data-bs-toggle="collapse" data-bs-target="#collapse{{ $key }}"
-                                                                aria-expanded="false" aria-controls="collapse{{ $key }}">
-                                                                <span style="font-size: 20px;">{{ $departmentReportDate[$key] }}</span>
-                                                        </button>
-                                                        </h2>
-                                                        <div id="collapse{{ $key }}" class="accordion-collapse collapse"
-                                                            style="visibility: unset" aria-labelledby="heading{{ $key }}"
-                                                            data-bs-parent="#reportsAccordion">
-                                                            <h2 style="padding: 10px 0;">{{ $a['DepartmentName'] }}</h2>
+                                                            <button class="accordion-button collapsed" type="button"
+                                                                    data-bs-toggle="collapse" data-bs-target="#collapse{{ $key }}"
+                                                                    aria-expanded="false" aria-controls="collapse{{ $key }}">
+                                                                    <span style="font-size: 20px;">{{ $departmentReportDate[$key] }}</span>
+                                                            </button>
+                                                            </h2>
+                                                            <div id="collapse{{ $key }}" class="accordion-collapse collapse"
+                                                                style="visibility: unset" aria-labelledby="heading{{ $key }}"
+                                                                data-bs-parent="#reportsAccordion">
+                                                                <h2 style="padding: 10px 0;">{{ $a['DepartmentName'] }}</h2>
 
-                                               
-                                                                @php
-                                                                    $arrayValues = $a;
-                                                                    $workDone = !empty($arrayValues['WorkDone']) ? $arrayValues['WorkDone'] : [];
-                                               
-                                                                    $expectedWork = !empty($arrayValues['ExpectedWork']) ? $arrayValues['ExpectedWork'] : [];
-                                                                    $requestWork = !empty($arrayValues['Request']) ? $arrayValues['Request'] : [];
-                                                                    $STT = 1;
-                                                                    $STT_NEXT = 1;
-                                                                @endphp
-                                                                
-                                                                    <div class="accordion-body">
-                                                                        <h3>Mục I: Công việc đã làm</h3>
-                                                                        
-                                                                            @if (!empty($arrayValues))
-                                                                                @foreach($a['WorkDone'] as $work)
+                                                
+                                                                    @php
+                                                                        $arrayValues = $a;
+                                                                        $workDone = !empty($arrayValues['WorkDone']) ? $arrayValues['WorkDone'] : [];
+                                                
+                                                                        $expectedWork = !empty($arrayValues['ExpectedWork']) ? $arrayValues['ExpectedWork'] : [];
+                                                                        $requestWork = !empty($arrayValues['Request']) ? $arrayValues['Request'] : [];
+                                                                        $STT = 1;
+                                                                        $STT_NEXT = 1;
+                                                                    @endphp
+                                                                    
+                                                                        <div class="accordion-body">
+                                                                            <h3>Mục I: Công việc đã làm</h3>
+                                                                            
+                                                                                @if (!empty($arrayValues))
+                                                                                    @foreach($a['WorkDone'] as $work)
+                                                                                        <div style="padding: 10px;">
+                                                                                            <div>
+                                                                                                <span
+                                                                                                    style="font-size:  20px; font-weight: bold">{{ $STT++ }}.
+                                                                                                </span>
+                                                                                                <span style="font-size:  20px; font-weight: bold">{{ $work['work_done'] }}</span>
+                                                                                            </div>
+                                                                                            {{-- value_of_work --}}
+                                                                                            <div style="display: flex; margin: 10px">
+                                                                                                <div
+                                                                                                    style="display: flex; flex: 2; align-items: center">
+                                                                                                    <span
+                                                                                                        style="font-size:  18px; font-weight: bold">Ngày
+                                                                                                        bắt
+                                                                                                        đầu:</span>
+                                                                                                    <div style="padding-left: 10px;">
+                                                                                                        {{ $work['start_date'] }}
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div
+                                                                                                    style="display: flex; flex: 2; align-items: center">
+                                                                                                    <span
+                                                                                                        style="font-size:  18px; font-weight: bold">Ngày
+                                                                                                        kết
+                                                                                                        thúc:</span>
+
+                                                                                                    <div style="padding-left: 10px;">
+                                                                                                        {{ $work['end_date'] }}
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            @if(!empty($work['work_status']))
+                                                                                            <div style="display: flex; margin: 10px">
+
+                                                                                                <span
+                                                                                                    style="font-size:  18px; font-weight: bold">Tiến
+                                                                                                    độ:</span>
+
+                                                                                                <div style="padding-left: 10px;">
+                                                                                                    {{ $work['work_status'] }}
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            @endif
+                                                                                            <div style="display: flex; margin: 10px">
+
+                                                                                                <span
+                                                                                                    style="font-size:  18px; font-weight: bold">Nội
+                                                                                                    dung:</span>
+
+                                                                                                <div style="padding-left: 10px;">
+                                                                                                    {{ $work['description'] }}
+                                                                                                </div>
+                                                                                            </div>
+
+                                                                                        </div>
+                                                                                    @endforeach
+                                                                                @else
+                                                                                    <span>Không tồn tại dữ liệu</span>
+                                                                                @endif
+                                                                    
+                                                                                @if (!empty($arrayValues))
+                                                                                    <h3>Mục II: Công việc tuần tới</h3>
+                                                                                    @foreach($a['ExpectedWork'] as $work)
                                                                                     <div style="padding: 10px;">
                                                                                         <div>
                                                                                             <span
                                                                                                 style="font-size:  20px; font-weight: bold">{{ $STT++ }}.
                                                                                             </span>
-                                                                                            <span style="font-size:  20px; font-weight: bold">{{ $work['work_done'] }}</span>
+                                                                                            <span style="font-size:  20px; font-weight: bold">{{ $work['next_work'] }}</span>
                                                                                         </div>
                                                                                         {{-- value_of_work --}}
                                                                                         <div style="display: flex; margin: 10px">
@@ -330,7 +415,7 @@
                                                                                                     bắt
                                                                                                     đầu:</span>
                                                                                                 <div style="padding-left: 10px;">
-                                                                                                    {{ $work['start_date'] }}
+                                                                                                    {{ $work['next_start_date'] }}
                                                                                                 </div>
                                                                                             </div>
                                                                                             <div
@@ -341,11 +426,10 @@
                                                                                                     thúc:</span>
 
                                                                                                 <div style="padding-left: 10px;">
-                                                                                                    {{ $work['end_date'] }}
+                                                                                                    {{ $work['next_end_date'] }}
                                                                                                 </div>
                                                                                             </div>
                                                                                         </div>
-                                                                                        @if(!empty($work['work_status']))
                                                                                         <div style="display: flex; margin: 10px">
 
                                                                                             <span
@@ -353,10 +437,9 @@
                                                                                                 độ:</span>
 
                                                                                             <div style="padding-left: 10px;">
-                                                                                                {{ $work['work_status'] }}
+                                                                                                {{ $work['next_status_work'] }}
                                                                                             </div>
                                                                                         </div>
-                                                                                        @endif
                                                                                         <div style="display: flex; margin: 10px">
 
                                                                                             <span
@@ -364,99 +447,224 @@
                                                                                                 dung:</span>
 
                                                                                             <div style="padding-left: 10px;">
-                                                                                                {{ $work['description'] }}
+                                                                                                {{ $work['next_description'] }}
                                                                                             </div>
                                                                                         </div>
 
                                                                                     </div>
-                                                                                @endforeach
+                                                                                    @endforeach
+                                                                                @else
+                                                                                    <span>Không tồn tại dữ liệu</span>
+                                                                                @endif
+                                                                        
+                                                                            <h3>Mục III: Kiến nghị</h3>
+
+                                                                            @if (!empty($a['Request']))
+                                                                                <p style="padding: 20px">{{ $a['Request'] }}</p>
                                                                             @else
                                                                                 <span>Không tồn tại dữ liệu</span>
                                                                             @endif
-                                                                   
-                                                                            @if (!empty($arrayValues))
-                                                                                <h3>Mục II: Công việc tuần tới</h3>
-                                                                                @foreach($a['ExpectedWork'] as $work)
-                                                                                <div style="padding: 10px;">
-                                                                                    <div>
-                                                                                        <span
-                                                                                            style="font-size:  20px; font-weight: bold">{{ $STT++ }}.
-                                                                                        </span>
-                                                                                        <span style="font-size:  20px; font-weight: bold">{{ $work['next_work'] }}</span>
-                                                                                    </div>
-                                                                                    {{-- value_of_work --}}
-                                                                                    <div style="display: flex; margin: 10px">
-                                                                                        <div
-                                                                                            style="display: flex; flex: 2; align-items: center">
-                                                                                            <span
-                                                                                                style="font-size:  18px; font-weight: bold">Ngày
-                                                                                                bắt
-                                                                                                đầu:</span>
-                                                                                            <div style="padding-left: 10px;">
-                                                                                                {{ $work['next_start_date'] }}
-                                                                                            </div>
-                                                                                        </div>
-                                                                                        <div
-                                                                                            style="display: flex; flex: 2; align-items: center">
-                                                                                            <span
-                                                                                                style="font-size:  18px; font-weight: bold">Ngày
-                                                                                                kết
-                                                                                                thúc:</span>
+                                                                        
+                                                                        <!-- Hiển thị thông tin về công việc tuần tới (Mục II) -->
+                                                                        
 
-                                                                                            <div style="padding-left: 10px;">
-                                                                                                {{ $work['next_end_date'] }}
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <div style="display: flex; margin: 10px">
-
-                                                                                        <span
-                                                                                            style="font-size:  18px; font-weight: bold">Tiến
-                                                                                            độ:</span>
-
-                                                                                        <div style="padding-left: 10px;">
-                                                                                            {{ $work['next_status_work'] }}
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <div style="display: flex; margin: 10px">
-
-                                                                                        <span
-                                                                                            style="font-size:  18px; font-weight: bold">Nội
-                                                                                            dung:</span>
-
-                                                                                        <div style="padding-left: 10px;">
-                                                                                            {{ $work['next_description'] }}
-                                                                                        </div>
-                                                                                    </div>
-
-                                                                                </div>
-                                                                                @endforeach
-                                                                            @else
-                                                                                <span>Không tồn tại dữ liệu</span>
-                                                                            @endif
+                                                                        </div>
                                                                     
-                                                                        <h3>Mục III: Kiến nghị</h3>
-
-                                                                        @if (!empty($a['Request']))
-                                                                            <p style="padding: 20px">{{ $a['Request'] }}</p>
-                                                                        @else
-                                                                            <span>Không tồn tại dữ liệu</span>
-                                                                        @endif
                                                                     
-                                                                    <!-- Hiển thị thông tin về công việc tuần tới (Mục II) -->
-                                                                    
+                                                                    <p style="border-bottom: 1px solid #e5e7eb; margin-bottom: 0;"></p>
 
-                                                                    </div>
-                                                                
-                                                                
-                                                                <p style="border-bottom: 1px solid #e5e7eb; margin-bottom: 0;"></p>
-
+                                                    
+                                                            </div>
                                                 
-                                                        </div>
-                                            
-                                                </div>
-                                            @endforeach                
+                                                    </div>
+                                                @endforeach  
+                                            @else
+                                                <span>Không tồn tại dữ liệu</span>
+                                            @endif              
                                         @endif    
+                                    </div>
+                                @endif
+
+                                @if(!empty($resultLog))
+                                    @php
+                                        $createdDate = \Carbon\Carbon::parse($reportWork->created_at);
+                                        $weekNumber = $createdDate->weekOfYear;
+                                        $startDateOfWeek = $createdDate->startOfWeek()->format('d-m-Y');
+                                        $endDateOfWeek = $createdDate->endOfWeek()->format('d-m-Y');
+                                    @endphp
+                                    <div id="search-results-department">
+                                        <div style="border: 1px solid rgb(243 244 246 / var(--tw-bg-opacity));">
+                                            <h2 class="accordion-header" id="heading{{ $reportWork['id'] }}">
+
+                                                <button class="accordion-button collapsed" type="button"
+                                                        data-bs-toggle="collapse" data-bs-target="#collapse{{ $reportWork['id'] }}"
+                                                        aria-expanded="false" aria-controls="collapse{{ $reportWork['id'] }}">
+                                                        <span style="font-size: 20px;">Báo cáo tuần (Từ
+                                                                    ngày
+                                                                    {{ $startDateOfWeek }} đến {{ $endDateOfWeek }})</span>
+
+                                                </button>
+                                                </h2>
+                                                <div id="collapse{{ $reportWork['id'] }}" class="accordion-collapse collapse"
+                                                    style="visibility: unset" aria-labelledby="heading{{ $reportWork['id'] }}"
+                                                    data-bs-parent="#reportsAccordion">
+                                                    <h2 style="padding: 10px 0;">{{ $departmentName }}</h2>
+
+                                    
+                                                        @php
+                                                            $arrayValue = $resultLog;
+                                                            $workDone = !empty($arrayValues['WorkDone']) ? $arrayValues['WorkDone'] : [];
+                                    
+                                                            $expectedWork = !empty($arrayValues['ExpectedWork']) ? $arrayValues['ExpectedWork'] : [];
+                                                            $requestWork = !empty($arrayValues['Request']) ? $arrayValues['Request'] : [];
+                                                            $STT = 1;
+                                                            $STT_NEXT = 1;
+                                                        @endphp
+                                                        @foreach($arrayValue as $arrayValues)
+                                                            <div class="accordion-body">
+                                                                <h3>Mục I: Công việc đã làm</h3>
+                                                                    @if (!empty($arrayValues))
+                                                                        @foreach($arrayValues['WorkDone'] as $work)
+                                                                            <div style="padding: 10px;">
+                                                                                <div>
+                                                                                    <span
+                                                                                        style="font-size:  20px; font-weight: bold">{{ $STT++ }}.
+                                                                                    </span>
+                                                                                    <span style="font-size:  20px; font-weight: bold">{{ $work['work_done'] }}</span>
+                                                                                </div>
+                                                                                {{-- value_of_work --}}
+                                                                                <div style="display: flex; margin: 10px">
+                                                                                    <div
+                                                                                        style="display: flex; flex: 2; align-items: center">
+                                                                                        <span
+                                                                                            style="font-size:  18px; font-weight: bold">Ngày
+                                                                                            bắt
+                                                                                            đầu:</span>
+                                                                                        <div style="padding-left: 10px;">
+                                                                                            {{ $work['start_date'] }}
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div
+                                                                                        style="display: flex; flex: 2; align-items: center">
+                                                                                        <span
+                                                                                            style="font-size:  18px; font-weight: bold">Ngày
+                                                                                            kết
+                                                                                            thúc:</span>
+
+                                                                                        <div style="padding-left: 10px;">
+                                                                                            {{ $work['end_date'] }}
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                @if(!empty($work['work_status']))
+                                                                                <div style="display: flex; margin: 10px">
+
+                                                                                    <span
+                                                                                        style="font-size:  18px; font-weight: bold">Tiến
+                                                                                        độ:</span>
+
+                                                                                    <div style="padding-left: 10px;">
+                                                                                        {{ $work['work_status'] }}
+                                                                                    </div>
+                                                                                </div>
+                                                                                @endif
+                                                                                <div style="display: flex; margin: 10px">
+
+                                                                                    <span
+                                                                                        style="font-size:  18px; font-weight: bold">Nội
+                                                                                        dung:</span>
+
+                                                                                    <div style="padding-left: 10px;">
+                                                                                        {{ $work['description'] }}
+                                                                                    </div>
+                                                                                </div>
+
+                                                                            </div>
+                                                                        @endforeach
+                                                                    @else
+                                                                        <span>Không tồn tại dữ liệu</span>
+                                                                    @endif
+                                                        
+                                                                    @if (!empty($arrayValues))
+                                                                        <h3>Mục II: Công việc tuần tới</h3>
+                                                                        @foreach($arrayValues['ExpectedWork'] as $work)
+                                                                        <div style="padding: 10px;">
+                                                                            <div>
+                                                                                <span
+                                                                                    style="font-size:  20px; font-weight: bold">{{ $STT++ }}.
+                                                                                </span>
+                                                                                <span style="font-size:  20px; font-weight: bold">{{ $work['next_work'] }}</span>
+                                                                            </div>
+                                                                            {{-- value_of_work --}}
+                                                                            <div style="display: flex; margin: 10px">
+                                                                                <div
+                                                                                    style="display: flex; flex: 2; align-items: center">
+                                                                                    <span
+                                                                                        style="font-size:  18px; font-weight: bold">Ngày
+                                                                                        bắt
+                                                                                        đầu:</span>
+                                                                                    <div style="padding-left: 10px;">
+                                                                                        {{ $work['next_start_date'] }}
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div
+                                                                                    style="display: flex; flex: 2; align-items: center">
+                                                                                    <span
+                                                                                        style="font-size:  18px; font-weight: bold">Ngày
+                                                                                        kết
+                                                                                        thúc:</span>
+
+                                                                                    <div style="padding-left: 10px;">
+                                                                                        {{ $work['next_end_date'] }}
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div style="display: flex; margin: 10px">
+
+                                                                                <span
+                                                                                    style="font-size:  18px; font-weight: bold">Tiến
+                                                                                    độ:</span>
+
+                                                                                <div style="padding-left: 10px;">
+                                                                                    {{ $work['next_status_work'] }}
+                                                                                </div>
+                                                                            </div>
+                                                                            <div style="display: flex; margin: 10px">
+
+                                                                                <span
+                                                                                    style="font-size:  18px; font-weight: bold">Nội
+                                                                                    dung:</span>
+
+                                                                                <div style="padding-left: 10px;">
+                                                                                    {{ $work['next_description'] }}
+                                                                                </div>
+                                                                            </div>
+
+                                                                        </div>
+                                                                        @endforeach
+                                                                    @else
+                                                                        <span>Không tồn tại dữ liệu</span>
+                                                                    @endif
+                                                            
+                                                                <h3>Mục III: Kiến nghị</h3>
+
+                                                                @if (!empty($arrayValues['Request']))
+                                                                    <p style="padding: 20px">{{ $arrayValues['Request'] }}</p>
+                                                                @else
+                                                                    <span>Không tồn tại dữ liệu</span>
+                                                                @endif
+                                                            
+                                                            <!-- Hiển thị thông tin về công việc tuần tới (Mục II) -->
+                                                            </div>
+                                                        @endforeach
+                                                        
+                                                        
+                                                        <p style="border-bottom: 1px solid #e5e7eb; margin-bottom: 0;"></p>
+
+                                        
+                                                </div>
+                                    
+                                        </div>   
                                     </div>
                                 @endif
                             @endif
@@ -660,9 +868,7 @@
 
                                     </div>
                                 @endforeach
-                            @endif
-
-                            @if (Isset($reports) && Isset($reportCenter))
+                            @else
                                 <!-- <div class="alert alert-danger">
                                     <span>Không tồn tại dữ liệu</span>
                                 </div> -->
@@ -872,7 +1078,16 @@
         function updateHiddenInput() {
             var selectedOption = document.getElementById('departmentSelect').value;
             document.getElementById('departmentInput').value = selectedOption;
-            console.log( document.getElementById('departmentInput').value);
+        }
+
+        function updateEndDateHidden() {
+            var endDateValue = document.getElementById('end_date_admin').value;
+            document.getElementById('end_date_hidden').value = endDateValue;
+        }
+
+        function updateStartDateHidden() {
+            var startDateValue = document.getElementById('start_date_admin').value;
+            document.getElementById('start_date_hidden').value = startDateValue;
         }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>

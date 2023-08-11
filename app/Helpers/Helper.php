@@ -282,11 +282,11 @@ class Helper
         $sheet->setCellValue('L1', 'Kiến nghị');
     
         $row = 2;
-    
         foreach ($data['mergedArray'] as $item) {
             $departmentName = $item['DepartmentName'];
             $sheet->setCellValue('A' . $row, $departmentName);
-
+            $startRow = $row;
+            $requestRow = $row;
             if (!empty($item['WorkDone'])) {
                 foreach ($item['WorkDone'] as $workDone) {
                     $sheet->setCellValue('B' . $row, $workDone['work_done']);
@@ -294,24 +294,23 @@ class Helper
                     $sheet->setCellValue('D' . $row, $workDone['end_date']);
                     $sheet->setCellValue('E' . $row, $workDone['status_work']);
                     $sheet->setCellValue('F' . $row, $workDone['description']);
-                    $row++;
+                    $row++; 
                 }
             }
         
             if (!empty($item['ExpectedWork'])) {
                 foreach ($item['ExpectedWork'] as $expectedWork) {
-                    $sheet->setCellValue('G' . $row, $expectedWork['next_work']);
-                    $sheet->setCellValue('H' . $row, $expectedWork['next_start_date']);
-                    $sheet->setCellValue('I' . $row, $expectedWork['next_end_date']);
-                    $sheet->setCellValue('J' . $row, $expectedWork['next_status_work']);
-                    $sheet->setCellValue('K' . $row, $expectedWork['next_description']);
-                    $row++;
+                    $sheet->setCellValue('G' . $startRow, $expectedWork['next_work']);
+                    $sheet->setCellValue('H' . $startRow, $expectedWork['next_start_date']);
+                    $sheet->setCellValue('I' . $startRow, $expectedWork['next_end_date']);
+                    $sheet->setCellValue('J' . $startRow, $expectedWork['next_status_work']);
+                    $sheet->setCellValue('K' . $startRow, $expectedWork['next_description']);
+                    $startRow++;
                 }
             }
     
             $request = $item['Request'];
-            $sheet->setCellValue('L' . $row, $request);
-            $row++;
+            $sheet->setCellValue('L' . $requestRow, $request);
         }
     
         $writer = new Xlsx($spreadsheet);
@@ -342,12 +341,12 @@ class Helper
         $sheet->setCellValue('L1', 'Kiến nghị');
     
         $row = 2;
-        $a = 2;
     
         foreach ($data['mergedArray'] as $item) {
             $departmentName = $item['DepartmentName'];
             $sheet->setCellValue('A' . $row, $departmentName);
-
+            $startRow = $row;
+            $requestRow = $row;
             if (!empty($item['WorkDone'])) {
                 foreach ($item['WorkDone'] as $workDone) {
                     $sheet->setCellValue('B' . $row, $workDone['work_done']);
@@ -361,18 +360,17 @@ class Helper
         
             if (!empty($item['ExpectedWork'])) {
                 foreach ($item['ExpectedWork'] as $expectedWork) {
-                    $sheet->setCellValue('G' . $row, $expectedWork['next_work']);
-                    $sheet->setCellValue('H' . $row, $expectedWork['next_start_date']);
-                    $sheet->setCellValue('I' . $row, $expectedWork['next_end_date']);
-                    $sheet->setCellValue('J' . $row, $expectedWork['next_status_work']);
-                    $sheet->setCellValue('K' . $row, $expectedWork['next_description']);
-                    $row++;
+                    $sheet->setCellValue('G' . $startRow, $expectedWork['next_work']);
+                    $sheet->setCellValue('H' . $startRow, $expectedWork['next_start_date']);
+                    $sheet->setCellValue('I' . $startRow, $expectedWork['next_end_date']);
+                    $sheet->setCellValue('J' . $startRow, $expectedWork['next_status_work']);
+                    $sheet->setCellValue('K' . $startRow, $expectedWork['next_description']);
+                    $startRow++;
                 }
             }
     
             $request = $item['Request'];
-            $sheet->setCellValue('L' . $row, $request);
-            // $row++;
+            $sheet->setCellValue('L' . $requestRow, $request);
         }
     
         $writer = new Xlsx($spreadsheet);
