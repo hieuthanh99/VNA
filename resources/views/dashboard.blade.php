@@ -72,9 +72,6 @@
                                                     @endforeach
                                                 @endif
                                             @endif
-                                        @else 
-                                                @dd('!empty($departments) || !empty($departmentList)');
-
                                         @endif
                                     </select>
                                     <button type="submit" class="btn btn-primary">Tìm Kiếm</button>
