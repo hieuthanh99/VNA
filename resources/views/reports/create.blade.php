@@ -244,12 +244,12 @@
                                                 <div class="content-date">
                                                     <div >
                                                         <label class="item-job" for="ngay_sinh">Ngày bắt đầu:</label>
-                                                        <input required type="date" name="start_date[]" id="start_date" class="form-control" value="{{$value->next_start_date}}">
+                                                        <input type="date" name="start_date[]" id="start_date" class="form-control" value="{{$value->next_start_date}}">
                                     
                                                     </div>
                                                     <div style="margin-left: 50px;">
                                                         <label class="item-job" for="ngay_sinh">Kết thúc:</label>
-                                                        <input required type="date" name="end_date[]" id="end_date" class="form-control" value="{{$value->next_end_date}}">
+                                                        <input type="date" name="end_date[]" id="end_date" class="form-control" value="{{$value->next_end_date}}">
                                     
                                                     </div>
                                                 </div>
@@ -331,12 +331,12 @@
                 <div class="content-date">
                     <div >
                         <label class="item-job" for="ngay_sinh">Ngày bắt đầu:</label>
-                        <input required type="date" name="start_date[]" id="start_date" class="form-control" value="{{ old('start_date[]') }}">
+                        <input type="date" name="start_date[]" id="start_date" class="form-control" value="{{ old('start_date[]') }}">
     
                     </div>
                     <div style="margin-left: 50px;">
                         <label class="item-job" for="ngay_sinh">Kết thúc:</label>
-                        <input required type="date" name="end_date[]" id="end_date" class="form-control" value="{{ old('end_date[]') }}">
+                        <input type="date" name="end_date[]" id="end_date" class="form-control" value="{{ old('end_date[]') }}">
     
                     </div>
                 </div>
@@ -431,12 +431,12 @@
                 <div class="content-date">
                     <div >
                         <label class="item-job" for="ngay_sinh">Ngày bắt đầu:</label>
-                        <input required type="date" name="start_date_tuan_toi[]" id="start_date_tuan_toi[]" class="form-control" value="{{ old('start_date[]') }}">
+                        <input type="date" name="start_date_tuan_toi[]" id="start_date_tuan_toi[]" class="form-control" value="{{ old('start_date[]') }}">
     
                     </div>
                     <div style="margin-left: 50px;">
                         <label class="item-job" for="ngay_sinh">Kết thúc:</label>
-                        <input required type="date" name="end_date_tuan_toi[]" id="end_date_tuan_toi[]" class="form-control" value="{{ old('end_date[]') }}">
+                        <input type="date" name="end_date_tuan_toi[]" id="end_date_tuan_toi[]" class="form-control" value="{{ old('end_date[]') }}">
     
                     </div>
                 </div>
