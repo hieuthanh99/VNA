@@ -276,27 +276,31 @@
                                                             </div>
                                                             {{-- value_of_work --}}
                                                             <div style="display: flex; margin: 10px">
-                                                                <div
-                                                                    style="display: flex; flex: 2; align-items: center">
-                                                                    <span
-                                                                        style="font-size:  18px; font-weight: bold">Ngày
-                                                                        bắt
-                                                                        đầu:</span>
-                                                                    <div style="padding-left: 10px;">
-                                                                        {{ $work['start_date'] }}
+                                                                @if(!empty($work['start_date']))
+                                                                    <div
+                                                                        style="display: flex; flex: 2; align-items: center">
+                                                                        <span
+                                                                            style="font-size:  18px; font-weight: bold">Ngày
+                                                                            bắt
+                                                                            đầu:</span>
+                                                                        <div style="padding-left: 10px;">
+                                                                            {{ $work['start_date'] }}
+                                                                        </div>
                                                                     </div>
-                                                                </div>
-                                                                <div
-                                                                    style="display: flex; flex: 2; align-items: center">
-                                                                    <span
-                                                                        style="font-size:  18px; font-weight: bold">Ngày
-                                                                        kết
-                                                                        thúc:</span>
+                                                                @endif
+                                                                @if(!empty($work['end_date']))
+                                                                    <div
+                                                                        style="display: flex; flex: 2; align-items: center">
+                                                                        <span
+                                                                            style="font-size:  18px; font-weight: bold">Ngày
+                                                                            kết
+                                                                            thúc:</span>
 
-                                                                    <div style="padding-left: 10px;">
-                                                                        {{ $work['end_date'] }}
+                                                                        <div style="padding-left: 10px;">
+                                                                            {{ $work['end_date'] }}
+                                                                        </div>
                                                                     </div>
-                                                                </div>
+                                                                @endif
                                                             </div>
                                                             @if(!empty($work['status_work']))
                                                                 <div style="display: flex; margin: 10px">
@@ -337,16 +341,19 @@
                                                             </div>
                                                             {{-- value_of_work --}}
                                                             <div style="display: flex; margin: 10px">
-                                                                <div
-                                                                    style="display: flex; flex: 2; align-items: center">
-                                                                    <span
-                                                                        style="font-size:  18px; font-weight: bold">Ngày
-                                                                        bắt
-                                                                        đầu:</span>
-                                                                    <div style="padding-left: 10px;">
-                                                                        {{ $work['next_start_date'] }}
+                                                                @if(!empty($work['next_start_date']))
+                                                                    <div
+                                                                        style="display: flex; flex: 2; align-items: center">
+                                                                        <span
+                                                                            style="font-size:  18px; font-weight: bold">Ngày
+                                                                            bắt
+                                                                            đầu:</span>
+                                                                        <div style="padding-left: 10px;">
+                                                                            {{ $work['next_start_date'] }}
+                                                                        </div>
                                                                     </div>
-                                                                </div>
+                                                                @endif
+                                                                @if(!empty($work['next_end_date']))
                                                                 <div
                                                                     style="display: flex; flex: 2; align-items: center">
                                                                     <span
@@ -358,6 +365,7 @@
                                                                         {{ $work['next_end_date'] }}
                                                                     </div>
                                                                 </div>
+                                                                @endif
                                                             </div>
                                                             @if(!empty($work['next_status_work']))
                                                                 <div style="display: flex; margin: 10px">
