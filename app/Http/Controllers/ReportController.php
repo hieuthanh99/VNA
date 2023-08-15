@@ -78,11 +78,11 @@ class ReportController extends Controller
 
         $logs = Logs::Where('department_id', $department->id)->whereBetween('created_at', [$previousWeekStart, $previousWeekEnd])->first();
     //   dd($logs);
-        if(isset($logs)){
-            $values = json_decode($logs->values);
-            $expectedWorkValues = $values->ExpectedWork;
-            return view('reports.create', ['department' => $department, 'expectedWorkValues' => $expectedWorkValues ]);
-        }
+        // if(isset($logs)){
+        //     $values = json_decode($logs->values);
+        //     $expectedWorkValues = $values->ExpectedWork;
+        //     return view('reports.create', ['department' => $department, 'expectedWorkValues' => $expectedWorkValues ]);
+        // }
         return view('reports.create', ['department' => $department, 'expectedWorkValues' => null ]);
     }
 
