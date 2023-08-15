@@ -76,13 +76,13 @@ class ReportController extends Controller
         $user = Auth::user();
         $department = Department::find($user->department);
 
-        $logs = Logs::Where('department_id', $department->id)->whereBetween('created_at', [$previousWeekStart, $previousWeekEnd])->first();
-    //   dd($logs);
-        if(isset($logs)){
-            $values = json_decode($logs->values);
-            $expectedWorkValues = $values->ExpectedWork;
-            return view('reports.create', ['department' => $department, 'expectedWorkValues' => $expectedWorkValues ]);
-        }
+        // $logs = Logs::Where('department_id', $department->id)->whereBetween('created_at', [$previousWeekStart, $previousWeekEnd])->first();
+        // if(isset($logs)){
+        //     $values = json_decode($logs->values);
+        //     $expectedWorkValues = $values->ExpectedWork;
+        //     dd($values);
+        //     return view('reports.create', ['department' => $department, 'expectedWorkValues' => $expectedWorkValues ]);
+        // }
         return view('reports.create', ['department' => $department, 'expectedWorkValues' => null ]);
     }
 
@@ -261,7 +261,7 @@ class ReportController extends Controller
         // dd($$itemData->id);
         $user = Auth::user();
         $department = Department::find($user->department);
-        $report = Report::where('department_id', $department->id)->first();
+        $report = Report::where('id', $id)->first();
         
         $data = Task::where('report_id', $report->id)->get();
         $startDate = Carbon::now()->startOfWeek();
