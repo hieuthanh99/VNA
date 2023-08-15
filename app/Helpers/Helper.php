@@ -315,7 +315,7 @@ class Helper
     
         $writer = new Xlsx($spreadsheet);
     
-        $fileName = 'example.xlsx';
+        $fileName = 'report.xlsx';
         $filePath = storage_path('app/public/') . $fileName;
         $writer->save($filePath);
     
@@ -375,7 +375,7 @@ class Helper
     
         $writer = new Xlsx($spreadsheet);
     
-        $fileName = 'example.xlsx';
+        $fileName = 'report.xlsx';
         $filePath = storage_path('app/public/') . $fileName;
         $writer->save($filePath);
     
