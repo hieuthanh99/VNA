@@ -87,24 +87,20 @@
                             @if(empty($reports))
                                 @if(!empty($reportCenter) && empty($departmentId))
                                     <div id="search-results-date">
-                                        @foreach($reportCenter as $i)
-                                            @php
-
-                                            $createdDate = \Carbon\Carbon::parse($i->created_at);
-
-                                            $dayOfWeek = $createdDate->dayOfWeek;
-                                            if ($dayOfWeek > 6) {
-                                                $lastFriday = $createdDate->copy()->subDays($dayOfWeek - 5)->format('d-m-Y');
-                                                $thisThursday = $createdDate->copy()->addDays(4 - $dayOfWeek + 7)->format('d-m-Y');
-                                            } else {
-                                                $lastFriday = $createdDate->copy()->subDays($dayOfWeek + 6 - 4)->format('d-m-Y');
-                                                $thisThursday = $createdDate->copy()->addDays(4 - $dayOfWeek)->format('d-m-Y');
-                                            }
-                                            @endphp
-                                        @endforeach
-
                                         @if(!empty($reportCenter))
                                             @foreach ($reportCenter as $a)
+                                                @php
+                                                    $createdDate = \Carbon\Carbon::parse($a->created_at);
+
+                                                    $dayOfWeek = $createdDate->dayOfWeek;
+                                                    if ($dayOfWeek > 6) {
+                                                        $lastFriday = $createdDate->copy()->subDays($dayOfWeek - 5)->format('d-m-Y');
+                                                        $thisThursday = $createdDate->copy()->addDays(4 - $dayOfWeek + 7)->format('d-m-Y');
+                                                    } else {
+                                                        $lastFriday = $createdDate->copy()->subDays($dayOfWeek + 6 - 4)->format('d-m-Y');
+                                                        $thisThursday = $createdDate->copy()->addDays(4 - $dayOfWeek)->format('d-m-Y');
+                                                    }
+                                                @endphp
                                                 <div style="border: 1px solid rgb(243 244 246 / var(--tw-bg-opacity));">
                                                     <h2 class="accordion-header" id="heading{{ $a->id }}">
                                                             <button class="accordion-button collapsed" type="button"
