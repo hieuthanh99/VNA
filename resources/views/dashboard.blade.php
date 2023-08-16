@@ -87,21 +87,20 @@
                             @if(empty($reports))
                                 @if(!empty($reportCenter) && empty($departmentId))
                                     <div id="search-results-date">
-                                        @foreach($reportCenter as $i)
-                                            @php
-
-                                                $createdDate = \Carbon\Carbon::parse($i->created_at);
-
-                                                // dd($createdDate);
-                                                $weekNumber = $createdDate->weekOfYear;
-
-                                                $startDateOfWeek = $createdDate->startOfWeek()->format('d-m-Y');
-                                                $endDateOfWeek = $createdDate->endOfWeek()->format('d-m-Y');
-                                            @endphp
-                                        @endforeach
-
                                         @if(!empty($reportCenter))
                                             @foreach ($reportCenter as $a)
+                                                @php
+                                                    $createdDate = \Carbon\Carbon::parse($a->created_at);
+
+                                                    $dayOfWeek = $createdDate->dayOfWeek;
+                                                    if ($dayOfWeek > 6) {
+                                                        $lastFriday = $createdDate->copy()->subDays($dayOfWeek - 5)->format('d-m-Y');
+                                                        $thisThursday = $createdDate->copy()->addDays(4 - $dayOfWeek + 7)->format('d-m-Y');
+                                                    } else {
+                                                        $lastFriday = $createdDate->copy()->subDays($dayOfWeek + 6 - 4)->format('d-m-Y');
+                                                        $thisThursday = $createdDate->copy()->addDays(4 - $dayOfWeek)->format('d-m-Y');
+                                                    }
+                                                @endphp
                                                 <div style="border: 1px solid rgb(243 244 246 / var(--tw-bg-opacity));">
                                                     <h2 class="accordion-header" id="heading{{ $a->id }}">
                                                             <button class="accordion-button collapsed" type="button"
@@ -109,7 +108,7 @@
                                                                 aria-expanded="false" aria-controls="collapse{{ $a->id }}">
                                                                 <span style="font-size: 20px;">Báo cáo tuần (Từ
                                                                     ngày
-                                                                    {{ $startDateOfWeek }} đến {{ $endDateOfWeek }})</span>
+                                                                    {{ $lastFriday }} đến {{ $thisThursday }})</span>
 
                                                             </button>
                                                         </h2>
@@ -501,55 +500,133 @@
                                 @endif
 
                                 @if(!empty($resultLog))
-                                    @php
-                                        $createdDate = \Carbon\Carbon::parse($reportWork->created_at);
-                                        $weekNumber = $createdDate->weekOfYear;
-                                        $startDateOfWeek = $createdDate->startOfWeek()->format('d-m-Y');
-                                        $endDateOfWeek = $createdDate->endOfWeek()->format('d-m-Y');
-                                    @endphp
                                     <div id="search-results-department">
-                                        <div style="border: 1px solid rgb(243 244 246 / var(--tw-bg-opacity));">
-                                            <h2 class="accordion-header" id="heading{{ $reportWork['id'] }}">
+                                        @foreach($reportDataLog as $key => $work)
+                                            @php
+                                                $resultLog = json_decode($work->values, true);
+                                                $createdDate = \Carbon\Carbon::parse($work->date_start);
+                                                $weekNumber = $createdDate->weekOfYear;
 
-                                                <button class="accordion-button collapsed" type="button"
-                                                        data-bs-toggle="collapse" data-bs-target="#collapse{{ $reportWork['id'] }}"
-                                                        aria-expanded="false" aria-controls="collapse{{ $reportWork['id'] }}">
-                                                        <span style="font-size: 20px;">Báo cáo tuần (Từ
-                                                                    ngày
-                                                                    {{ $startDateOfWeek }} đến {{ $endDateOfWeek }})</span>
+                                                $dayOfWeek = $createdDate->dayOfWeek;
+                                                if ($dayOfWeek > 5) {
+                                                    $lastFriday = $createdDate->copy()->subDays($dayOfWeek - 5)->format('d-m-Y');
+                                                    $thisThursday = $createdDate->copy()->addDays(4 - $dayOfWeek + 7)->format('d-m-Y');
+                                                } else {
+                                                    $lastFriday = $createdDate->copy()->subDays($dayOfWeek + 6 - 4)->format('d-m-Y');
+                                                    $thisThursday = $createdDate->copy()->addDays(4 - $dayOfWeek)->format('d-m-Y');
+                                                }
+                                            @endphp
+                                            <div style="border: 1px solid rgb(243 244 246 / var(--tw-bg-opacity));">
+                                                    <h2 class="accordion-header" id="heading{{ $key }}">
 
-                                                </button>
-                                                </h2>
-                                                <div id="collapse{{ $reportWork['id'] }}" class="accordion-collapse collapse"
-                                                    style="visibility: unset" aria-labelledby="heading{{ $reportWork['id'] }}"
-                                                    data-bs-parent="#reportsAccordion">
-                                                    <h2 style="padding: 10px 0;">{{ $departmentName }}</h2>
+                                                        <button class="accordion-button collapsed" type="button"
+                                                                data-bs-toggle="collapse" data-bs-target="#collapse{{ $key }}"
+                                                                aria-expanded="false" aria-controls="collapse{{ $key }}">
+                                                                <span style="font-size: 20px;">Báo cáo tuần (Từ
+                                                                            ngày
+                                                                            {{ $lastFriday }} đến {{ $thisThursday }})</span>
 
-                                    
-                                                        @php
-                                                            $arrayValue = $resultLog;
-                                                            $workDone = !empty($arrayValues['WorkDone']) ? $arrayValues['WorkDone'] : [];
-                                    
-                                                            $expectedWork = !empty($arrayValues['ExpectedWork']) ? $arrayValues['ExpectedWork'] : [];
-                                                            $requestWork = !empty($arrayValues['Request']) ? $arrayValues['Request'] : [];
-                                                            $STT = 1;
-                                                            $STT_NEXT = 1;
-                                                        @endphp
-                                                        @foreach($arrayValue as $arrayValues)
+                                                        </button>
+                                                        </h2>
+                                                    <div id="collapse{{ $key }}" class="accordion-collapse collapse"
+                                                        style="visibility: unset" aria-labelledby="heading{{ $key }}"
+                                                        data-bs-parent="#reportsAccordion">
+                                                        <h2 style="padding: 10px 0;">{{ $departmentName }}</h2>
+
+                                        
+                                                            @php
+                                                                $arrayValues = $resultLog;
+                                                                $workDone = !empty($arrayValues['WorkDone']) ? $arrayValues['WorkDone'] : [];
+                                        
+                                                                $expectedWork = !empty($arrayValues['ExpectedWork']) ? $arrayValues['ExpectedWork'] : [];
+                                                                $requestWork = !empty($arrayValues['Request']) ? $arrayValues['Request'] : [];
+                                                                $STT = 1;
+                                                                $STT_NEXT = 1;
+                                                            @endphp
                                                             <div class="accordion-body">
                                                                 <h3>Mục I: Công việc đã làm</h3>
                                                                     @if (!empty($arrayValues))
-                                                                        @foreach($arrayValues['WorkDone'] as $work)
+                                                                        @foreach($arrayValues as $item)
+                                                                            @foreach($item['WorkDone'] as $work)
+                                                                                <div style="padding: 10px;">
+                                                                                    <div>
+                                                                                        <span
+                                                                                            style="font-size:  20px; font-weight: bold">{{ $STT++ }}.
+                                                                                        </span>
+                                                                                        <span style="font-size:  20px; font-weight: bold">{{ $work['work_done'] }}</span>
+                                                                                    </div>
+                                                                                    {{-- value_of_work --}}
+                                                                                    <div style="display: flex; margin: 10px">
+                                                                                        @if(!empty($work['start_date']))
+                                                                                        <div
+                                                                                            style="display: flex; flex: 2; align-items: center">
+                                                                                            <span
+                                                                                                style="font-size:  18px; font-weight: bold">Ngày
+                                                                                                bắt
+                                                                                                đầu:</span>
+                                                                                            <div style="padding-left: 10px;">
+                                                                                                {{ $work['start_date'] }}
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        @endif
+                                                                                        @if(!empty($work['end_date']))
+                                                                                        <div
+                                                                                            style="display: flex; flex: 2; align-items: center">
+                                                                                            <span
+                                                                                                style="font-size:  18px; font-weight: bold">Ngày
+                                                                                                kết
+                                                                                                thúc:</span>
+
+                                                                                            <div style="padding-left: 10px;">
+                                                                                                {{ $work['end_date'] }}
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        @endif
+                                                                                    </div>
+                                                                                    @if(!empty($work['work_status']))
+                                                                                    <div style="display: flex; margin: 10px">
+
+                                                                                        <span
+                                                                                            style="font-size:  18px; font-weight: bold">Tiến
+                                                                                            độ:</span>
+
+                                                                                        <div style="padding-left: 10px;">
+                                                                                            {{ $work['work_status'] }}
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    @endif
+                                                                                    <div style="display: flex; margin: 10px">
+
+                                                                                        <span
+                                                                                            style="font-size:  18px; font-weight: bold">Nội
+                                                                                            dung:</span>
+
+                                                                                        <div style="padding-left: 10px;">
+                                                                                            {{ $work['description'] }}
+                                                                                        </div>
+                                                                                    </div>
+
+                                                                                </div>
+                                                                            @endforeach
+                                                                        @endforeach        
+                                                                    @else
+                                                                        <span>Không tồn tại dữ liệu</span>
+                                                                    @endif
+                                                        
+                                                                    @if (!empty($arrayValues))
+                                                                        <h3>Mục II: Công việc tuần tới</h3>
+                                                                        @foreach($arrayValues as $item)
+                                                                            @foreach($item['ExpectedWork'] as $work)
                                                                             <div style="padding: 10px;">
                                                                                 <div>
                                                                                     <span
                                                                                         style="font-size:  20px; font-weight: bold">{{ $STT++ }}.
                                                                                     </span>
-                                                                                    <span style="font-size:  20px; font-weight: bold">{{ $work['work_done'] }}</span>
+                                                                                    <span style="font-size:  20px; font-weight: bold">{{ $work['next_work'] }}</span>
                                                                                 </div>
                                                                                 {{-- value_of_work --}}
                                                                                 <div style="display: flex; margin: 10px">
-                                                                                    @if(!empty($work['start_date']))
+                                                                                    @if(!empty($work['next_start_date']))
                                                                                     <div
                                                                                         style="display: flex; flex: 2; align-items: center">
                                                                                         <span
@@ -557,11 +634,11 @@
                                                                                             bắt
                                                                                             đầu:</span>
                                                                                         <div style="padding-left: 10px;">
-                                                                                            {{ $work['start_date'] }}
+                                                                                            {{ $work['next_start_date'] }}
                                                                                         </div>
                                                                                     </div>
                                                                                     @endif
-                                                                                    @if(!empty($work['end_date']))
+                                                                                    @if(!empty($work['next_end_date']))
                                                                                     <div
                                                                                         style="display: flex; flex: 2; align-items: center">
                                                                                         <span
@@ -570,12 +647,12 @@
                                                                                             thúc:</span>
 
                                                                                         <div style="padding-left: 10px;">
-                                                                                            {{ $work['end_date'] }}
+                                                                                            {{ $work['next_end_date'] }}
                                                                                         </div>
                                                                                     </div>
                                                                                     @endif
                                                                                 </div>
-                                                                                @if(!empty($work['work_status']))
+                                                                                @if(!empty($work['next_status_work']))
                                                                                 <div style="display: flex; margin: 10px">
 
                                                                                     <span
@@ -583,7 +660,7 @@
                                                                                         độ:</span>
 
                                                                                     <div style="padding-left: 10px;">
-                                                                                        {{ $work['work_status'] }}
+                                                                                        {{ $work['next_status_work'] }}
                                                                                     </div>
                                                                                 </div>
                                                                                 @endif
@@ -594,78 +671,12 @@
                                                                                         dung:</span>
 
                                                                                     <div style="padding-left: 10px;">
-                                                                                        {{ $work['description'] }}
+                                                                                        {{ $work['next_description'] }}
                                                                                     </div>
                                                                                 </div>
 
                                                                             </div>
-                                                                        @endforeach
-                                                                    @else
-                                                                        <span>Không tồn tại dữ liệu</span>
-                                                                    @endif
-                                                        
-                                                                    @if (!empty($arrayValues))
-                                                                        <h3>Mục II: Công việc tuần tới</h3>
-                                                                        @foreach($arrayValues['ExpectedWork'] as $work)
-                                                                        <div style="padding: 10px;">
-                                                                            <div>
-                                                                                <span
-                                                                                    style="font-size:  20px; font-weight: bold">{{ $STT++ }}.
-                                                                                </span>
-                                                                                <span style="font-size:  20px; font-weight: bold">{{ $work['next_work'] }}</span>
-                                                                            </div>
-                                                                            {{-- value_of_work --}}
-                                                                            <div style="display: flex; margin: 10px">
-                                                                                @if(!empty($work['next_start_date']))
-                                                                                <div
-                                                                                    style="display: flex; flex: 2; align-items: center">
-                                                                                    <span
-                                                                                        style="font-size:  18px; font-weight: bold">Ngày
-                                                                                        bắt
-                                                                                        đầu:</span>
-                                                                                    <div style="padding-left: 10px;">
-                                                                                        {{ $work['next_start_date'] }}
-                                                                                    </div>
-                                                                                </div>
-                                                                                @endif
-                                                                                @if(!empty($work['next_end_date']))
-                                                                                <div
-                                                                                    style="display: flex; flex: 2; align-items: center">
-                                                                                    <span
-                                                                                        style="font-size:  18px; font-weight: bold">Ngày
-                                                                                        kết
-                                                                                        thúc:</span>
-
-                                                                                    <div style="padding-left: 10px;">
-                                                                                        {{ $work['next_end_date'] }}
-                                                                                    </div>
-                                                                                </div>
-                                                                                @endif
-                                                                            </div>
-                                                                            @if(!empty($work['next_status_work']))
-                                                                            <div style="display: flex; margin: 10px">
-
-                                                                                <span
-                                                                                    style="font-size:  18px; font-weight: bold">Tiến
-                                                                                    độ:</span>
-
-                                                                                <div style="padding-left: 10px;">
-                                                                                    {{ $work['next_status_work'] }}
-                                                                                </div>
-                                                                            </div>
-                                                                            @endif
-                                                                            <div style="display: flex; margin: 10px">
-
-                                                                                <span
-                                                                                    style="font-size:  18px; font-weight: bold">Nội
-                                                                                    dung:</span>
-
-                                                                                <div style="padding-left: 10px;">
-                                                                                    {{ $work['next_description'] }}
-                                                                                </div>
-                                                                            </div>
-
-                                                                        </div>
+                                                                            @endforeach
                                                                         @endforeach
                                                                     @else
                                                                         <span>Không tồn tại dữ liệu</span>
@@ -681,15 +692,15 @@
                                                             
                                                             <!-- Hiển thị thông tin về công việc tuần tới (Mục II) -->
                                                             </div>
-                                                        @endforeach
-                                                        
-                                                        
-                                                        <p style="border-bottom: 1px solid #e5e7eb; margin-bottom: 0;"></p>
+                                                            
+                                                            
+                                                            <p style="border-bottom: 1px solid #e5e7eb; margin-bottom: 0;"></p>
 
+                                            
+                                                    </div>
                                         
-                                                </div>
-                                    
-                                        </div>   
+                                            </div>   
+                                        @endforeach
                                     </div>
                                 @endif
                             @endif
@@ -698,10 +709,14 @@
                                     <div class="accordion-item">
                                         @php
                                             $createdDate = \Carbon\Carbon::parse($report->created_at);
-                                            // dd($createdDate);
-                                            $weekNumber = $createdDate->weekOfYear;
-                                            $startDateOfWeek = $createdDate->startOfWeek()->format('d-m-Y');
-                                            $endDateOfWeek = $createdDate->endOfWeek()->format('d-m-Y');
+                                            $dayOfWeek = $createdDate->dayOfWeek;
+                                            if ($dayOfWeek >= 6) {
+                                                $lastFriday = $createdDate->copy()->subDays($dayOfWeek - 5)->format('d-m-Y');
+                                                $thisThursday = $createdDate->copy()->addDays(4 - $dayOfWeek + 7)->format('d-m-Y');
+                                            } else {
+                                                $lastFriday = $createdDate->copy()->subDays($dayOfWeek + 6 - 4)->format('d-m-Y');
+                                                $thisThursday = $createdDate->copy()->addDays(4 - $dayOfWeek)->format('d-m-Y');
+                                            }
                                             
                                         @endphp
                                         <h2 class="accordion-header" id="heading{{ $report->id }}">
@@ -710,7 +725,7 @@
                                                 aria-expanded="false" aria-controls="collapse{{ $report->id }}">
                                                 <span style="font-size: 20px;">Báo cáo tuần {{ $Week++ }} (Từ
                                                     ngày
-                                                    {{ $startDateOfWeek }} đến {{ $endDateOfWeek }})</span>
+                                                    {{ $lastFriday }} đến {{ $thisThursday }})</span>
 
                                             </button>
                                         </h2>
@@ -929,18 +944,23 @@
                                         $STT_NEXT = 1;
                                         $nameDepartment = $arrayValues['DepartmentName'] ?? '';
                                         $createdDate = \Carbon\Carbon::parse($array->created_at);
-                                        // dd($createdDate);
-                                        $weekNumber = $createdDate->weekOfYear;
-                                        $startDateOfWeek = $createdDate->startOfWeek()->format('d-m-Y');
-                                        $endDateOfWeek = $createdDate->endOfWeek()->format('d-m-Y');
-                                        
+
+
+                                        $dayOfWeek = $createdDate->dayOfWeek;
+                                        if ($dayOfWeek >= 5) {
+                                            $lastFriday = $createdDate->copy()->subDays($dayOfWeek - 5)->format('d-m-Y');
+                                            $thisThursday = $createdDate->copy()->addDays(4 - $dayOfWeek + 7)->format('d-m-Y');
+                                        } else {
+                                            $lastFriday = $createdDate->copy()->subDays($dayOfWeek + 6 - 4)->format('d-m-Y');
+                                            $thisThursday = $createdDate->copy()->addDays(4 - $dayOfWeek)->format('d-m-Y');
+                                        }
                                     @endphp
                                     <h2 class="accordion-header" id="heading{{ $array->id }}">
                                         <button class="accordion-button collapsed" type="button"
                                             data-bs-toggle="collapse" data-bs-target="#collapse{{ $array->id }}"
                                             aria-expanded="false" aria-controls="collapse{{ $array->id }}">
                                             <span style="font-size: 20px;">Công việc tuần {{ $Week++ }} (Từ ngày
-                                                {{ $startDateOfWeek }} đến {{ $endDateOfWeek }})</span>
+                                                {{ $lastFriday }} đến {{ $thisThursday }})</span>
 
                                         </button>
                                     </h2>

@@ -47,10 +47,23 @@ class ReportDateController extends Controller
         $startTime = \Carbon\Carbon::parse($startDate);
         $endTime = \Carbon\Carbon::parse($endDate);
 
-        $startDateOfWeekInput = $startTime->startOfWeek();
-        $endDateOfWeekInput = $endTime->endOfWeek();
+        // $startDateOfWeekInput = $startTime->startOfWeek();
+        // $endDateOfWeekInput = $endTime->endOfWeek();
 
+        $dayOfWeek = $startTime->dayOfWeek;
+        if ($dayOfWeek >= 5) {
+            $startDateOfWeekInput = $startTime->copy()->subDays($dayOfWeek - 5);
 
+        } else {
+            $startDateOfWeekInput = $startTime->copy()->subDays($dayOfWeek + 6 - 4);
+        }
+
+        $dayOfWeek = $endTime->dayOfWeek;
+        if ($dayOfWeek >= 5) {
+            $endDateOfWeekInput = $endTime->copy()->addDays(4 - $dayOfWeek + 7);
+        } else {
+            $endDateOfWeekInput = $endTime->copy()->addDays(4 - $dayOfWeek);
+        }
 
         $reportDates = Logs::whereBetween('created_at', [$startDate, $endDate])->get();
         $reportData = Logs::all();
@@ -68,10 +81,16 @@ class ReportDateController extends Controller
                     $id = $item['DepartmentId'];
                     if ($id == $departmentId) {
                        $dataDepartment[] = $item;
-                       $createdDate = \Carbon\Carbon::parse($reportCenter->created_at);
-                       $startDateOfWeek = $createdDate->startOfWeek()->format('d-m-Y');
-                       $endDateOfWeek = $createdDate->endOfWeek()->format('d-m-Y');
-                       $departmentReportDate[] ="Báo cáo tuần (Từ ngày " . $startDateOfWeek ." đến " .$endDateOfWeek. ")";
+                       $createdDate = \Carbon\Carbon::parse($reportCenter->date_start);
+                        $dayOfWeek = $createdDate->dayOfWeek;
+                        if ($dayOfWeek >= 5) {
+                            $lastFriday = $createdDate->copy()->subDays($dayOfWeek - 5)->format('d-m-Y');
+                            $thisThursday = $createdDate->copy()->addDays(4 - $dayOfWeek + 7)->format('d-m-Y');
+                        } else {
+                            $lastFriday = $createdDate->copy()->subDays($dayOfWeek + 6 - 4)->format('d-m-Y');
+                            $thisThursday = $createdDate->copy()->addDays(4 - $dayOfWeek)->format('d-m-Y');
+                        }
+                       $departmentReportDate[] ="Báo cáo tuần (Từ ngày " . $lastFriday ." đến " .$thisThursday. ")";
    
                        continue;
                     }
@@ -83,30 +102,42 @@ class ReportDateController extends Controller
         if(!empty($startDate) && !empty($endDate) && !empty($departmentId)) {
             $reportCen = ReportCenter::whereBetween('date_start', [$startDateOfWeekInput, $endDateOfWeekInput])
             ->where('status', '1')
-            ->get();
+            ->get()->all();
             $data = [];
             $name = '';
-
-            foreach($reportCen as  $reportWork) {
-                $resultLog = json_decode($reportWork->values, true);
-
-                foreach ($resultLog as $item) {
-                    $departmentIdLog = $item['DepartmentId'];
-                    if ($departmentIdLog == $departmentId) {
-                        $data[] = $item;
-                        $departmentData = Department::find($departmentId);
-                        $departmentName = $departmentData->name;    
-                        $name = $departmentName;
-
-                        continue;
+            if(!empty($reportCen)) {
+                foreach($reportCen as  $reportWork) {
+                    $resultLog = json_decode($reportWork->values, true);
+                    $reportDataLog[] = $reportWork;
+                    foreach ($resultLog as $item) {
+                        $departmentIdLog = $item['DepartmentId'];
+                        if ($departmentIdLog == $departmentId) {
+                            $data[] = $item;
+                            $departmentData = Department::find($departmentId);
+                            $departmentName = $departmentData->name;    
+                            $name = $departmentName;
+    
+                            continue;
+                        }
                     }
                 }
+                return view('dashboard', ['reportDates' => $reportDates,
+                'departmentList' => $departmentList ,
+                'reportWork' => $reportWork ,
+                'departmentName' => $name ,
+                'departmentIdLog' => $departmentIdLog ,
+                'departmentReportDate' => $departmentReportDate ,
+                'resultLog' => $data ,
+                'dataReportCenter' => $dataReportCenter,
+                'departmentId' => $departmentId,
+                'startDate' => $startDate,
+                'endDate' => $endDate ,
+                'reportDataLog' => $reportDataLog,
+                'reportData' => $reportData ,'reports' => []]);
             }
             return view('dashboard', ['reportDates' => $reportDates,
             'departmentList' => $departmentList ,
-            'reportWork' => $reportWork ,
             'departmentName' => $name ,
-            'departmentIdLog' => $departmentIdLog ,
             'departmentReportDate' => $departmentReportDate ,
             'resultLog' => $data ,
             'dataReportCenter' => $dataReportCenter,
