@@ -108,7 +108,7 @@ class ReportDateController extends Controller
             if(!empty($reportCen)) {
                 foreach($reportCen as  $reportWork) {
                     $resultLog = json_decode($reportWork->values, true);
-    
+                    $reportDataLog[] = $reportWork;
                     foreach ($resultLog as $item) {
                         $departmentIdLog = $item['DepartmentId'];
                         if ($departmentIdLog == $departmentId) {
@@ -132,6 +132,7 @@ class ReportDateController extends Controller
                 'departmentId' => $departmentId,
                 'startDate' => $startDate,
                 'endDate' => $endDate ,
+                'reportDataLog' => $reportDataLog,
                 'reportData' => $reportData ,'reports' => []]);
             }
             return view('dashboard', ['reportDates' => $reportDates,
