@@ -90,13 +90,16 @@
                                         @foreach($reportCenter as $i)
                                             @php
 
-                                                $createdDate = \Carbon\Carbon::parse($i->created_at);
+                                            $createdDate = \Carbon\Carbon::parse($i->created_at);
 
-                                                // dd($createdDate);
-                                                $weekNumber = $createdDate->weekOfYear;
-
-                                                $startDateOfWeek = $createdDate->startOfWeek()->format('d-m-Y');
-                                                $endDateOfWeek = $createdDate->endOfWeek()->format('d-m-Y');
+                                            $dayOfWeek = $createdDate->dayOfWeek;
+                                            if ($dayOfWeek > 6) {
+                                                $lastFriday = $createdDate->copy()->subDays($dayOfWeek - 5)->format('d-m-Y');
+                                                $thisThursday = $createdDate->copy()->addDays(4 - $dayOfWeek + 7)->format('d-m-Y');
+                                            } else {
+                                                $lastFriday = $createdDate->copy()->subDays($dayOfWeek + 6 - 4)->format('d-m-Y');
+                                                $thisThursday = $createdDate->copy()->addDays(4 - $dayOfWeek)->format('d-m-Y');
+                                            }
                                             @endphp
                                         @endforeach
 
@@ -109,7 +112,7 @@
                                                                 aria-expanded="false" aria-controls="collapse{{ $a->id }}">
                                                                 <span style="font-size: 20px;">Báo cáo tuần (Từ
                                                                     ngày
-                                                                    {{ $startDateOfWeek }} đến {{ $endDateOfWeek }})</span>
+                                                                    {{ $lastFriday }} đến {{ $thisThursday }})</span>
 
                                                             </button>
                                                         </h2>
@@ -502,10 +505,17 @@
 
                                 @if(!empty($resultLog))
                                     @php
-                                        $createdDate = \Carbon\Carbon::parse($reportWork->created_at);
+                                        $createdDate = \Carbon\Carbon::parse($reportWork->date_start);
                                         $weekNumber = $createdDate->weekOfYear;
-                                        $startDateOfWeek = $createdDate->startOfWeek()->format('d-m-Y');
-                                        $endDateOfWeek = $createdDate->endOfWeek()->format('d-m-Y');
+
+                                        $dayOfWeek = $createdDate->dayOfWeek;
+                                        if ($dayOfWeek > 5) {
+                                            $lastFriday = $createdDate->copy()->subDays($dayOfWeek - 5)->format('d-m-Y');
+                                            $thisThursday = $createdDate->copy()->addDays(4 - $dayOfWeek + 7)->format('d-m-Y');
+                                        } else {
+                                            $lastFriday = $createdDate->copy()->subDays($dayOfWeek + 6 - 4)->format('d-m-Y');
+                                            $thisThursday = $createdDate->copy()->addDays(4 - $dayOfWeek)->format('d-m-Y');
+                                        }
                                     @endphp
                                     <div id="search-results-department">
                                         <div style="border: 1px solid rgb(243 244 246 / var(--tw-bg-opacity));">
@@ -516,7 +526,7 @@
                                                         aria-expanded="false" aria-controls="collapse{{ $reportWork['id'] }}">
                                                         <span style="font-size: 20px;">Báo cáo tuần (Từ
                                                                     ngày
-                                                                    {{ $startDateOfWeek }} đến {{ $endDateOfWeek }})</span>
+                                                                    {{ $lastFriday }} đến {{ $thisThursday }})</span>
 
                                                 </button>
                                                 </h2>
@@ -698,10 +708,14 @@
                                     <div class="accordion-item">
                                         @php
                                             $createdDate = \Carbon\Carbon::parse($report->created_at);
-                                            // dd($createdDate);
-                                            $weekNumber = $createdDate->weekOfYear;
-                                            $startDateOfWeek = $createdDate->startOfWeek()->format('d-m-Y');
-                                            $endDateOfWeek = $createdDate->endOfWeek()->format('d-m-Y');
+                                            $dayOfWeek = $createdDate->dayOfWeek;
+                                            if ($dayOfWeek >= 6) {
+                                                $lastFriday = $createdDate->copy()->subDays($dayOfWeek - 5)->format('d-m-Y');
+                                                $thisThursday = $createdDate->copy()->addDays(4 - $dayOfWeek + 7)->format('d-m-Y');
+                                            } else {
+                                                $lastFriday = $createdDate->copy()->subDays($dayOfWeek + 6 - 4)->format('d-m-Y');
+                                                $thisThursday = $createdDate->copy()->addDays(4 - $dayOfWeek)->format('d-m-Y');
+                                            }
                                             
                                         @endphp
                                         <h2 class="accordion-header" id="heading{{ $report->id }}">
@@ -710,7 +724,7 @@
                                                 aria-expanded="false" aria-controls="collapse{{ $report->id }}">
                                                 <span style="font-size: 20px;">Báo cáo tuần {{ $Week++ }} (Từ
                                                     ngày
-                                                    {{ $startDateOfWeek }} đến {{ $endDateOfWeek }})</span>
+                                                    {{ $lastFriday }} đến {{ $thisThursday }})</span>
 
                                             </button>
                                         </h2>
@@ -929,18 +943,23 @@
                                         $STT_NEXT = 1;
                                         $nameDepartment = $arrayValues['DepartmentName'] ?? '';
                                         $createdDate = \Carbon\Carbon::parse($array->created_at);
-                                        // dd($createdDate);
-                                        $weekNumber = $createdDate->weekOfYear;
-                                        $startDateOfWeek = $createdDate->startOfWeek()->format('d-m-Y');
-                                        $endDateOfWeek = $createdDate->endOfWeek()->format('d-m-Y');
-                                        
+
+
+                                        $dayOfWeek = $createdDate->dayOfWeek;
+                                        if ($dayOfWeek >= 5) {
+                                            $lastFriday = $createdDate->copy()->subDays($dayOfWeek - 5)->format('d-m-Y');
+                                            $thisThursday = $createdDate->copy()->addDays(4 - $dayOfWeek + 7)->format('d-m-Y');
+                                        } else {
+                                            $lastFriday = $createdDate->copy()->subDays($dayOfWeek + 6 - 4)->format('d-m-Y');
+                                            $thisThursday = $createdDate->copy()->addDays(4 - $dayOfWeek)->format('d-m-Y');
+                                        }
                                     @endphp
                                     <h2 class="accordion-header" id="heading{{ $array->id }}">
                                         <button class="accordion-button collapsed" type="button"
                                             data-bs-toggle="collapse" data-bs-target="#collapse{{ $array->id }}"
                                             aria-expanded="false" aria-controls="collapse{{ $array->id }}">
                                             <span style="font-size: 20px;">Công việc tuần {{ $Week++ }} (Từ ngày
-                                                {{ $startDateOfWeek }} đến {{ $endDateOfWeek }})</span>
+                                                {{ $lastFriday }} đến {{ $thisThursday }})</span>
 
                                         </button>
                                     </h2>
