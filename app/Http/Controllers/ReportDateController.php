@@ -51,8 +51,9 @@ class ReportDateController extends Controller
         // $endDateOfWeekInput = $endTime->endOfWeek();
 
         $dayOfWeek = $startTime->dayOfWeek;
-        if ($dayOfWeek > 5) {
+        if ($dayOfWeek >= 5) {
             $startDateOfWeekInput = $startTime->copy()->subDays($dayOfWeek - 5);
+
         } else {
             $startDateOfWeekInput = $startTime->copy()->subDays($dayOfWeek + 6 - 4);
         }
