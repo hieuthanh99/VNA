@@ -5,7 +5,11 @@
         align-items: center;
         justify-content: space-between;">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Báo cáo tuần Khối dịch vụ (' . $startDate . ' đến ' . $endDate . ')') }}
+                @if(!empty($record)) 
+                    {{ __('Báo cáo tuần Khối dịch vụ (' . $startDateOfWeekInput . ' đến ' . $endDateOfWeekInput . ')') }}
+                @else 
+                    {{ __('Báo cáo tuần Khối dịch vụ (' . $startDate . ' đến ' . $endDate . ')') }}
+                @endif
             </h2>
             <div style="display: flex;">
                 <form style="margin: 0 20px;" action="{{ route('centers.run') }}" method="POST">
@@ -228,7 +232,6 @@
 
                                     @php
                                         $Week = 1;
-                                        
                                         $createdDate = \Carbon\Carbon::parse($record->created_at);
                                         // dd($createdDate);
                                         $weekNumber = $createdDate->weekOfYear;
@@ -240,10 +243,15 @@
                                         <button class="accordion-button collapsed" type="button"
                                             data-bs-toggle="collapse" data-bs-target="#collapse{{ $record->id }}"
                                             aria-expanded="false" aria-controls="collapse{{ $record->id }}">
-                                            <span style="font-size: 20px;">Báo cáo tuần Khối dịch vụ (Từ
-                                                ngày
-                                                {{ $startDateOfWeek }} đến {{ $endDateOfWeek }})</span>
-
+                                            @if(!empty($record)) 
+                                                <span style="font-size: 20px;">Báo cáo tuần Khối dịch vụ (Từ
+                                                    ngày
+                                                    {{ $startDateOfWeekInput }} đến {{ $endDateOfWeekInput }})</span>
+                                            @else 
+                                                <span style="font-size: 20px;">Báo cáo tuần Khối dịch vụ (Từ
+                                                    ngày
+                                                    {{ $startDate }} đến {{ $endDate }})</span>
+                                            @endif
                                         </button>
                                     </h2>
                                     <div id="collapse{{ $record->id }}" class="accordion-collapse collapse"
