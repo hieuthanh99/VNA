@@ -44,7 +44,7 @@ class ReportCenterController extends Controller
             }
             return view('centers.index', ['record' => $record,'startDateOfWeekInput' => $startDateOfWeekInput,'endDateOfWeekInput' => $endDateOfWeekInput , 'data' => $mergedArray, 'startDate' => $startDate->format('d-m-Y'), 'endDate' => $endDateWeek->format('d-m-Y')]);
         }
-        return view('centers.index', ['record' => $record, 'data' => $mergedArray, 'startDate' => $lastFridayFormatted, 'endDate' => $thisThursdayFormatted->format('d-m-Y')]);
+        return view('centers.index', ['record' => $record, 'data' => $mergedArray, 'startDate' => $lastFridayFormatted, 'endDate' => $thisThursdayFormatted]);
     }
 
     /**
