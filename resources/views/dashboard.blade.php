@@ -503,7 +503,7 @@
                                     <div id="search-results-department">
                                         @foreach($reportDataLog as $key => $work)
                                             @php
-                                                $resultLog = json_decode($work->values, true);
+                                                $resultLogDepartment = json_decode($work->values, true);
                                                 $createdDate = \Carbon\Carbon::parse($work->date_start);
                                                 $weekNumber = $createdDate->weekOfYear;
 

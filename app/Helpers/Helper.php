@@ -104,7 +104,6 @@ class Helper
                 ];
             }
         }
-    
         // Trả về một mảng chứa các giá trị cần trả về
         return [
             'mergedArray' => $mergedArray,
@@ -116,8 +115,20 @@ class Helper
     public static function pdf()
     {
         $data = Helper::reportWeeked();
-        //dd($data);      
-        $pdf = PDF::loadView('pdf.template',['department' => $data['mergedArray']]);
+        $record = $data['record'];
+        if(!empty($record)) {
+            $dataDate =  $record->date_start;
+            $dateCarbon = Carbon::parse($dataDate);
+            $dayOfWeek = Carbon::parse($record->date_start)->dayOfWeek;
+            if ($dayOfWeek > 5) {
+                $startDateOfWeekInput = $dateCarbon->copy()->subDays($dayOfWeek - 5)->format('d-m-Y');
+                $endDateOfWeekInput = $dateCarbon->copy()->addDays(4 - $dayOfWeek + 7)->format('d-m-Y');
+            } else {
+                $startDateOfWeekInput = $dateCarbon->copy()->subDays($dayOfWeek + 6 - 4)->format('d-m-Y');
+                $endDateOfWeekInput = $dateCarbon->copy()->addDays(4 - $dayOfWeek)->format('d-m-Y');
+            }
+        }
+        $pdf = PDF::loadView('pdf.template',['department' => $data['mergedArray'],'startDateOfWeekInput' => $startDateOfWeekInput, "endDateOfWeekInput" => $endDateOfWeekInput]);
 
         return $pdf->download('report.pdf');
     }
@@ -134,56 +145,85 @@ class Helper
     public static function word() {
         // Truyền dữ liệu vào để in ra bản Word
         $data = Helper::reportWeeked();
+        $record = $data['record'];
         $phpWord = new PhpWord();
         $section = $phpWord->addSection();
         // Lặp qua mảng dữ liệu và thêm từng dòng vào tài liệu Word
+        if(!empty($record)) {
+            $dataDate =  $record->date_start;
+            $dateCarbon = Carbon::parse($dataDate);
+            $dayOfWeek = Carbon::parse($record->date_start)->dayOfWeek;
+            if ($dayOfWeek > 5) {
+                $startDateOfWeekInput = $dateCarbon->copy()->subDays($dayOfWeek - 5)->format('d-m-Y');
+                $endDateOfWeekInput = $dateCarbon->copy()->addDays(4 - $dayOfWeek + 7)->format('d-m-Y');
+            } else {
+                $startDateOfWeekInput = $dateCarbon->copy()->subDays($dayOfWeek + 6 - 4)->format('d-m-Y');
+                $endDateOfWeekInput = $dateCarbon->copy()->addDays(4 - $dayOfWeek)->format('d-m-Y');
+            }
+            
+            $section->addText("              BÁO CÁO CÔNG VIỆC TUẦN ($startDateOfWeekInput – $endDateOfWeekInput)", ['size' => 12, 'bold' => true]);
+            $section->addTextBreak(3);
+        }
         $data = $data['mergedArray'];
         foreach ($data as $item) {
             // Thêm thông tin về phòng
-            $section->addText($item['DepartmentName'], ['size' => 16, 'bold' => true]);
+            $section->addText($item['DepartmentName'], ['size' => 11, 'bold' => true]);
+            $section->addTextBreak(1);
+            $STTWorkDone = 1;
+            $STTExpectedWork = 1;
             if(!empty($item['WorkDone'])) {
-
-            
                 // Thêm thông tin về công việc đã làm
-                $section->addText("Công việc đã thực hiện:", ['size' => 14, 'bold' => true]);
+                $section->addText("I. Công việc đã thực hiện:", ['size' => 11, 'bold' => true]);
+                $section->addTextBreak(1);
                 foreach ($item['WorkDone'] as $workDone) {
-                    $section->addText("Công việc đã thực hiện: " . $workDone['work_done'], ['size' => 14, 'bold' => false]);
-                    $section->addText("Nội dung: " . $workDone['description'], ['size' => 14, 'bold' => false]);
-                    $section->addText("Ngày bắt đầu: " . $workDone['start_date'], ['size' => 14, 'bold' => false]);
-                    $section->addText("Ngày kết thúc: " . $workDone['end_date'], ['size' => 14, 'bold' => false]);
-                    $section->addText("Tiến độ: " . $workDone['status_work'], ['size' => 14, 'bold' => false]);
+                    $sttWorkDone = $STTWorkDone++;
+                    $section->addText("$sttWorkDone. Công việc đã thực hiện: ", ['size' => 11, 'bold' => false]);
+                    $section->addTextBreak(1);
+                    $section->addText("- Tiêu đề : " . $workDone['work_done'], ['size' => 11, 'bold' => false]);
+                    $section->addText("- Nội dung : " . $workDone['description'], ['size' => 11, 'bold' => false]);
+                    $section->addText("- Ngày bắt đầu : " . $workDone['start_date'], ['size' => 11, 'bold' => false]);
+                    $section->addText("- Ngày kết thúc : " . $workDone['end_date'], ['size' => 11, 'bold' => false]);
+                    $section->addText("- Tiến độ : " . $workDone['status_work'], ['size' => 11, 'bold' => false]);
                     $section->addTextBreak(1);
                 }
 
                 // Thêm khoảng trắng giữa các phần
                 $section->addTextBreak(1);
             } else {
-                $section->addText("Công việc đã thực hiện: Không có dữ liệu", ['size' => 14, 'bold' => false]);
+                $section->addText("I. Công việc đã thực hiện : Không có dữ liệu", ['size' => 11, 'bold' => true]);
                 $section->addTextBreak(1);
             }
             if(!empty($item['ExpectedWork'])) {
 
                 // Thêm thông tin về công việc dự kiến
-                $section->addText("Công việc dự kiến:", ['size' => 14, 'bold' => true]);
+                $section->addText("II. Công việc dự kiến:", ['size' => 11, 'bold' => true]);
+                $section->addTextBreak(1);
                 foreach ($item['ExpectedWork'] as $expectedWork) {
-                    $section->addText("Tiêu đề: " . $expectedWork['next_work'], ['size' => 14, 'bold' => false]);
-                    $section->addText("Nội dung: " . $expectedWork['next_description'], ['size' => 14, 'bold' => false]);
-                    $section->addText("Ngày bắt đầu: " . $expectedWork['next_start_date'], ['size' => 14, 'bold' => false]);
-                    $section->addText("Ngày kết thúc: " . $expectedWork['next_end_date'], ['size' => 14, 'bold' => false]);
-                    $section->addText("Tiến độ: " . $expectedWork['next_status_work'], ['size' => 14, 'bold' => false]);
+                    $sttExpectedWork = $STTExpectedWork++;
+                    $section->addText("$sttExpectedWork. Công việc dự kiến: ", ['size' => 11, 'bold' => false]);
+                    $section->addTextBreak(1);
+                    $section->addText("- Tiêu đề : " . $expectedWork['next_work'], ['size' => 11, 'bold' => false]);
+                    $section->addText("- Nội dung : " . $expectedWork['next_description'], ['size' => 11, 'bold' => false]);
+                    $section->addText("- Ngày bắt đầu : " . $expectedWork['next_start_date'], ['size' => 11, 'bold' => false]);
+                    $section->addText("- Ngày kết thúc : " . $expectedWork['next_end_date'], ['size' => 11, 'bold' => false]);
+                    $section->addText("- Tiến độ : " . $expectedWork['next_status_work'], ['size' => 11, 'bold' => false]);
                     $section->addTextBreak(1);
                 }
 
                 
             } else {
-                $section->addText("Công việc dự kiến: Không có dữ liệu", ['size' => 14, 'bold' => false]);
+                $section->addText("II. Công việc dự kiến : Không có dữ liệu", ['size' => 11, 'bold' => true]);
                 $section->addTextBreak(1);
             }
 
             if(!empty($item['ExpectedWork'])) {
-                $section->addText("Kiến nghị: " . $item['Request'], ['size' => 14, 'bold' => false]);
+                $section->addText("III. Kiến nghị:", ['size' => 11, 'bold' => true]);
+                $section->addTextBreak(1);
+                $section->addText($item['Request'], ['size' => 11, 'bold' => false]);
+                $section->addTextBreak(2);
             } else {
-                $section->addText("Kiến nghị: " . 'Không có dữ liệu', ['size' => 14, 'bold' => false]);
+                $section->addText("III. Kiến nghị : " . 'Không có dữ liệu', ['size' => 11, 'bold' => true]);
+                $section->addTextBreak(2);
             }
 
         }

@@ -16,11 +16,11 @@
             margin-bottom: 30px;
         }
         .h1-custom {
-            font-size: 24px;
+            font-size: 17px;
             font-weight: bold;
         }
         .h2-custom {
-            font-size: 20px;
+            font-size: 15px;
             font-weight: bold;
             margin-top: 30px;
             margin-bottom: 10px;
@@ -39,7 +39,7 @@
 </head>
 <body>
     <div class="container mb-30">
-        <h1 style= "text-align: center; margin-bottom: 10px;" class="h1-custom">Báo cáo tuần </h1>
+        <h1 style= "text-align: center; margin-bottom: 10px;" class="h1-custom">BÁO CÁO CÔNG VIỆC TUẦN ({{ $startDateOfWeekInput }} - {{ $endDateOfWeekInput }})</h1>
 
         <br>
         <br>
@@ -82,6 +82,7 @@
 
         <h2 class="h2-custom">III. Kiến nghị</h2>
         <p class="p-custom">{{ $department['Request'] }}</p>
+        <p style="border: 1px solid;"></p>
         @endforeach
     </div>
 </body>
