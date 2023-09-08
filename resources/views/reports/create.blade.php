@@ -240,7 +240,7 @@
                                             </div>
                                             <div class="content-report form-group" >
                                                 <label class="item-job" style="vertical-align: top;"  for="noi_dung_cong_viec">Nội dung:</label> 
-                                                <textarea required style="width: 62%; height: 200px; margin-left:30px;" name="noi_dung_cong_viec[]" placeholder="Nhập nội dung công việc" class="form-control" style="margin-bottom: 10px;">{{$value->next_description}}</textarea>
+                                                <textarea style="width: 62%; height: 80px; margin-left:30px;" name="noi_dung_cong_viec[]" placeholder="Nhập nội dung công việc" class="form-control" style="margin-bottom: 10px;">{{$value->next_description}}</textarea>
                                                 <div class="content-date">
                                                     <div >
                                                         <label class="item-job" for="ngay_sinh">Ngày bắt đầu:</label>
@@ -327,7 +327,7 @@
             </div>
             <div class="content-report form-group" >
                 <label class="item-job" style="vertical-align: top;"  for="noi_dung_cong_viec">Nội dung:</label> 
-                <textarea required style="width: 62%; height: 200px; margin-left:30px;" name="noi_dung_cong_viec[]" placeholder="Nhập nội dung công việc" class="form-control" style="margin-bottom: 10px;"></textarea>
+                <textarea style="width: 62%; height: 80px; margin-left:30px;" name="noi_dung_cong_viec[]" placeholder="Nhập nội dung công việc" class="form-control" style="margin-bottom: 10px;"></textarea>
                 <div class="content-date">
                     <div >
                         <label class="item-job" for="ngay_sinh">Ngày bắt đầu:</label>
@@ -373,7 +373,7 @@
             </div>
             <div class="content-report form-group" >
                 <label class="item-job" style="vertical-align: top;"  for="noi_dung_cong_viec">Nội dung:</label> 
-                <textarea readonly style="width: 55%; height: 200px; margin-left:30px;" name="noi_dung_cong_viec_tuan_toi[]" placeholder="Nhập nội dung công việc" class="form-control" style="margin-bottom: 10px;">${row.querySelector('textarea').value}</textarea>
+                <textarea readonly style="width: 55%; height: 80px; margin-left:30px;" name="noi_dung_cong_viec_tuan_toi[]" placeholder="Nhập nội dung công việc" class="form-control" style="margin-bottom: 10px;">${row.querySelector('textarea').value}</textarea>
                 <div  class="content-date">
                     <div >
                         <label class="item-job" for="start_date_tuan_toi">Ngày bắt đầu:</label>
@@ -427,7 +427,7 @@
         </div>
         <div class="content-report form-group" >
             <label class="item-job" style="vertical-align: top;"  for="noi_dung_cong_viec">Nội dung:</label> 
-                <textarea required style="width: 55%; height: 200px; margin-left:30px;" name="noi_dung_cong_viec_tuan_toi[]" placeholder="Nhập nội dung công việc" class="form-control" style="margin-bottom: 10px;"></textarea>
+                <textarea style="width: 55%; height: 80px; margin-left:30px;" name="noi_dung_cong_viec_tuan_toi[]" placeholder="Nhập nội dung công việc" class="form-control" style="margin-bottom: 10px;"></textarea>
                 <div class="content-date">
                     <div >
                         <label class="item-job" for="ngay_sinh">Ngày bắt đầu:</label>
@@ -518,7 +518,7 @@
             </div>
             <div class="content-report form-group" >
                 <label class="item-job" style="vertical-align: top;"  for="noi_dung_cong_viec">Nội dung:</label> 
-                <textarea style="width: 55%; height: 200px; margin-left:30px;" name="noi_dung_cong_viec_tuan_toi[]" placeholder="Nhập nội dung công việc" class="form-control" style="margin-bottom: 10px;">${row.querySelector('textarea').value}</textarea>
+                <textarea style="width: 55%; height: 80px; margin-left:30px;" name="noi_dung_cong_viec_tuan_toi[]" placeholder="Nhập nội dung công việc" class="form-control" style="margin-bottom: 10px;">${row.querySelector('textarea').value}</textarea>
                 <div  class="content-date">
                     <div >
                         <label class="item-job" for="ngay_sinh">Ngày bắt đầu:</label>

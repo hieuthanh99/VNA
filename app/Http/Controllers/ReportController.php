@@ -101,29 +101,31 @@ class ReportController extends Controller
             $department = Department::find($user->department);
             $requestData = $request->all();
             $reportDate = ReportDate::latest()->first();
-            $reportDate = $reportDate->report_date;
-            $errorMessage = '';
-
-            if (isset($requestData['end_date'])) {
-                $endDates = $requestData['end_date'];
-                foreach ($endDates as $endDate) {
-
-                    $endDate = Carbon::parse($endDate);
-                
-                    if ($endDate->lessThan($reportDate)) {
-                        return redirect()->back()->with('error', 'Không thể chọn ngày kết thúc trong tuần đã chốt.');
-                    } 
-                }
-            }
-
-            if(isset($requestData['end_date_tuan_toi'])) {
-                $endDatesTuanToi = $requestData['end_date_tuan_toi'];
-                foreach ($endDatesTuanToi as $endDateTuanToi) {
+            if(!empty($reportDate)) {
+                $reportDate = $reportDate->report_date;
+                $errorMessage = '';
+    
+                if (isset($requestData['end_date'])) {
+                    $endDates = $requestData['end_date'];
+                    foreach ($endDates as $endDate) {
+    
+                        $endDate = Carbon::parse($endDate);
                     
-                    $endDateTuanToi = Carbon::parse($endDateTuanToi);
-                
-                    if ($endDateTuanToi->lessThan($reportDate)) {
-                        return redirect()->back()->with(['error' => 'Không thể chọn ngày kết thúc trong tuần đã chốt.']);
+                        if ($endDate->lessThan($reportDate)) {
+                            return redirect()->back()->with('error', 'Không thể chọn ngày kết thúc trong tuần đã chốt.');
+                        } 
+                    }
+                }
+    
+                if(isset($requestData['end_date_tuan_toi'])) {
+                    $endDatesTuanToi = $requestData['end_date_tuan_toi'];
+                    foreach ($endDatesTuanToi as $endDateTuanToi) {
+                        
+                        $endDateTuanToi = Carbon::parse($endDateTuanToi);
+                    
+                        if ($endDateTuanToi->lessThan($reportDate)) {
+                            return redirect()->back()->with(['error' => 'Không thể chọn ngày kết thúc trong tuần đã chốt.']);
+                        }
                     }
                 }
             }
@@ -227,8 +229,9 @@ class ReportController extends Controller
             if (isset($jsonData->Request)) {
                 Task::create([
                     'report_id' => $report->id,
-                    'title' => $jsonData->Request,
+                    'description' => $jsonData->Request,
                     'reports_title' => 'Request',
+                    'title' => 'Request',
                 ]);
             }
 
@@ -411,7 +414,7 @@ class ReportController extends Controller
                         $request = $jsonData->Request;
                         if($existingTask) {
                             $existingTask->update([
-                                'title' => $request,
+                                'description' => $request,
                             ]);
                             $existingTask->save();
                         }

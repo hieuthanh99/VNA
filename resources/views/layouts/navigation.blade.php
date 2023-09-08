@@ -51,6 +51,11 @@
                         {{ __('Đặt ngày báo cáo') }}
                     </x-nav-link>
                 </div>
+                <div class="nav-item hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                    <x-nav-link :href="route('emails.index')" :active="request()->routeIs('emails.index')">
+                        {{ __('Quản lý Email') }}
+                    </x-nav-link>
+                </div>
                 @endif
 
             </div>
