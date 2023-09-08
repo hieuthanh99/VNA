@@ -12,6 +12,7 @@ use App\Http\Controllers\WordController;
 use App\Http\Controllers\ReportDateController;
 use App\Http\Controllers\ExcelController;
 use App\Http\Controllers\UnitController;
+use App\Http\Controllers\EmailController;
 
 /*
 |--------------------------------------------------------------------------
@@ -56,6 +57,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/search-report', [ReportDateController::class, 'searchReport'])->name('search.report');
     
     Route::get('/show-units', [UnitController::class, 'showUnits'])->name('show.units');
+
+    Route::resource('emails', EmailController::class);
 });
 
 require __DIR__.'/auth.php';

@@ -39,8 +39,11 @@
 </head>
 <body>
     <div class="container mb-30">
-        <h1 style= "text-align: center; margin-bottom: 10px;" class="h1-custom">BÁO CÁO CÔNG VIỆC TUẦN ({{ $startDateOfWeekInput }} - {{ $endDateOfWeekInput }})</h1>
-
+        @if(!empty($startDateOfWeekInput && !empty($endDateOfWeekInput)) )
+            <h1 style= "text-align: center; margin-bottom: 10px;" class="h1-custom">BÁO CÁO CÔNG VIỆC TUẦN ({{ $startDateOfWeekInput }} - {{ $endDateOfWeekInput }})</h1>
+        @else 
+            <h1 style= "text-align: center; margin-bottom: 10px;" class="h1-custom">BÁO CÁO CÔNG VIỆC TUẦN</h1>
+        @endif
         <br>
         <br>
         @foreach ($department as $department)

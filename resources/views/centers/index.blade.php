@@ -201,6 +201,27 @@
         .item-job {
             font-weight: 500;
         }
+
+        .center-edit {
+            text-align: right;
+        }
+        .report-center-edit {
+            display: inline-block;
+            padding: 10px 20px; 
+            background-image: linear-gradient(195deg,#006885 0%,#006885 100%); 
+            color: #fff; 
+            text-decoration: none; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer;
+            font-weight: bold; 
+            margin-top: 22px;
+            margin-right: 15px;
+        }
+
+        .report-center-edit:hover {
+            opacity: 0.75;
+        }
     </style>
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -257,6 +278,9 @@
                                     <div id="collapse{{ $record->id }}" class="accordion-collapse collapse"
                                         style="visibility: unset" aria-labelledby="heading{{ $record->id }}"
                                         data-bs-parent="#reportsAccordion">
+                                        <div class="center-edit">
+                                            <a class="report-center-edit" href="{{ route('centers.edit', $record->id) }}">Chỉnh sửa báo cáo</a>
+                                        </div>
                                         @foreach ($data as $array)
                                             @php
                                                 $workDone = !empty($array['WorkDone']) ? $array['WorkDone'] : [];
