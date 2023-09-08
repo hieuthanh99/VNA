@@ -367,7 +367,7 @@
                                                                         <span
                                                                             style="font-size:  20px; font-weight: bold">{{ $STT_NEXT++ }}.
                                                                         </span>
-                                                                            <input  value="{{ $work->next_work }}" style="font-size:  20px; font-weight: bold; margin-left: 14px; padding-bottom: 8px; padding-top: 0; " type="text" name="cong_viec_tuan_toi*_*{{$key}}*_*ExpectedWork*_*{{$keyExpectedWord}}" placeholder="Nhập tiêu đề công việc" class="form-control" required>
+                                                                            <input  value="{{ $work->next_work }}" style="font-size:  20px; font-weight: bold; margin-left: 14px; padding-bottom: 8px; padding-top: 0; " type="text" name="tieu_de_cong_viec_tuan_toi*_*{{$key}}*_*ExpectedWork*_*{{$keyExpectedWord}}" placeholder="Nhập tiêu đề công việc" class="form-control" required>
                                                                     </div>
                                                                     {{-- value_of_work --}}
                                                                     <div style="display: flex; margin: 10px; padding: 10px 0;">
