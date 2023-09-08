@@ -148,7 +148,7 @@ class ReportCenterController extends Controller
                 $jsonArray[$parts[1]]->WorkDone[$parts[3]]->description = $item;
             }
             //ExpectedWork
-            if (strpos($key, 'cong_viec_tuan_toi') !== false) {
+            if (strpos($key, 'tieu_de_cong_viec_tuan_toi') !== false) {
                 $parts = explode("*_*", $key);
                 $jsonArray[$parts[1]]->ExpectedWork[$parts[3]]->next_work = $item;
             }
