@@ -13,11 +13,18 @@ use App\Models\Logs;
 use Illuminate\Support\Facades\Session;
 use App\Models\ReportCenter;
 use App\Mail\SendReportEmail;
+use App\Mail\SendEmailUser;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\DB;
 
 class DashBoardController extends Controller
 {
+    public function sendEmail()
+    {
+        $emails = User::pluck('email')->toArray();
+        Mail::to($emails)->send(new SendEmailUser());
+        return redirect()->back()->with('success', 'Thực thi thành công báo cáo và email.');
+    }
     /**
      * Display a listing of the resource.
      *

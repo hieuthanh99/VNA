@@ -8,9 +8,18 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
                 <div class="">
-                    <div class="new-row">
-                        <a href="#" id="add-new-row">Thêm mới</a>
+                    <div style="display: flex; justify-content: space-between">
+                        <div class="new-row">
+                            <form action="{{ route('centers.sendEmail') }}" method="POST">
+                                @csrf
+                                <button id="button-send" class="">Send Email</button>
+                            </form>
+                        </div>
+                        <div class="new-row">
+                            <a href="#" id="add-new-row">Thêm mới</a>
+                        </div>
                     </div>
+       
                     @if (session('success'))
                         <div class="alert alert-success">
                             {{ session('success') }}
@@ -54,6 +63,19 @@
             text-align: right;
         }
         #add-new-row {
+            display: inline-block;
+            padding: 10px 20px; 
+            background-image: linear-gradient(195deg,#006885 0%,#006885 100%); 
+            color: #fff; 
+            text-decoration: none; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer;
+            font-weight: bold; 
+            margin-bottom: 15px;
+        }
+
+        #button-send {
             display: inline-block;
             padding: 10px 20px; 
             background-image: linear-gradient(195deg,#006885 0%,#006885 100%); 
