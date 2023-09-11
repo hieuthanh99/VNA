@@ -7,54 +7,63 @@
     <div class="py-12 mt-6 space-y-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="">
-                    <div style="display: flex; justify-content: space-between">
-                        <div class="new-row">
-                            <form action="{{ route('centers.sendEmail') }}" method="POST">
-                                @csrf
-                                <button id="button-send" class="">Send Email</button>
-                            </form>
+               
+                    <div class="">
+                        <div style="display: flex; justify-content: space-between">
+                            <div class="new-row">
+                                <form id="listEmail" action="{{ route('centers.sendEmail') }}" method="POST">
+                                    @csrf
+                                    <button id="button-send" class="">Send Email</button>
+                                </form>
+                            </div>
+                            <div class="new-row">
+                                <a href="#" id="add-new-row">Thêm mới</a>
+                            </div>
                         </div>
-                        <div class="new-row">
-                            <a href="#" id="add-new-row">Thêm mới</a>
+        
+                        @if (session('success'))
+                            <div class="alert alert-success">
+                                {{ session('success') }}
+                            </div>
+                        @endif
+                        @if (session('error'))
+                        <div class="alert alert-danger">
+                            {{ session('error') }}
                         </div>
-                    </div>
-       
-                    @if (session('success'))
-                        <div class="alert alert-success">
-                            {{ session('success') }}
-                        </div>
-                    @endif
-                    @if (session('error'))
-                    <div class="alert alert-danger">
-                        {{ session('error') }}
-                    </div>
-                    @endif
-                    <table class="w-full bg-white" style="text-align: center">
-                        <thead>
-                            <tr class="bg-gray-100">
-                                <th class="py-2 px-4 font-semibold text-gray-600">Phòng ban</th>
-                                <th class="py-2 px-4 font-semibold text-gray-600">Email</th>
-                                <th class="py-2 px-4 font-semibold text-gray-600">Hành động</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($emails as $email)
-                                <tr class="user-row">
-                                    <td class="py-2 px-4 border-b">{{ $email->department_name }}</td>
-                                    <td class="py-2 px-4 border-b">{{ $email->email }}</td>
-                                    <td class="py-2 px-4 border-b">
-                                        <form action="{{ route('emails.destroy', ['email' => $email->id]) }}" method="POST">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit">Xóa</button>
-                                        </form>
-                                    </td>
+                        @endif
+                        <table class="w-full bg-white" style="text-align: center">
+                            <thead>
+                                <tr class="bg-gray-100">
+                                    {{-- <th><div>
+                                        <input type="checkbox" id="select-all">
+                                        <label for="select-all"> All</label>
+                                    </div></th> --}}
+                                    <th class="py-2 px-4 font-semibold text-gray-600">Phòng ban</th>
+                                    <th class="py-2 px-4 font-semibold text-gray-600">Email</th>
+                                    <th class="py-2 px-4 font-semibold text-gray-600">Hành động</th>
                                 </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
+                            </thead>
+                            <tbody>
+                                @foreach ($emails as $email)
+                                    <tr class="user-row">
+                                        {{-- <td class="py-2 px-4 border-b">
+                                            <input type="checkbox" name="selectedEmails[]" value="{{ $email->id }}">
+                                        </td> --}}
+                                        <td class="py-2 px-4 border-b">{{ $email->department_name }}</td>
+                                        <td class="py-2 px-4 border-b">{{ $email->email }}</td>
+                                        <td class="py-2 px-4 border-b">
+                                            <form action="{{ route('emails.destroy', ['email' => $email->id]) }}" method="POST">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit">Xóa</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+              
             </div>
         </div>
     </div>
@@ -102,6 +111,18 @@
         }
     </style>
     <script>
+        document.getElementById('button-send').addEventListener('click', function() {
+        // Gửi form khi nút "Send Email" được nhấp
+            document.getElementById('listEmail').submit();
+        });
+        //Click ALL
+        document.getElementById('select-all').addEventListener('change', function () {
+        var checkboxes = document.querySelectorAll('input[name="selectedEmails[]"]');
+            checkboxes.forEach(function (checkbox) {
+                checkbox.checked = document.getElementById('select-all').checked;
+            });
+        });
+
         document.addEventListener('DOMContentLoaded', function () {
         const addNewRowLink = document.getElementById('add-new-row');
         const table = document.querySelector('table tbody');

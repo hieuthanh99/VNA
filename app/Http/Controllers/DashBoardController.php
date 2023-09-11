@@ -19,8 +19,9 @@ use Illuminate\Support\Facades\DB;
 
 class DashBoardController extends Controller
 {
-    public function sendEmail()
+    public function sendEmail(Request $request)
     {
+
         $emails = User::pluck('email')->toArray();
         Mail::to($emails)->send(new SendEmailUser());
         return redirect()->back()->with('success', 'Thực thi thành công báo cáo và email.');
