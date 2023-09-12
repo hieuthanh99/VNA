@@ -16,8 +16,6 @@ class SendEmailUser extends Mailable
 {
     use Queueable, SerializesModels;
 
-    protected $arrayCenter;
-    
     /**
      * Create a new message instance.
      *
@@ -25,7 +23,7 @@ class SendEmailUser extends Mailable
      */
     public function __construct()
     {
-        // $this->arrayCenter = $arrayCenter;
+        //
     }
 
     public function build()
