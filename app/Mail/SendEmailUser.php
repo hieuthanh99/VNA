@@ -8,11 +8,16 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use PDF;
+use Carbon\Carbon;
+use App\Helpers\Helper;
 
 class SendEmailUser extends Mailable
 {
     use Queueable, SerializesModels;
 
+    protected $arrayCenter;
+    
     /**
      * Create a new message instance.
      *
@@ -20,7 +25,44 @@ class SendEmailUser extends Mailable
      */
     public function __construct()
     {
-        //
+        // $this->arrayCenter = $arrayCenter;
+    }
+
+    public function build()
+    {
+        $data = [
+            'title' => 'Welcome to ItSolutionStuff.com',
+            'date' => date('m/d/Y')
+        ];
+        $dataEmail = Helper::reportWeeked();
+        $record = $dataEmail['record'];
+
+        if(!empty($record)) {
+            $dataDate =  $record->date_start;
+
+            $dateCarbon = Carbon::parse($dataDate);
+            $dayOfWeek = Carbon::parse($record->date_start)->dayOfWeek;
+            if ($dayOfWeek > 5) {
+                $startDateOfWeekInput = $dateCarbon->copy()->subDays($dayOfWeek - 5)->format('d-m-Y');
+                $endDateOfWeekInput = $dateCarbon->copy()->addDays(4 - $dayOfWeek + 7)->format('d-m-Y');
+            } else {
+                $startDateOfWeekInput = $dateCarbon->copy()->subDays($dayOfWeek + 6 - 4)->format('d-m-Y');
+                $endDateOfWeekInput = $dateCarbon->copy()->addDays(4 - $dayOfWeek)->format('d-m-Y');
+            }
+        }
+        //dd($dataEmail)
+        $pdf = PDF::loadView('pdf.template', ['department' => $dataEmail['mergedArray'],'startDateOfWeekInput' => $startDateOfWeekInput, "endDateOfWeekInput" => $endDateOfWeekInput]);
+        // Lưu tệp PDF vào bộ nhớ tạm thời
+        $pdfContent = $pdf->output();
+        $pdfPath = storage_path('report.pdf');
+        file_put_contents($pdfPath, $pdfContent);
+       // dd($pdfPath);
+        // Đính kèm tệp PDF vào email
+        return $this->from('n.hieuthanhps@gmail.com')->view('email.email_report')
+                    ->attach($pdfPath, [
+                        'as' => 'report.pdf',
+                        'mime' => 'application/pdf',
+                    ]);
     }
 
     /**

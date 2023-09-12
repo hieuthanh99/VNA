@@ -12,48 +12,49 @@
         .container {
             padding: 20px;
         }
-        .mb-30 {
-            margin-bottom: 30px;
-        }
-        .h1-custom {
-            font-size: 17px;
+        h1 {
+            font-size: 16px;
             font-weight: bold;
+            text-align: center;
+            margin-bottom: 10px;
         }
-        .h2-custom {
-            font-size: 15px;
+        h2 {
+            font-size: 19px;
             font-weight: bold;
             margin-top: 30px;
             margin-bottom: 10px;
         }
-        .ul-custom {
+        ul {
             list-style: none;
             padding-left: 0;
         }
-        .li-custom {
+        li {
             margin-bottom: 10px;
         }
-        .p-custom {
+        p {
             margin-bottom: 10px;
+        }
+        hr {
+            border: 1px solid #ccc;
         }
     </style>
 </head>
 <body>
-    <div class="container mb-30">
+    <div class="container">
         @if(!empty($startDateOfWeekInput && !empty($endDateOfWeekInput)) )
-            <h1 style= "text-align: center; margin-bottom: 10px;" class="h1-custom">BÁO CÁO CÔNG VIỆC TUẦN ({{ $startDateOfWeekInput }} - {{ $endDateOfWeekInput }})</h1>
+            <h1>BÁO CÁO CÔNG VIỆC TUẦN ({{ $startDateOfWeekInput }} - {{ $endDateOfWeekInput }})</h1>
         @else 
-            <h1 style= "text-align: center; margin-bottom: 10px;" class="h1-custom">BÁO CÁO CÔNG VIỆC TUẦN</h1>
+            <h1>BÁO CÁO CÔNG VIỆC TUẦN</h1>
         @endif
-        <br>
-        <br>
-        @foreach ($department as $department)
-        <h1 class="h1-custom">{{ $department['DepartmentName'] }}</h1>
 
-        <h2 class="h2-custom">I. Công việc đã thực hiện</h2>
+        @foreach ($department as $department)
+        <h1>{{ $department['DepartmentName'] }}</h1>
+
+        <h2>I. Công việc đã thực hiện</h2>
         @if (count($department['WorkDone']) > 0)
-            <ul class="ul-custom">
+            <ul>
                 @foreach ($department['WorkDone'] as $work)
-                    <li class="li-custom">
+                    <li>
                         <strong>Tiêu đề:</strong> {{ $work['work_done'] }}<br>
                         <strong>Nội dung:</strong> {{ $work['description'] }}<br>
                         <strong>Ngày bắt đầu:</strong> {{ $work['start_date'] }}<br>
@@ -63,14 +64,14 @@
                 @endforeach
             </ul>
         @else
-            <p class="p-custom">Không có công việc đã thực hiện.</p>
+            <p>Không có công việc đã thực hiện.</p>
         @endif
 
-        <h2 class="h2-custom">II. Công việc dự kiến</h2>
+        <h2>II. Công việc dự kiến</h2>
         @if (count($department['ExpectedWork']) > 0)
-            <ul class="ul-custom">
+            <ul>
                 @foreach ($department['ExpectedWork'] as $work)
-                    <li class="li-custom">
+                    <li>
                         <strong>Tiêu đề:</strong> {{ $work['next_work'] }}<br>
                         <strong>Nội dung:</strong> {{ $work['next_description'] }}<br>
                         <strong>Ngày bắt đầu:</strong> {{ $work['next_start_date'] }}<br>
@@ -80,12 +81,16 @@
                 @endforeach
             </ul>
         @else
-            <p class="p-custom">Không có công việc dự kiến.</p>
+            <p>Không có công việc dự kiến.</p>
         @endif
 
-        <h2 class="h2-custom">III. Kiến nghị</h2>
-        <p class="p-custom">{{ $department['Request'] }}</p>
-        <p style="border: 1px solid;"></p>
+        <h2>III. Kiến nghị</h2>
+        @if(!empty($department['Request']))
+            <p>{{ $department['Request'] }}</p>
+        @else 
+            <p>Không có kiến nghị nào.</p>
+        @endif
+        <hr>
         @endforeach
     </div>
 </body>

@@ -34,10 +34,10 @@
                         <table class="w-full bg-white" style="text-align: center">
                             <thead>
                                 <tr class="bg-gray-100">
-                                    {{-- <th><div>
+                                    <!-- <th><div>
                                         <input type="checkbox" id="select-all">
                                         <label for="select-all"> All</label>
-                                    </div></th> --}}
+                                    </div></th> -->
                                     <th class="py-2 px-4 font-semibold text-gray-600">Phòng ban</th>
                                     <th class="py-2 px-4 font-semibold text-gray-600">Email</th>
                                     <th class="py-2 px-4 font-semibold text-gray-600">Hành động</th>
@@ -116,12 +116,12 @@
             document.getElementById('listEmail').submit();
         });
         //Click ALL
-        document.getElementById('select-all').addEventListener('change', function () {
-        var checkboxes = document.querySelectorAll('input[name="selectedEmails[]"]');
-            checkboxes.forEach(function (checkbox) {
-                checkbox.checked = document.getElementById('select-all').checked;
-            });
-        });
+        // document.getElementById('select-all').addEventListener('change', function () {
+        // var checkboxes = document.querySelectorAll('input[name="selectedEmails[]"]');
+        //     checkboxes.forEach(function (checkbox) {
+        //         checkbox.checked = document.getElementById('select-all').checked;
+        //     });
+        // });
 
         document.addEventListener('DOMContentLoaded', function () {
         const addNewRowLink = document.getElementById('add-new-row');
