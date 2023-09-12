@@ -257,7 +257,7 @@
                                             </div>
                                             <div  class="form-group style-note">
                                                     <label class="item-job" for="trangthai_congviec">Tiến độ:</label> 
-                                                    <input value="{{$value->next_status_work}}" style="flex:4; margin-left: 46px" type="text"  name="trangthai_congviec[]" placeholder="Nhập tiến độ công việc" class="form-control" required>
+                                                    <input value="{{$value->next_status_work}}" style="flex:4; margin-left: 46px" type="text"  name="trangthai_congviec[]" placeholder="Nhập tiến độ công việc" class="form-control">
                                                     <div class="form-check" style="margin-top: 0; flex: 2;">
                                                 </div>
                                         </div>
@@ -391,7 +391,7 @@
             </div>
             <div class="form-group style-note">
                     <label class="item-job" for="trangthai_congviec">Tiến độ:</label> 
-                    <input readonly style="flex:4; margin-left: 46px" type="text" value="${row.querySelector('input[name="trangthai_congviec[]"]').value}"   name="trangthai_congviec_tuan_toi[]" placeholder="Nhập tiến độ công việc" class="form-control" required>
+                    <input readonly style="flex:4; margin-left: 46px" type="text" value="${row.querySelector('input[name="trangthai_congviec[]"]').value}"   name="trangthai_congviec_tuan_toi[]" placeholder="Nhập tiến độ công việc" class="form-control">
                     <div class="form-check" style="margin-top: 0; flex: 2;">
                 </div>
             `;
@@ -492,7 +492,8 @@
                 var workStatusValue = workStatus.value.trim() !== '';
                 var hasText = workDone.value.trim() !== '';
                 const errorSpan = document.getElementById('error');
-                if (!hasText || !startDateValue || !descriptionWorkValue || !endDateValue || !workStatusValue) {
+                // if (!hasText || !startDateValue || !descriptionWorkValue || !endDateValue || !workStatusValue) {
+                if (!hasText || !workStatusValue) {
                     const errorMessage = 'Vui lòng nhập dữ liệu.';
                     errorSpan.style.backgroundColor = '#f1c9c9';
                     errorSpan.innerHTML = '<span>' + errorMessage + '</span>';
@@ -533,7 +534,7 @@
             </div>
             <div class="form-group style-note">
                     <label class="item-job" for="trangthai_congviec">Tiến độ:</label> 
-                    <input style="flex:4; margin-left: 46px" type="text" value="${row.querySelector('input[name="trangthai_congviec[]"]').value}"   name="trangthai_congviec_tuan_toi[]" placeholder="Tiêu đề công việc" class="form-control" required>
+                    <input style="flex:4; margin-left: 46px" type="text" value="${row.querySelector('input[name="trangthai_congviec[]"]').value}"   name="trangthai_congviec_tuan_toi[]" placeholder="Tiêu đề công việc" class="form-control">
                     <div class="form-check" style="margin-top: 0; flex: 2;">
                 </div>
             `;

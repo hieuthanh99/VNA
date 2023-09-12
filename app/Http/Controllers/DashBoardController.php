@@ -9,6 +9,7 @@ use App\Models\Department;
 use Carbon\Carbon;
 use App\Models\Report;
 use App\Models\Task;
+use App\Models\Email;
 use App\Models\Logs;
 use Illuminate\Support\Facades\Session;
 use App\Models\ReportCenter;
@@ -22,9 +23,14 @@ class DashBoardController extends Controller
     public function sendEmail(Request $request)
     {
 
-        $emails = User::pluck('email')->toArray();
-        Mail::to($emails)->send(new SendEmailUser());
-        return redirect()->back()->with('success', 'Thực thi thành công báo cáo và email.');
+        $emails = Email::pluck('email')->toArray();
+        $dataCenter = ReportCenter::latest()->first();
+        if($dataCenter) {
+            Mail::to($emails)->send(new SendEmailUser());
+            return redirect()->back()->with('success', 'Gửi email thành công.');
+        } else {
+            return redirect()->back()->with('error', 'Chưa có thông tin bản báo cáo, không gửi được email');
+        }
     }
     /**
      * Display a listing of the resource.
