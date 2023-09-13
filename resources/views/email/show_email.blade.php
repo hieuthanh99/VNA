@@ -188,6 +188,8 @@
                     alert('Vui lòng điền đầy đủ thông tin vào trường "Email".');
                     return false;
                 } 
+
+                saveButton.disabled = true;
                 console.log('Phòng ban:', departmentValue);
                 console.log('Email:', emailValue);
                 let contentArray = [];
