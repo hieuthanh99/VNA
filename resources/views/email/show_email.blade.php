@@ -168,15 +168,26 @@
                 newRow.remove();
             });
 
+            table.appendChild(newRow);
+            rowCount++;
+
             const saveButton = newRow.querySelector('button[type="submit"]');
-            saveButton.addEventListener('click', function (e) {
-                e.preventDefault();
+            // saveButton.addEventListener('click', function (e) {
+                // e.preventDefault();
+            saveButton.onclick = function() {
 
                 const departmentInput = newRow.querySelector('input[name="department_name[]"]');
                 const emailInput = newRow.querySelector('input[name="email[]"]');
                 const departmentValue = departmentInput.value;
                 const emailValue = emailInput.value;
-
+                if (departmentValue.trim() === '') {
+                    alert('Vui lòng điền đầy đủ thông tin vào trường "Phòng ban".');
+                    return false;
+                } 
+                if (emailValue.trim() === '') {
+                    alert('Vui lòng điền đầy đủ thông tin vào trường "Email".');
+                    return false;
+                } 
                 console.log('Phòng ban:', departmentValue);
                 console.log('Email:', emailValue);
                 let contentArray = [];
@@ -206,10 +217,8 @@
                 .catch(error => {
                     console.error('Lỗi:', error);
                 });
-            });
-
-            table.appendChild(newRow);
-            rowCount++;
+            // });
+            };
         });
     });
     </script>
