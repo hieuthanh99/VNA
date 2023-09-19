@@ -61,6 +61,9 @@
             .newest-date {
                 margin-left: 30px;
             }
+            #report_date_error, #report_time_error {
+                color: red;
+            }
         </style>
     </x-slot>
 
@@ -75,10 +78,12 @@
             <div class="form-group">
                 <label for="report_date">Ngày báo cáo:</label>
                 <input type="date" name="report_date" id="report_date" class="form-control">
+                <span id="report_date_error" class="error"></span>
             </div>
             <div class="form-group">
                 <label for="report_time">Chọn giờ báo cáo:</label>
                 <input class="form-control" type="time" id="report_time" name="report_time">
+                <span id="report_time_error" class="error"></span>
             </div>
             <button type="submit" class="btn btn-primary">Đặt ngày giờ báo cáo</button>
         </form>
@@ -94,4 +99,35 @@
             </div>
         @endif
     </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var form = document.querySelector(".form-date");
+            var reportDateInput = document.getElementById("report_date");
+            var reportTimeInput = document.getElementById("report_time");
+            var reportDateError = document.getElementById("report_date_error");
+            var reportTimeError = document.getElementById("report_time_error");
+
+            form.addEventListener("submit", function(event) {
+                var hasError = false;
+
+                if (reportDateInput.value === "") {
+                    reportDateError.textContent = "Vui lòng nhập ngày báo cáo.";
+                    hasError = true;
+                } else {
+                    reportDateError.textContent = "";
+                }
+
+                if (reportTimeInput.value === "") {
+                    reportTimeError.textContent = "Vui lòng chọn giờ báo cáo.";
+                    hasError = true;
+                } else {
+                    reportTimeError.textContent = "";
+                }
+
+                if (hasError) {
+                    event.preventDefault();
+                }
+            });
+        });
+    </script>
 </x-app-layout>
