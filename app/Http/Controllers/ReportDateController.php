@@ -36,6 +36,14 @@ class ReportDateController extends Controller
             'report_time' => $selectedTime
         ]);
 
+        $maxRecords = 5;
+        if (ReportDate::count() > $maxRecords) {
+            $oldestRecords = ReportDate::orderBy('created_at')->take(ReportDate::count() - $maxRecords)->get();
+            foreach ($oldestRecords as $oldestRecord) {
+                $oldestRecord->delete();
+            }
+        }
+
         return redirect()->route('report-dates.index', compact('reportDate'))->with('success', 'Ngày giờ báo cáo đã được đặt thành công.');
     }
 

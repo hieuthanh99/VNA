@@ -29,8 +29,9 @@ class EmailsSeeder extends Seeder
             foreach ($departmentsData as $department) {
                 if($user->role !== 'admin') {
                     if($user->department == $department->id) {
+                        $email = trim($user->email);
                         $emailsData[] = [
-                            'email' => $user->email,
+                            'email' => $email,
                             'department_name' => $department->name,
                         ];
                     }
