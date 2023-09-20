@@ -12,8 +12,9 @@ use App\Models\Task;
 use App\Models\Logs;
 use App\Models\ReportCenter;
 use Illuminate\Support\Facades\Session;
-use App\Mail\SendReportEmail;
 use Illuminate\Support\Facades\Mail;
+use App\Models\Email;
+use App\Mail\SendEmailUser;
 
 class StockScheduler extends Command
 {
@@ -45,7 +46,7 @@ class StockScheduler extends Command
         $reportCenter = ReportCenter::whereBetween('created_at', [$startDate, $endDate2])->get();
         
         if(!$reportCenter->isEmpty()){
-            Mail::to('n.hieuthanhps@gmail.com')->send(new SendReportEmail());
+            Mail::to('n.hieuthanhps@gmail.com')->send(new SendEmailUser());
 
             \Log::info("Tổn tại báo cáo tuần ... !".$startDate);
             exit();
@@ -87,15 +88,21 @@ class StockScheduler extends Command
                     $dataByDepartment[$departmentId]['Request'] = $values['Request'];
                 }
             }
-            
+
+            $dateStart = Carbon::now();
             $jsonData = json_encode(array_values($dataByDepartment));
             ReportCenter::create([
                 'values' => $jsonData,
                 'created_at' => $endDate2,
+                'date_start' => $dateStart,
             ]);
             \Log::info("Testing Cron is Running ... !".$jsonData);
             $this->info('Daily report has been sent successfully!');
-            return 'Daily report has been sent successfully!';
+            $emailArray = Email::pluck('email')->filter(function ($email) {
+                return filter_var($email, FILTER_VALIDATE_EMAIL);
+            })->toArray();
+                
+            Mail::to($emailArray)->send(new SendEmailUser());
         }
         \Log::info("Not Fonnd Report ");
       

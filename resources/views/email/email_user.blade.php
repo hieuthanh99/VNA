@@ -35,18 +35,12 @@
 </head>
 <body>
   <div class="container">
-    <h1>Kính gửi Giám đốc và các phòng ban,</h1>
+    <h1>Kính gửi: Anh/chị lãnh đạo Ban DVHK,</h1>
     <p>
-      Tôi xin gửi đến Quý vị báo cáo công việc của tuần vừa qua dưới đây. Xin vui lòng tìm thấy nó trong tệp PDF đính kèm.
+      Hệ thống xin gửi Anh/chị báo cáo công việc của khối Dịch vụ tuần vừa qua trong tệp đính kèm.
     </p>
     <p>
-      Nếu có bất kỳ câu hỏi hoặc ý kiến nào về báo cáo công việc này, xin vui lòng liên hệ với tôi.
-    </p>
-    <p>
-      Xin cám ơn và chúc một ngày làm việc hiệu quả!
-    </p>
-    <p class="contact">
-      Trân trọng,
+      Trân trọng cảm ơn.
     </p>
   </div>
 </body>
