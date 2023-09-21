@@ -12,6 +12,7 @@ use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use App\Models\Report;
 
 class Helper
 {
@@ -55,6 +56,56 @@ class Helper
                 ];
             }
         }
+    
+        // Trả về một mảng chứa các giá trị cần trả về
+        return [
+            'mergedArray' => $mergedArray,
+            'startDate' => $startDate,
+            'endDateWeek' => $endDateWeek,
+            'record' => $record
+        ];
+    }
+
+    public static function reportItem()
+    {
+        $startDate = Carbon::now()->startOfWeek();
+        $endDateWeek = Carbon::now()->endOfWeek();
+        $endDate = Carbon::now()->setISODate(Carbon::now()->year, Carbon::now()->isoWeek(), 5)->setTime(17, 0, 0);
+        $department = Department::get()->toArray();
+        $data = Report::whereBetween('created_at', [$startDate, $endDate])->get();
+        $record = $data;
+       
+        $data = json_decode($data->value('values'), true) ?? [];
+        $mergedArray = [];
+    
+        // foreach ($department as $dept) {
+        //     $departmentId = $dept['id'];
+           
+        //     $item = array_filter($data, function ($value) use ($departmentId) {
+        //         return $value['DepartmentId'] == $departmentId;
+        //     });
+        
+        //     // Kiểm tra nếu mảng $item không rỗng
+        //     if (!empty($item)) {
+        //         foreach ($item as $itemData) {
+        //             $mergedArray[] = [
+        //                 'DepartmentId' => $itemData['DepartmentId'],
+        //                 'DepartmentName' => $dept['name'],
+        //                 'WorkDone' => $itemData['WorkDone'],
+        //                 'ExpectedWork' => $itemData['ExpectedWork'],
+        //                 'Request' => $itemData['Request']
+        //             ];
+        //         }
+        //     } else {
+        //         $mergedArray[] = [
+        //             'DepartmentId' => $departmentId,
+        //             'DepartmentName' => $dept['name'],
+        //             'WorkDone' => [],
+        //             'ExpectedWork' => [],
+        //             'Request' => ''
+        //         ];
+        //     }
+        // }
     
         // Trả về một mảng chứa các giá trị cần trả về
         return [

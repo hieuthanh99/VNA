@@ -91,11 +91,29 @@ class StockScheduler extends Command
 
             $dateStart = Carbon::now();
             $jsonData = json_encode(array_values($dataByDepartment));
-            ReportCenter::create([
+            $dataReportCenter = ReportCenter::create([
                 'values' => $jsonData,
                 'created_at' => $endDate2,
                 'date_start' => $dateStart,
+                'status' => 1,
             ]);
+
+            $arrayCenter = json_decode($dataReportCenter->values);
+            $departmentIds = []; 
+            foreach ($arrayCenter as $item) {
+                $departmentIds[] = $item->DepartmentId;
+            }
+            $dataStatusDepartment = [];
+            $statusShow = 2;
+            foreach ($departmentIds as $item) {
+                $dataReport = Report::where('department_id', $item)->whereBetween('created_at', [$startDate, $endDate])->first();
+                if ($dataReport) {
+                    $status = $statusShow; 
+                    $dataReport->status = $status; 
+                    $dataReport->save(); 
+                    $dataStatusDepartment[] = $dataReport;
+                }
+            }
             \Log::info("Testing Cron is Running ... !".$jsonData);
             $this->info('Daily report has been sent successfully!');
             $emailArray = Email::pluck('email')->filter(function ($email) {

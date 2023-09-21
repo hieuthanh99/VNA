@@ -20,33 +20,39 @@ class ReportCenterController extends Controller
      */
     public function index()
     {
-        $result = Helper::reportWeeked();
+        $checkView = false;
+        $result = Helper::reportItem();
         $mergedArray = $result['mergedArray'] ?? null;
         $startDate = $result['startDate'] ?? null;
-        $endDateWeek = $result['endDateWeek'] ?? null;
+        $endDateWeek = $result['endDateWeek'] ?? null; 
 
         $lastFriday = $startDate->copy()->subDays($startDate->dayOfWeek + 2);
         $thisThursday = $startDate->copy()->addDays(3 - $startDate->dayOfWeek + 1);
 
         $lastFridayFormatted = $lastFriday->format('d-m-Y');
         $thisThursdayFormatted = $thisThursday->format('d-m-Y');
-        $record = $result['record'] ?? null;
-        if(!empty($record)) {
-            $data =  $record->date_start;
-            $dateCarbon = Carbon::parse($data);
-            $dayOfWeek = Carbon::parse($record->date_start)->dayOfWeek;
-            if(!empty($record)) {
-                if ($dayOfWeek > 5) {
-                    $startDateOfWeekInput = $dateCarbon->copy()->subDays($dayOfWeek - 5)->format('d-m-Y');
-                    $endDateOfWeekInput = $dateCarbon->copy()->addDays(4 - $dayOfWeek + 7)->format('d-m-Y');
-                } else {
-                    $startDateOfWeekInput = $dateCarbon->copy()->subDays($dayOfWeek + 6 - 4)->format('d-m-Y');
-                    $endDateOfWeekInput = $dateCarbon->copy()->addDays(4 - $dayOfWeek)->format('d-m-Y');
+        $records = $result['record'] ?? null;
+        $arrayValues = [];
+        $deparments = [];
+        if(!$records->isEmpty()) {
+            foreach ($records as $record) {
+                $data =  $record->date_start;
+                $dataRecord = $record;
+                $dateCarbon = Carbon::parse($data);
+                $dayOfWeek = Carbon::parse($record->date_start)->dayOfWeek;
+                if(!empty($record)) {
+                    if ($dayOfWeek > 5) {
+                        $startDateOfWeekInput = $dateCarbon->copy()->subDays($dayOfWeek - 5)->format('d-m-Y');
+                        $endDateOfWeekInput = $dateCarbon->copy()->addDays(4 - $dayOfWeek + 7)->format('d-m-Y');
+                    } else {
+                        $startDateOfWeekInput = $dateCarbon->copy()->subDays($dayOfWeek + 6 - 4)->format('d-m-Y');
+                        $endDateOfWeekInput = $dateCarbon->copy()->addDays(4 - $dayOfWeek)->format('d-m-Y');
+                    }
                 }
             }
-            return view('centers.index', ['record' => $record,'startDateOfWeekInput' => $startDateOfWeekInput,'endDateOfWeekInput' => $endDateOfWeekInput , 'data' => $mergedArray, 'startDate' => $startDate->format('d-m-Y'), 'endDate' => $endDateWeek->format('d-m-Y')]);
+            return view('centers.index', ['record' => $dataRecord,'deparments'=> $deparments, 'startDateOfWeekInput' => $startDateOfWeekInput,'endDateOfWeekInput' => $endDateOfWeekInput , 'records' => $records, 'startDate' => $startDate->format('d-m-Y'), 'endDate' => $endDateWeek->format('d-m-Y')]);
         }
-        return view('centers.index', ['record' => $record, 'data' => $mergedArray, 'startDate' => $lastFridayFormatted, 'endDate' => $thisThursdayFormatted]);
+        return view('centers.index', ['records' => $records, 'data' => $mergedArray, 'startDate' => $lastFridayFormatted, 'endDate' => $thisThursdayFormatted]);
     }
 
     /**
@@ -89,28 +95,28 @@ class ReportCenterController extends Controller
      */
     public function edit($id)
     {
-        $dataCenter = ReportCenter::find($id);
-        $result = Helper::reportWeeked();
-        $record = $result['record'] ?? null;
-        $startDate = $result['startDate'] ?? null;
-        $endDateWeek = $result['endDateWeek'] ?? null;
-        if(!empty($record)) {
-            $data =  $record->date_start;
-            $dateCarbon = Carbon::parse($data);
-            $dayOfWeek = Carbon::parse($record->date_start)->dayOfWeek;
+        // $dataCenter = ReportCenter::find($id);
+        // $result = Helper::reportWeeked();
+        // $record = $result['record'] ?? null;
+        // $startDate = $result['startDate'] ?? null;
+        // $endDateWeek = $result['endDateWeek'] ?? null;
+        // if(!empty($record)) {
+        //     $data =  $record->date_start;
+        //     $dateCarbon = Carbon::parse($data);
+        //     $dayOfWeek = Carbon::parse($record->date_start)->dayOfWeek;
            
-            if(!empty($record)) {
-                if ($dayOfWeek > 5) {
-                    $startDateOfWeekInput = $dateCarbon->copy()->subDays($dayOfWeek - 5)->format('d-m-Y');
-                    $endDateOfWeekInput = $dateCarbon->copy()->addDays(4 - $dayOfWeek + 7)->format('d-m-Y');
-                } else {
-                    $startDateOfWeekInput = $dateCarbon->copy()->subDays($dayOfWeek + 6 - 4)->format('d-m-Y');
-                    $endDateOfWeekInput = $dateCarbon->copy()->addDays(4 - $dayOfWeek)->format('d-m-Y');
-                }
-            }
-            return view('centers.edit', ['dataCenter' => $dataCenter, 'record' => $record,'startDateOfWeekInput' => $startDateOfWeekInput,'endDateOfWeekInput' => $endDateOfWeekInput, 'startDate'=> $startDate, 'endDate'=> $endDateWeek]);
-        }
-        return view('centers.edit', ['dataCenter' => $dataCenter, 'startDate'=> $startDate, 'endDate'=> $endDateWeek]);
+        //     if(!empty($record)) {
+        //         if ($dayOfWeek > 5) {
+        //             $startDateOfWeekInput = $dateCarbon->copy()->subDays($dayOfWeek - 5)->format('d-m-Y');
+        //             $endDateOfWeekInput = $dateCarbon->copy()->addDays(4 - $dayOfWeek + 7)->format('d-m-Y');
+        //         } else {
+        //             $startDateOfWeekInput = $dateCarbon->copy()->subDays($dayOfWeek + 6 - 4)->format('d-m-Y');
+        //             $endDateOfWeekInput = $dateCarbon->copy()->addDays(4 - $dayOfWeek)->format('d-m-Y');
+        //         }
+        //     }
+        //     return view('centers.edit', ['dataCenter' => $dataCenter, 'record' => $record,'startDateOfWeekInput' => $startDateOfWeekInput,'endDateOfWeekInput' => $endDateOfWeekInput, 'startDate'=> $startDate, 'endDate'=> $endDateWeek]);
+        // }
+        // return view('centers.edit', ['dataCenter' => $dataCenter, 'startDate'=> $startDate, 'endDate'=> $endDateWeek]);
     }
 
     /**

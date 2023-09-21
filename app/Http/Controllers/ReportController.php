@@ -187,6 +187,7 @@ class ReportController extends Controller
                 'user_id' => $user->id,
                 'start_date' => $currentDateTime,
                 'end_date' => $currentDateTime,
+                'values' => json_encode($jsonData),
                 'status' => 1,
             ]);
 
@@ -260,24 +261,44 @@ class ReportController extends Controller
      */
     public function edit($id)
     {
-        $itemData = Report::find($id);
-        // dd($$itemData->id);
         $user = Auth::user();
-        $department = Department::find($user->department);
-        $report = Report::where('id', $id)->first();
-        
-        $data = Task::where('report_id', $report->id)->get();
-        $startDate = Carbon::now()->startOfWeek();
-        $endDate = Carbon::now()->endOfWeek();
-
-        $logs = Logs::Where('department_id', $department->id)->whereBetween('created_at', [$startDate, $endDate])->first();
-
-        if($logs){
-
-            $array = json_decode($logs->values, true);
-            return view('reports.edit', ['department' => $department, 'array' => $array, 'report' => $report]);
+        if($user->role == 'admin') {
+            $report = Report::where('id', $id)->first();
+            $itemData = Report::find($id);
+            // dd($$itemData->id);
+            $department = Department::find($report->department_id);
+            $report = Report::where('id', $id)->first();
+            
+            $data = Task::where('report_id', $report->id)->get();
+            $startDate = Carbon::now()->startOfWeek();
+            $endDate = Carbon::now()->endOfWeek();
+    
+            $logs = Logs::Where('department_id', $department->id)->whereBetween('created_at', [$startDate, $endDate])->first();
+    
+            if($logs){
+    
+                $array = json_decode($logs->values, true);
+                return view('reports.edit', ['department' => $department, 'array' => $array, 'report' => $report]);
+            }
+        } else {
+            $itemData = Report::find($id);
+            // dd($$itemData->id);
+            $department = Department::find($user->department);
+            $report = Report::where('id', $id)->first();
+            
+            $data = Task::where('report_id', $report->id)->get();
+            $startDate = Carbon::now()->startOfWeek();
+            $endDate = Carbon::now()->endOfWeek();
+    
+            $logs = Logs::Where('department_id', $department->id)->whereBetween('created_at', [$startDate, $endDate])->first();
+    
+            if($logs){
+    
+                $array = json_decode($logs->values, true);
+                return view('reports.edit', ['department' => $department, 'array' => $array, 'report' => $report]);
+            }
+            return view('reports.edit', ['department' => $department, 'array' => null, 'report' => $report]);
         }
-        return view('reports.edit', ['department' => $department, 'array' => null, 'report' => $report]);
     }
 
     /**
@@ -317,8 +338,7 @@ class ReportController extends Controller
                     $nextWeekNoteWork = isset($requestData['noi_dung_cong_viec_tuan_toi']) ? $requestData['noi_dung_cong_viec_tuan_toi'] : $item->description;
                 }
                 if ($item->reports_title == 'Request') {
-                    $note = isset($requestData['kien_nghi']) ? $requestData['kien_nghi'] : $item->title;
-
+                    $note = isset($requestData['kien_nghi']) ? $requestData['kien_nghi'] : 'Chưa báo cáo';
                 }
             }
 
@@ -350,8 +370,8 @@ class ReportController extends Controller
 
                 // Tạo chuỗi JSON
                 $jsonData = json_encode([
-                    'WorkDone' => $mapDataDone,
-                    'ExpectedWork' => $mapDataNextWeek,
+                    'WorkDone' =>  isset($mapDataDone) ? $mapDataDone : null,
+                    'ExpectedWork' =>  isset($nextWeekWork) ? $mapDataNextWeek : null,
                     'Request' => $note,
                 ], JSON_PRETTY_PRINT);
 
@@ -362,6 +382,9 @@ class ReportController extends Controller
                 $report = Report::find($id);
                 $report->update($request->start_date);
                 $report->update($request->end_date);
+                $report->update([
+                    'values' => json_encode($jsonData)
+                ]);
 
                 $dataLogId = Logs::where('report_id', $id)->first();
 
@@ -393,7 +416,9 @@ class ReportController extends Controller
                 }
 
                 if (isset($jsonData->ExpectedWork)) {
-                    $tasks = Task::where('reports_title', 'ExpectedWork')->get();
+                    $tasks = Task::where('reports_title', 'ExpectedWork')
+                    ->where('report_id', $id)
+                    ->get();
                     foreach ($jsonData->ExpectedWork as $index => $data) {
                         if (isset($tasks[$index])) {
                             $task = $tasks[$index];
@@ -410,7 +435,9 @@ class ReportController extends Controller
                 }
 
                 if (isset($jsonData->Request)) {
-                    $existingTask = Task::where('reports_title', 'Request')->first();
+                    $existingTask = Task::where('reports_title', 'Request')
+                    ->where('report_id', $id)
+                    ->first();
                         $request = $jsonData->Request;
                         if($existingTask) {
                             $existingTask->update([
@@ -421,7 +448,10 @@ class ReportController extends Controller
                 }
                 
 
-
+                $user = Auth::user();
+            if($user->role == "admin") {
+                return redirect()->route('centers.index')->with(['success' => 'Dữ liệu đã được lưu thành công.']);
+            }
             return redirect()->route('reports.index')->with(['success' => 'Dữ liệu đã được lưu thành công.']);
         } catch (QueryException $e) {
             \Log::info("Error ", $e);
