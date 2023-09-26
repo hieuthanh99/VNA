@@ -221,6 +221,9 @@
                     @endphp
 
                     <form action="{{ route('reports.store') }}" method="POST" class="mt-4" id="report-form">
+                        @if(!empty($department))
+                            <input class="department_id" type="hidden" name="department_id" value="{{ $department->id }}">
+                        @endif
                         @csrf
                         <div class="mb-4">
                             <h1 class="mb-2 heading-style">I. Công việc đã thực hiện</h1>

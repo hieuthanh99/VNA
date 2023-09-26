@@ -11,8 +11,6 @@
 
     .container {
       max-width: 600px;
-      margin: 0 auto;
-      padding: 20px;
       background-color: #ffffff;
       border-radius: 5px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -31,13 +29,17 @@
     .contact {
       color: #007bff;
     }
+    .h2 {
+      color:#333;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Kính gửi: Anh/chị lãnh đạo Ban DVHK,</h1>
+    <h1>Kính gửi: PTGĐ,</h1>
+    <h2>Cc: TB DVHK</h2>
     <p>
-      Hệ thống xin gửi Anh/chị báo cáo công việc của khối Dịch vụ tuần vừa qua trong tệp đính kèm.
+      Ban DVHK và các đơn vị xin gửi PTGĐ báo cáo công việc của khối Dịch vụ tuần vừa qua trong tệp đính kèm.
     </p>
     <p>
       Trân trọng cảm ơn.

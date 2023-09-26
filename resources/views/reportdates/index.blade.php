@@ -56,6 +56,13 @@
             .alert-success {
                 width: 50%;
                 margin: auto;
+                color: #007bff;
+            }
+
+            .alert-error {
+                width: 50%;
+                margin: auto; 
+                color: red;
             }
 
             .newest-date {
@@ -71,6 +78,11 @@
         @if (session('success'))
             <div class="alert alert-success">
                 {{ session('success') }}
+            </div>
+        @endif
+        @if (session('error'))
+            <div class="alert alert-error">
+                {{ session('error') }}
             </div>
         @endif
         <form class="form-date" action="{{ route('report-dates.store') }}" method="post">

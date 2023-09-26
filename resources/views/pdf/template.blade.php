@@ -51,37 +51,46 @@
         <h1>{{ $department['DepartmentName'] }}</h1>
 
         <h2>I. Công việc đã thực hiện</h2>
-        @if (count($department['WorkDone']) > 0)
-            <ul>
-                @foreach ($department['WorkDone'] as $work)
-                    <li>
-                        <strong>Tiêu đề:</strong> {{ $work['work_done'] }}<br>
-                        <strong>Nội dung:</strong> {{ $work['description'] }}<br>
-                        <strong>Ngày bắt đầu:</strong> {{ $work['start_date'] }}<br>
-                        <strong>Kết thúc:</strong> {{ $work['end_date'] }}<br>
-                        <strong>Tiến độ:</strong> {{ $work['status_work'] }}
-                    </li>
-                @endforeach
-            </ul>
+        @if (!empty($department['WorkDone'])) 
+            @if (count($department['WorkDone']) > 0)
+                <ul>
+                    @foreach ($department['WorkDone'] as $work)
+                        <li>
+                            <strong>Tiêu đề:</strong> {{ $work['work_done'] }}<br>
+                            <strong>Nội dung:</strong> {{ $work['description'] }}<br>
+                            <strong>Ngày bắt đầu:</strong> {{ $work['start_date'] }}<br>
+                            <strong>Kết thúc:</strong> {{ $work['end_date'] }}<br>
+                            <strong>Tiến độ:</strong> {{ $work['status_work'] }}
+                        </li>
+                    @endforeach
+                </ul>
+            @else
+                <p>Không có công việc đã thực hiện.</p>
+            @endif
         @else
-            <p>Không có công việc đã thực hiện.</p>
+            <p>Không có dữ liệu công việc đã thực hiện</p>
         @endif
+       
 
         <h2>II. Công việc dự kiến</h2>
-        @if (count($department['ExpectedWork']) > 0)
-            <ul>
-                @foreach ($department['ExpectedWork'] as $work)
-                    <li>
-                        <strong>Tiêu đề:</strong> {{ $work['next_work'] }}<br>
-                        <strong>Nội dung:</strong> {{ $work['next_description'] }}<br>
-                        <strong>Ngày bắt đầu:</strong> {{ $work['next_start_date'] }}<br>
-                        <strong>Kết thúc:</strong> {{ $work['next_end_date'] }}<br>
-                        <strong>Tiến độ:</strong> {{ $work['next_status_work'] }}
-                    </li>
-                @endforeach
-            </ul>
-        @else
-            <p>Không có công việc dự kiến.</p>
+        @if (!empty($department['ExpectedWork'])) 
+            @if (count($department['ExpectedWork']) > 0)
+                <ul>
+                    @foreach ($department['ExpectedWork'] as $work)
+                        <li>
+                            <strong>Tiêu đề:</strong> {{ $work['next_work'] }}<br>
+                            <strong>Nội dung:</strong> {{ $work['next_description'] }}<br>
+                            <strong>Ngày bắt đầu:</strong> {{ $work['next_start_date'] }}<br>
+                            <strong>Kết thúc:</strong> {{ $work['next_end_date'] }}<br>
+                            <strong>Tiến độ:</strong> {{ $work['next_status_work'] }}
+                        </li>
+                    @endforeach
+                </ul>
+            @else
+                <p>Không có công việc dự kiến.</p>
+            @endif
+        @else 
+            <p>Không có dữ liệu công việc dự kiến</p>
         @endif
 
         <h2>III. Kiến nghị</h2>

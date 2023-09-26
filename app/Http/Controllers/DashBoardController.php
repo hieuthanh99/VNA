@@ -90,17 +90,16 @@ class DashBoardController extends Controller
         try {
 
             $startDate = Carbon::now()->startOfWeek();
+            $startDate->subDays(3);
             $dateStart = Carbon::now();
             $endDate = Carbon::now()->endOfWeek();
-            $endDate2 = Carbon::now()->setISODate(Carbon::now()->year, Carbon::now()->isoWeek(), 5)->setTime(16, 0, 0);
-
+            $endDate2 = Carbon::now()->setISODate(Carbon::now()->year, Carbon::now()->isoWeek(), 4)->setTime(16, 0, 0);
             $reportCenter = ReportCenter::whereBetween('created_at', [$startDate, $endDate2])->get();
-            
             if(!$reportCenter->isEmpty()){
                 return redirect()->back()->with('error', 'Bạn đã thực thi trong tuần này.');
             }
 
-            $records = Logs::whereBetween('created_at', [$startDate, $endDate])->get();
+            $records = Logs::whereBetween('created_at', [$startDate, $endDate2])->get();
             if ($records->count() > 0) {
                 $dataByDepartment = [];
             
@@ -134,12 +133,28 @@ class DashBoardController extends Controller
                     }
                 }
                 $jsonData = json_encode(array_values($dataByDepartment));
-                ReportCenter::create([
+                $dataReportCenter = ReportCenter::create([
                     'status' => 1,
                     'values' => $jsonData,
                     'created_at' => $endDate2,
                     'date_start' => $dateStart,
                 ]);
+                $arrayCenter = json_decode($dataReportCenter->values);
+                $departmentIds = []; 
+                foreach ($arrayCenter as $item) {
+                    $departmentIds[] = $item->DepartmentId;
+                }
+                $dataStatusDepartment = [];
+                $statusShow = 2;
+                foreach ($departmentIds as $item) {
+                    $dataReport = Report::where('department_id', $item)->whereBetween('created_at', [$startDate, $endDate])->first();
+                    if ($dataReport) {
+                        $status = $statusShow; 
+                        $dataReport->status = $status; 
+                        $dataReport->save(); 
+                        $dataStatusDepartment[] = $dataReport;
+                    }
+                }
 
                 \Log::info("Testing Cron is Running ... !".$jsonData);
                 \Log::info('Daily report has been sent successfully!');

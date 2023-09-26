@@ -12,16 +12,19 @@ use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use App\Models\Report;
 
 class Helper
 {
     public static function reportWeeked()
     {
-        $startDate = Carbon::now()->startOfWeek();
-        $endDateWeek = Carbon::now()->endOfWeek();
+        // $startDate = Carbon::now()->startOfWeek();
+        // $endDateWeek = Carbon::now()->endOfWeek();
+        $startDate = Carbon::now()->startOfWeek()->subWeek()->addDays(4);
+        $endDateWeek = Carbon::now()->endOfWeek()->subWeek()->addDays(4); 
         $endDate = Carbon::now()->setISODate(Carbon::now()->year, Carbon::now()->isoWeek(), 5)->setTime(17, 0, 0);
         $department = Department::get()->toArray();
-        $data = ReportCenter::whereBetween('created_at', [$startDate, $endDate]);
+        $data = ReportCenter::whereBetween('created_at', [$startDate, $endDateWeek])->get();
         $record = $data->first();
        
         $data = json_decode($data->value('values'), true) ?? [];
@@ -33,7 +36,6 @@ class Helper
             $item = array_filter($data, function ($value) use ($departmentId) {
                 return $value['DepartmentId'] == $departmentId;
             });
-        
             // Kiểm tra nếu mảng $item không rỗng
             if (!empty($item)) {
                 foreach ($item as $itemData) {
@@ -55,7 +57,69 @@ class Helper
                 ];
             }
         }
-    
+        // Trả về một mảng chứa các giá trị cần trả về
+        return [
+            'mergedArray' => $mergedArray,
+            'startDate' => $startDate,
+            'endDateWeek' => $endDateWeek,
+            'record' => $record
+        ];
+    }
+
+    public static function reportItem()
+    {
+        // $startDate = Carbon::now()->startOfWeek();
+        // $endDateWeek = Carbon::now()->endOfWeek();
+        $startDate = Carbon::now()->startOfWeek()->subWeek()->addDays(4);
+     
+        $endDateWeek = Carbon::now()->endOfWeek()->subWeek()->addDays(4); 
+        $today = Carbon::now();
+        $lastFriday = $endDateWeek->copy()->subDays($endDateWeek->dayOfWeek + 2);
+        $thisThursday = $endDateWeek->copy()->addDays(3 - $endDateWeek->dayOfWeek + 1);
+        // if ($endDateWeek->equalTo($today)) {
+        //     $lastFriday = $endDateWeek->copy()->subDays($endDateWeek->dayOfWeek + 2);
+        //     $thisThursday = $endDateWeek->copy()->addDays(3 - $endDateWeek->dayOfWeek + 1);
+        //     $data = Report::whereBetween('end_date', [$lastFriday, $thisThursday])->get();
+        // } elseif ($endDateWeek->greaterThan($today)) {
+        //     $lastFriday = $endDateWeek->copy()->subDays($endDateWeek->dayOfWeek + 2);
+        //     $thisThursday = $endDateWeek->copy()->addDays(3 - $endDateWeek->dayOfWeek + 1);
+        //     $data = Report::whereBetween('end_date', [$lastFriday, $thisThursday])->get();
+        // } else {
+        //     $lastFriday = $endDateWeek->copy()->subDays($endDateWeek->dayOfWeek + 2);
+        //     $thisThursday = $endDateWeek->copy()->addDays(3 - $endDateWeek->dayOfWeek + 1);
+            
+        // }
+        $data = Report::whereBetween('end_date', [$lastFriday, $thisThursday])->get();
+
+        $endDate = Carbon::now()->setISODate(Carbon::now()->year, Carbon::now()->isoWeek(), 5)->setTime(17, 0, 0);
+        $department = Department::get()->toArray();
+        $arrayDepartmentIds = [];
+        foreach ($data as $item) {
+            $arrayDepartmentIds[] = $item->department_id;
+        }
+
+        $record = $data;
+       
+        $data = json_decode($data->value('values'), true) ?? [];
+        $mergedArray = [];
+        
+        $departmentId = [];
+        foreach ($department as $dept) {
+            $departmentId[] = $dept['id'];
+        }
+
+        foreach ($departmentId as $id) {
+            if (!in_array($id, $arrayDepartmentIds)) {
+                $name = Department::find($id)->name;
+                $mergedArray[] = [
+                    'DepartmentId' => $id,
+                    'DepartmentName' => $name, 
+                    'WorkDone' => [],
+                    'ExpectedWork' => [],
+                    'Request' => ''
+                ];
+            }
+        }
         // Trả về một mảng chứa các giá trị cần trả về
         return [
             'mergedArray' => $mergedArray,
@@ -178,30 +242,31 @@ class Helper
             $section->addText("              BÁO CÁO CÔNG VIỆC TUẦN ($startDateOfWeekInput – $endDateOfWeekInput)", ['size' => 12, 'bold' => true]);
             $section->addTextBreak(3);
         }
-        $data = $data['mergedArray'];
+        $data = $record;
+        $data = json_decode($data->values);
         foreach ($data as $item) {
             // Thêm thông tin về phòng
-            $section->addText($item['DepartmentName'], ['size' => 11, 'bold' => true]);
+            $section->addText($item->DepartmentName, ['size' => 11, 'bold' => true]);
             $section->addTextBreak(1);
             $STTWorkDone = 1;
             $STTExpectedWork = 1;
-            if(!empty($item['WorkDone'])) {
+            if(!empty($item->WorkDone)) {
                 // Thêm thông tin về công việc đã làm
                 $section->addText("I. Công việc đã thực hiện:", ['size' => 11, 'bold' => true]);
                 $section->addTextBreak(1);
-                foreach ($item['WorkDone'] as $workDone) {
+                foreach ($item->WorkDone as $workDone) {
                     $sttWorkDone = $STTWorkDone++;
                     $section->addText("$sttWorkDone. Công việc đã thực hiện: ", ['size' => 11, 'bold' => false]);
                     $section->addTextBreak(1);
-                    $section->addText("- Tiêu đề : " . $workDone['work_done'], ['size' => 11, 'bold' => false]);
+                    $section->addText("- Tiêu đề : " . $workDone->work_done, ['size' => 11, 'bold' => false]);
                     $section->addTextBreak(1);
-                    $section->addText("- Nội dung : " . $workDone['description'], ['size' => 11, 'bold' => false]);
+                    $section->addText("- Nội dung : " . $workDone->description, ['size' => 11, 'bold' => false]);
                     $section->addTextBreak(1);
-                    $section->addText("- Ngày bắt đầu : " . $workDone['start_date'], ['size' => 11, 'bold' => false]);
+                    $section->addText("- Ngày bắt đầu : " . $workDone->start_date, ['size' => 11, 'bold' => false]);
                     $section->addTextBreak(1);
-                    $section->addText("- Ngày kết thúc : " . $workDone['end_date'], ['size' => 11, 'bold' => false]);
+                    $section->addText("- Ngày kết thúc : " . $workDone->end_date, ['size' => 11, 'bold' => false]);
                     $section->addTextBreak(1);
-                    $section->addText("- Tiến độ : " . $workDone['status_work'], ['size' => 11, 'bold' => false]);
+                    $section->addText("- Tiến độ : " . $workDone->status_work, ['size' => 11, 'bold' => false]);
                     $section->addTextBreak(1);
                 }
 
@@ -211,24 +276,24 @@ class Helper
                 $section->addText("I. Công việc đã thực hiện : Không có dữ liệu", ['size' => 11, 'bold' => true]);
                 $section->addTextBreak(1);
             }
-            if(!empty($item['ExpectedWork'])) {
+            if(!empty($item->ExpectedWork)) {
 
                 // Thêm thông tin về công việc dự kiến
                 $section->addText("II. Công việc dự kiến:", ['size' => 11, 'bold' => true]);
                 $section->addTextBreak(1);
-                foreach ($item['ExpectedWork'] as $expectedWork) {
+                foreach ($item->ExpectedWork as $expectedWork) {
                     $sttExpectedWork = $STTExpectedWork++;
                     $section->addText("$sttExpectedWork. Công việc dự kiến: ", ['size' => 11, 'bold' => false]);
                     $section->addTextBreak(1);
-                    $section->addText("- Tiêu đề : " . $expectedWork['next_work'], ['size' => 11, 'bold' => false]);
+                    $section->addText("- Tiêu đề : " . $expectedWork->next_work, ['size' => 11, 'bold' => false]);
                     $section->addTextBreak(1);
-                    $section->addText("- Nội dung : " . $expectedWork['next_description'], ['size' => 11, 'bold' => false]);
+                    $section->addText("- Nội dung : " . $expectedWork->next_description, ['size' => 11, 'bold' => false]);
                     $section->addTextBreak(1);
-                    $section->addText("- Ngày bắt đầu : " . $expectedWork['next_start_date'], ['size' => 11, 'bold' => false]);
+                    $section->addText("- Ngày bắt đầu : " . $expectedWork->next_start_date, ['size' => 11, 'bold' => false]);
                     $section->addTextBreak(1);
-                    $section->addText("- Ngày kết thúc : " . $expectedWork['next_end_date'], ['size' => 11, 'bold' => false]);
+                    $section->addText("- Ngày kết thúc : " . $expectedWork->next_end_date, ['size' => 11, 'bold' => false]);
                     $section->addTextBreak(1);
-                    $section->addText("- Tiến độ : " . $expectedWork['next_status_work'], ['size' => 11, 'bold' => false]);
+                    $section->addText("- Tiến độ : " . $expectedWork->next_status_work, ['size' => 11, 'bold' => false]);
                     $section->addTextBreak(1);
                 }
 
@@ -238,10 +303,10 @@ class Helper
                 $section->addTextBreak(1);
             }
 
-            if(!empty($item['ExpectedWork'])) {
+            if(!empty($item->ExpectedWork)) {
                 $section->addText("III. Kiến nghị:", ['size' => 11, 'bold' => true]);
                 $section->addTextBreak(1);
-                $section->addText($item['Request'], ['size' => 11, 'bold' => false]);
+                $section->addText($item->Request, ['size' => 11, 'bold' => false]);
                 $section->addTextBreak(2);
             } else {
                 $section->addText("III. Kiến nghị : " . 'Không có dữ liệu', ['size' => 11, 'bold' => true]);

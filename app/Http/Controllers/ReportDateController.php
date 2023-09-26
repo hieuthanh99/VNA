@@ -26,25 +26,30 @@ class ReportDateController extends Controller
             'report_date' => 'required|date',
         ]);
 
-        $reportDate = $request->input('report_date');
         $selectedTime = $request->input('report_time');
-
-        // Tính toán ngày báo cáo kết thúc sau 7 ngày
-        // $endOfWeek = Carbon::createFromFormat('Y-m-d', $reportDate)->addDays(7)->toDateString();
-        ReportDate::create([
-            'report_date' => $reportDate,
-            'report_time' => $selectedTime
-        ]);
-
-        $maxRecords = 5;
-        if (ReportDate::count() > $maxRecords) {
-            $oldestRecords = ReportDate::orderBy('created_at')->take(ReportDate::count() - $maxRecords)->get();
-            foreach ($oldestRecords as $oldestRecord) {
-                $oldestRecord->delete();
+        $reportDate = $request->input('report_date');
+        $reportDate = Carbon::createFromFormat('Y-m-d', $reportDate);
+        $thursday = Carbon::now()->endOfWeek()->subWeek()->addDays(4); 
+        if ($thursday->greaterThanOrEqualTo($reportDate)) {
+            ReportDate::create([
+                'report_date' => $reportDate,
+                'report_time' => $selectedTime
+            ]);
+    
+            $maxRecords = 5;
+            if (ReportDate::count() > $maxRecords) {
+                $oldestRecords = ReportDate::orderBy('created_at')->take(ReportDate::count() - $maxRecords)->get();
+                foreach ($oldestRecords as $oldestRecord) {
+                    $oldestRecord->delete();
+                }
             }
+    
+            return redirect()->route('report-dates.index', compact('reportDate'))->with('success', 'Ngày giờ báo cáo đã được đặt thành công.');
+        } else {
+            return redirect()->route('report-dates.index')->with(['error' => 'Ngày báo cáo không được lớn hơn thứ 5 tuần này.']);
         }
 
-        return redirect()->route('report-dates.index', compact('reportDate'))->with('success', 'Ngày giờ báo cáo đã được đặt thành công.');
+
     }
 
     public function searchReport(Request $request)
