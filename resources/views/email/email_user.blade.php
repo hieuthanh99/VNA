@@ -16,32 +16,19 @@
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
 
-    h1 {
-      color: #333;
-      font-size: 24px;
-    }
-
-    p {
-      color: #666;
-      font-size: 16px;
-    }
-
-    .contact {
-      color: #007bff;
-    }
-    .h2 {
-      color:#333;
+    .text {
+      color: #000;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Kính gửi: PTGĐ,</h1>
-    <h2>Cc: TB DVHK</h2>
-    <p>
+    <p class="text">Kính gửi: PTGĐ,</p>
+    <p class="text">Cc: TB DVHK</p>
+    <p class="text">
       Ban DVHK và các đơn vị xin gửi PTGĐ báo cáo công việc của khối Dịch vụ tuần vừa qua trong tệp đính kèm.
     </p>
-    <p>
+    <p class="text">
       Trân trọng cảm ơn.
     </p>
   </div>
