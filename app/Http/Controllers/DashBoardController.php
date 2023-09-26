@@ -90,17 +90,16 @@ class DashBoardController extends Controller
         try {
 
             $startDate = Carbon::now()->startOfWeek();
+            $startDate->subDays(3);
             $dateStart = Carbon::now();
             $endDate = Carbon::now()->endOfWeek();
-            $endDate2 = Carbon::now()->setISODate(Carbon::now()->year, Carbon::now()->isoWeek(), 5)->setTime(16, 0, 0);
-
+            $endDate2 = Carbon::now()->setISODate(Carbon::now()->year, Carbon::now()->isoWeek(), 4)->setTime(16, 0, 0);
             $reportCenter = ReportCenter::whereBetween('created_at', [$startDate, $endDate2])->get();
-            
             if(!$reportCenter->isEmpty()){
                 return redirect()->back()->with('error', 'Bạn đã thực thi trong tuần này.');
             }
 
-            $records = Logs::whereBetween('created_at', [$startDate, $endDate])->get();
+            $records = Logs::whereBetween('created_at', [$startDate, $endDate2])->get();
             if ($records->count() > 0) {
                 $dataByDepartment = [];
             

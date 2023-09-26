@@ -40,11 +40,10 @@ class StockScheduler extends Command
     public function handle()
     {
         $startDate = Carbon::now()->startOfWeek();
+        $startDate->subDays(3);
         $endDate = Carbon::now()->endOfWeek();
-        $endDate2 = Carbon::now()->setISODate(Carbon::now()->year, Carbon::now()->isoWeek(), 5)->setTime(16, 0, 0);
-
+        $endDate2 = Carbon::now()->setISODate(Carbon::now()->year, Carbon::now()->isoWeek(), 4)->setTime(16, 0, 0);
         $reportCenter = ReportCenter::whereBetween('created_at', [$startDate, $endDate2])->get();
-        
         if(!$reportCenter->isEmpty()){
             Mail::to('n.hieuthanhps@gmail.com')->send(new SendEmailUser());
 
@@ -52,7 +51,7 @@ class StockScheduler extends Command
             exit();
         }
        
-        $records = Logs::whereBetween('created_at', [$startDate, $endDate])->get();
+        $records = Logs::whereBetween('created_at', [$startDate, $endDate2])->get();
         if ($records->count() > 0) {
             $dataByDepartment = [];
         

@@ -25,15 +25,16 @@ class ReportCenterController extends Controller
         $mergedArray = $result['mergedArray'] ?? null;
         $startDate = $result['startDate'] ?? null;
         $endDateWeek = $result['endDateWeek'] ?? null; 
-
         $lastFriday = $startDate->copy()->subDays($startDate->dayOfWeek + 2);
         $thisThursday = $startDate->copy()->addDays(3 - $startDate->dayOfWeek + 1);
 
         $lastFridayFormatted = $lastFriday->format('d-m-Y');
         $thisThursdayFormatted = $thisThursday->format('d-m-Y');
         $records = $result['record'] ?? null;
-        $arrayValues = [];
-        $deparments = [];
+        $startDate = Carbon::now()->startOfWeek();
+        $startDate->subDays(3);
+        $endDate2 = Carbon::now()->setISODate(Carbon::now()->year, Carbon::now()->isoWeek(), 4)->setTime(16, 0, 0);
+        $reportCenter = ReportCenter::whereBetween('created_at', [$startDate, $endDate2])->first();
         if(!$records->isEmpty()) {
             foreach ($records as $record) {
                 $data =  $record->date_start;
@@ -50,9 +51,13 @@ class ReportCenterController extends Controller
                     }
                 }
             }
-            return view('centers.index', ['record' => $dataRecord,'deparments'=> $deparments, 'startDateOfWeekInput' => $startDateOfWeekInput,'endDateOfWeekInput' => $endDateOfWeekInput , 'records' => $records, 'startDate' => $startDate->format('d-m-Y'), 'endDate' => $endDateWeek->format('d-m-Y')]);
+            if(!empty($reportCenter)) {
+                return view('centers.index', ['record' => $dataRecord, 'mergedArray' => $mergedArray, 'reportCenter' => $reportCenter, 'startDateOfWeekInput' => $startDateOfWeekInput,'endDateOfWeekInput' => $endDateOfWeekInput , 'records' => $records, 'startDate' => $startDate->format('d-m-Y'), 'endDate' => $endDateWeek->format('d-m-Y')]);
+            } else {
+                return view('centers.index', ['record' => $dataRecord, 'mergedArray' => $mergedArray, 'startDateOfWeekInput' => $startDateOfWeekInput,'endDateOfWeekInput' => $endDateOfWeekInput , 'records' => $records, 'startDate' => $startDate->format('d-m-Y'), 'endDate' => $endDateWeek->format('d-m-Y')]);
+            }
         }
-        return view('centers.index', ['records' => $records, 'data' => $mergedArray, 'startDate' => $lastFridayFormatted, 'endDate' => $thisThursdayFormatted]);
+        return view('centers.index', ['records' => $records, 'mergedArray' => $mergedArray, 'startDate' => $lastFridayFormatted, 'endDate' => $thisThursdayFormatted]);
     }
 
     /**
@@ -84,7 +89,8 @@ class ReportCenterController extends Controller
      */
     public function show($id)
     {
-        //
+        $department = Department::where('id' , $id)->first();
+        return view('reports.create', ['department' => $department, 'expectedWorkValues' => null ]);
     }
 
     /**
@@ -128,66 +134,66 @@ class ReportCenterController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $reportCenter = ReportCenter::find($id);
-        $jsonArray = json_decode($reportCenter->values);
+        // $reportCenter = ReportCenter::find($id);
+        // $jsonArray = json_decode($reportCenter->values);
 
-        foreach ($request->all() as $key => $item) {
-            //WorkDone
-            if (strpos($key, 'cong_viec_da_lam') !== false) {
-                $parts = explode("*_*", $key);
-                $jsonArray[$parts[1]]->WorkDone[$parts[3]]->work_done = $item;
-            }
-            if (strpos($key, 'start_date_tuan_nay') !== false) {
-                $parts = explode("*_*", $key);
-                $jsonArray[$parts[1]]->WorkDone[$parts[3]]->start_date = $item;
-            }
-            if (strpos($key, 'end_date_tuan_nay') !== false) {
-                $parts = explode("*_*", $key);
-                $jsonArray[$parts[1]]->WorkDone[$parts[3]]->end_date = $item;
-            }
-            if (strpos($key, 'trangthai_cong_viec_tuan_nay') !== false) {
-                $parts = explode("*_*", $key);
-                $jsonArray[$parts[1]]->WorkDone[$parts[3]]->status_work = $item;
-            }
-            if (strpos($key, 'noi_dung_cong_viec_tuan_nay') !== false) {
-                $parts = explode("*_*", $key);
-                $jsonArray[$parts[1]]->WorkDone[$parts[3]]->description = $item;
-            }
-            //ExpectedWork
-            if (strpos($key, 'tieu_de_cong_viec_tuan_toi') !== false) {
-                $parts = explode("*_*", $key);
-                $jsonArray[$parts[1]]->ExpectedWork[$parts[3]]->next_work = $item;
-            }
-            if (strpos($key, 'start_date_tuan_toi') !== false) {
-                $parts = explode("*_*", $key);
-                $jsonArray[$parts[1]]->ExpectedWork[$parts[3]]->next_start_date = $item;
-            }
-            if (strpos($key, 'end_date_tuan_toi') !== false) {
-                $parts = explode("*_*", $key);
-                $jsonArray[$parts[1]]->ExpectedWork[$parts[3]]->next_end_date = $item;
-            }
-            if (strpos($key, 'trangthai_congviec_tuan_toi') !== false) {
-                $parts = explode("*_*", $key);
-                $jsonArray[$parts[1]]->ExpectedWork[$parts[3]]->next_status_work = $item;
-            }
-            if (strpos($key, 'noi_dung_cong_viec_tuan_toi') !== false) {
-                $parts = explode("*_*", $key);
-                $jsonArray[$parts[1]]->ExpectedWork[$parts[3]]->next_description = $item;
-            }
+        // foreach ($request->all() as $key => $item) {
+        //     //WorkDone
+        //     if (strpos($key, 'cong_viec_da_lam') !== false) {
+        //         $parts = explode("*_*", $key);
+        //         $jsonArray[$parts[1]]->WorkDone[$parts[3]]->work_done = $item;
+        //     }
+        //     if (strpos($key, 'start_date_tuan_nay') !== false) {
+        //         $parts = explode("*_*", $key);
+        //         $jsonArray[$parts[1]]->WorkDone[$parts[3]]->start_date = $item;
+        //     }
+        //     if (strpos($key, 'end_date_tuan_nay') !== false) {
+        //         $parts = explode("*_*", $key);
+        //         $jsonArray[$parts[1]]->WorkDone[$parts[3]]->end_date = $item;
+        //     }
+        //     if (strpos($key, 'trangthai_cong_viec_tuan_nay') !== false) {
+        //         $parts = explode("*_*", $key);
+        //         $jsonArray[$parts[1]]->WorkDone[$parts[3]]->status_work = $item;
+        //     }
+        //     if (strpos($key, 'noi_dung_cong_viec_tuan_nay') !== false) {
+        //         $parts = explode("*_*", $key);
+        //         $jsonArray[$parts[1]]->WorkDone[$parts[3]]->description = $item;
+        //     }
+        //     //ExpectedWork
+        //     if (strpos($key, 'tieu_de_cong_viec_tuan_toi') !== false) {
+        //         $parts = explode("*_*", $key);
+        //         $jsonArray[$parts[1]]->ExpectedWork[$parts[3]]->next_work = $item;
+        //     }
+        //     if (strpos($key, 'start_date_tuan_toi') !== false) {
+        //         $parts = explode("*_*", $key);
+        //         $jsonArray[$parts[1]]->ExpectedWork[$parts[3]]->next_start_date = $item;
+        //     }
+        //     if (strpos($key, 'end_date_tuan_toi') !== false) {
+        //         $parts = explode("*_*", $key);
+        //         $jsonArray[$parts[1]]->ExpectedWork[$parts[3]]->next_end_date = $item;
+        //     }
+        //     if (strpos($key, 'trangthai_congviec_tuan_toi') !== false) {
+        //         $parts = explode("*_*", $key);
+        //         $jsonArray[$parts[1]]->ExpectedWork[$parts[3]]->next_status_work = $item;
+        //     }
+        //     if (strpos($key, 'noi_dung_cong_viec_tuan_toi') !== false) {
+        //         $parts = explode("*_*", $key);
+        //         $jsonArray[$parts[1]]->ExpectedWork[$parts[3]]->next_description = $item;
+        //     }
 
 
 
-            if (strpos($key, 'kien_nghi') !== false) {
-                $parts = explode("*_*", $key);
-                $jsonArray[$parts[1]]->Request = $item;
-            }
-        }
+        //     if (strpos($key, 'kien_nghi') !== false) {
+        //         $parts = explode("*_*", $key);
+        //         $jsonArray[$parts[1]]->Request = $item;
+        //     }
+        // }
 
-        $jsonData = json_encode($jsonArray);
-        $reportCenter->values = $jsonData;
-        $reportCenter->save();
+        // $jsonData = json_encode($jsonArray);
+        // $reportCenter->values = $jsonData;
+        // $reportCenter->save();
         
-        return redirect()->route('centers.index')->with(['success' => 'Dữ liệu đã được lưu thành công.']);
+        // return redirect()->route('centers.index')->with(['success' => 'Dữ liệu đã được lưu thành công.']);
     }
 
     /**

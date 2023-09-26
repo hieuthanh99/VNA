@@ -12,10 +12,10 @@
                 @endif
             </h2>
             <div style="display: flex;">
-                <form style="margin: 0 20px;" action="{{ route('centers.run') }}" method="POST">
+                <!-- <form style="margin: 0 20px;" action="{{ route('centers.run') }}" method="POST">
                     @csrf
                     <button id="run-cronjob-button" class="custom-button">Run Job</button>
-                </form>
+                </form> -->
                 @if (isset($data) && isset($record))
                     <form action="{{ route('pdf') }}" method="GET">
                         @csrf

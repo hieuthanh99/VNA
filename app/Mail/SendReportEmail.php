@@ -46,6 +46,7 @@ class SendReportEmail extends Mailable
         ];
         $dataEmail = Helper::reportWeeked();
         $record = $dataEmail['record'];
+        // dd($record);
         if(!empty($record)) {
             $dataDate =  $record->date_start;
             $dateCarbon = Carbon::parse($dataDate);
