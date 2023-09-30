@@ -27,9 +27,22 @@ class ReportController extends Controller
         $user = Auth::user();
         $department = Department::find($user->department);
         $report = Report::where('department_id', $department->id)->latest()->first();
-        $startDate = Carbon::now()->startOfWeek();
-        $endDate = Carbon::now()->endOfWeek();
-        $dataWideReport = DB::table('center_wide_report')->whereBetween('created_at', [$startDate, $endDate])->first();
+        // $startDate = Carbon::now()->startOfWeek();
+        // $endDate = Carbon::now()->endOfWeek();
+
+        $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(4)->format('d-m-Y');
+        $today = Carbon::now()->format('d-m-Y');
+        $yesterday = \Carbon\Carbon::now()->subDay();
+        if($today > $thisThursdayFormatted)
+        {
+            $startDate = Carbon::now()->endOfWeek()->subWeek()->addDays(6)->startOfDay();
+            $endDate = Carbon::now()->next()->endOfWeek()->subWeek()->addDays(5);
+        } else {
+            $startDate = Carbon::now()->startOfWeek()->subWeek()->addDays(5)->startOfDay();
+            $endDate = Carbon::now()->endOfWeek()->subWeek()->addDays(5);
+        }
+
+        $dataWideReport = DB::table('center_wide_report')->whereBetween('date_start', [$startDate, $endDate])->first();
         $logs = Logs::Where('department_id', $department->id)->whereBetween('created_at', [$startDate, $endDate])->first();
         if($logs){
             $array = json_decode($logs->values, true);
@@ -45,43 +58,42 @@ class ReportController extends Controller
      */
     public function create()
     {
+        $endDate = Carbon::now()->endOfWeek()->subWeek()->addDays(5);
+        $today = Carbon::now()->format('d-m-Y');
+        // $yesterday = \Carbon\Carbon::now()->subDay();
 
-        $startDate = Carbon::now()->startOfWeek();
-        // $nextMonday = $startDate->copy()->addWeek();
-        $nextFriday = Carbon::now()->endOfWeek()->subWeek()->addDays(5); 
-        // $endDate = Carbon::now()->endOfWeek();
-        $endDate = Carbon::now()->setISODate(Carbon::now()->year, Carbon::now()->isoWeek(), 5)->setTime(16, 0, 0);
-       
+        if($today > $endDate)
+        {
+            $startDataSat = Carbon::now()->endOfWeek()->subWeek()->addDays(6)->startOfDay();
+            $endFri = Carbon::now()->next()->endOfWeek()->subWeek()->addDays(5);
+        } else {
+            $startDataSat = Carbon::now()->startOfWeek()->subWeek()->addDays(5)->startOfDay();
+            $endFri = Carbon::now()->endOfWeek()->subWeek()->addDays(5);
+        }
         $user = Auth::user();
         $department = Department::find($user->department);
         $expectedWorkValues = null;
-        $reportCenter = ReportCenter::whereBetween('created_at', [$startDate, $endDate])->get();
-       
-        
-        $existingRecord = Report::Where('department_id', $department->id)->whereBetween('created_at', [$startDate, $endDate]);
+        $reportCenter = ReportCenter::whereBetween('created_at', [$startDataSat, $endFri])->get();
+
+
+        $existingRecord = Report::Where('department_id', $department->id)->whereBetween('created_at', [$startDataSat, $endFri]);
         if ($existingRecord->exists()) {
-            return redirect()->route('reports.index')->with(['success' => 'Bạn đã tạo báo cáo vào ngày '.$existingRecord->first()->created_at->format('d-m-Y').'. Báo cáo tiếp theo vào ngày '.$nextFriday->format('d-m-Y')]);
+            return redirect()->route('reports.index')->with(['success' => 'Bạn đã tạo báo cáo vào ngày '.$existingRecord->first()->created_at->format('d-m-Y').'. Báo cáo tiếp theo vào ngày '.$endFri->addDay()->format('d-m-Y')]);
         }
         else{
             if(!$reportCenter->isEmpty()){
-                return redirect()->route('reports.index')->with(['error' => 'Phòng ban đã hết hạn báo cáo. Vui lòng báo cáo tiếp tục vào ngày '.$nextFriday->format('d-m-Y')]);
+                return redirect()->route('reports.index')->with(['error' => 'Phòng ban đã hết hạn báo cáo. Vui lòng báo cáo tiếp tục vào ngày '.$endFri->addDay()->format('d-m-Y')]);
             }
         }
-       
-       
-        $previousWeekStart = Carbon::now()->subWeek()->startOfWeek();
-        $previousWeekEnd = Carbon::now()->subWeek()->endOfWeek();
-        // dd($previousWeekStart);
         //Role
         $user = Auth::user();
         $department = Department::find($user->department);
 
-        // $logs = Logs::Where('department_id', $department->id)->whereBetween('created_at', [$previousWeekStart, $previousWeekEnd])->first();
+        // $logs = Logs::Where('department_id', $department->id)->whereBetween('created_at', [$lastFridayFormatted, $thisThursdayFormatted])->first();
         // if(isset($logs)){
         //     $values = json_decode($logs->values);
         //     $expectedWorkValues = $values->ExpectedWork;
-        //     dd($values);
-        //     return view('reports.create', ['department' => $department, 'expectedWorkValues' => $expectedWorkValues ]);
+        //     return view('reports.index', ['department' => $department, 'expectedWorkValues' => $expectedWorkValues ]);
         // }
         return view('reports.create', ['department' => $department, 'expectedWorkValues' => null ]);
     }
@@ -104,23 +116,23 @@ class ReportController extends Controller
                 if(!empty($reportDate)) {
                     $reportDate = $reportDate->report_date;
                     $errorMessage = '';
-        
+
                     if (isset($requestData['end_date'])) {
                         $endDates = $requestData['end_date'];
                         foreach ($endDates as $endDate) {
-        
+
                             $endDate = Carbon::parse($endDate);
-                        
+
                             if ($endDate->lessThan($reportDate)) {
                                 return redirect()->back()->with('error', 'Không thể chọn ngày kết thúc trong tuần123 đã chốt.');
-                            } 
+                            }
                         }
                     }
-        
+
                     if(isset($requestData['end_date_tuan_toi'])) {
                         $endDatesTuanToi = $requestData['end_date_tuan_toi'];
                         foreach ($endDatesTuanToi as $endDateTuanToi) {
-                            
+
                             $endDateTuanToi = Carbon::parse($endDateTuanToi);
                             if ($endDateTuanToi->lessThan($reportDate)) {
                                 return redirect()->back()->with(['error' => 'Không thể chọn ngày kết thúc trong tuần đã chốt.']);
@@ -128,7 +140,7 @@ class ReportController extends Controller
                         }
                     }
                 }
-                
+
                 $mapDataDone = [];
                 $mapDataNextWeek = [];
 
@@ -144,7 +156,7 @@ class ReportController extends Controller
                 $nextWeekEndDate = isset($requestData['end_date_tuan_toi']) ? $requestData['end_date_tuan_toi'] : null;
                 $nextWeekStatusWork = isset($requestData['trangthai_congviec_tuan_toi']) ? $requestData['trangthai_congviec_tuan_toi'] : null;
                 $nextWeekNoteWork = isset($requestData['noi_dung_cong_viec_tuan_toi']) ? $requestData['noi_dung_cong_viec_tuan_toi'] : null;
-                
+
                 $note = isset($requestData['kien_nghi']) ? $requestData['kien_nghi'] : null;
 
                 if (isset($workDoneValues)) {
@@ -206,7 +218,7 @@ class ReportController extends Controller
                             'end_date' => Carbon::parse($data->end_date),
                             'description' => $data->description,
                             'work_status' => $data->status_work
-                            
+
                         ]);
                     }
                 }
@@ -234,13 +246,29 @@ class ReportController extends Controller
                     ]);
                 }
 
-                $startDate = Carbon::now()->startOfWeek();
-                $startDate->subDays(3);
-                $endDate2 = Carbon::now()->setISODate(Carbon::now()->year, Carbon::now()->isoWeek(), 4)->setTime(16, 0, 0);
+                // $startDate = Carbon::now()->startOfWeek();
+                // $startDate->subDays(4);
+
+                // $endDate2 = Carbon::now()->setISODate(Carbon::now()->year, Carbon::now()->isoWeek(), 4)->setTime(16, 0, 0);
                 $record = Logs::where('id', $log->id)->first();
                 $values = json_decode($record->values, true);
-                $reportCenter = ReportCenter::whereBetween('created_at', [$startDate, $endDate2])->first();
 
+
+                $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5)->format('d-m-Y');
+                $today = Carbon::now()->format('d-m-Y');
+                // $yesterday = \Carbon\Carbon::now()->subDay();
+
+                if($today > $thisThursdayFormatted)
+                {
+                    $lastFridayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5);
+                    $thisThursdayFormatted = Carbon::now()->next()->endOfWeek()->subWeek()->addDays(4);
+                } else {
+                    $lastFridayFormatted = Carbon::now()->startOfWeek()->subWeek()->addDays(4);
+                    $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(4);
+                }
+
+
+                $reportCenter = ReportCenter::whereBetween('date_start', [$lastFridayFormatted, $thisThursdayFormatted])->first();
                 $departmentId = $record->department_id;
                 $dataByDepartment = [];
                 // Tạo một mảng mới cho phòng ban nếu chưa tồn tại
@@ -283,32 +311,32 @@ class ReportController extends Controller
                 if(!empty($reportDate)) {
                     $reportDate = $reportDate->report_date;
                     $errorMessage = '';
-        
+
                     if (isset($requestData['end_date'])) {
                         $endDates = $requestData['end_date'];
                         foreach ($endDates as $endDate) {
-        
+
                             $endDate = Carbon::parse($endDate);
-                        
+
                             if ($endDate->lessThan($reportDate)) {
                                 return redirect()->back()->with('error', 'Không thể chọn ngày kết thúc trong tuần đã chốt.');
-                            } 
+                            }
                         }
                     }
-        
+
                     if(isset($requestData['end_date_tuan_toi'])) {
                         $endDatesTuanToi = $requestData['end_date_tuan_toi'];
                         foreach ($endDatesTuanToi as $endDateTuanToi) {
-                            
+
                             $endDateTuanToi = Carbon::parse($endDateTuanToi);
-                        
+
                             if ($endDateTuanToi->lessThan($reportDate)) {
                                 return redirect()->back()->with(['error' => 'Không thể chọn ngày kết thúc trong tuần đã chốt.']);
                             }
                         }
                     }
                 }
-                
+
                 $mapDataDone = [];
                 $mapDataNextWeek = [];
 
@@ -324,7 +352,7 @@ class ReportController extends Controller
                 $nextWeekEndDate = isset($requestData['end_date_tuan_toi']) ? $requestData['end_date_tuan_toi'] : null;
                 $nextWeekStatusWork = isset($requestData['trangthai_congviec_tuan_toi']) ? $requestData['trangthai_congviec_tuan_toi'] : null;
                 $nextWeekNoteWork = isset($requestData['noi_dung_cong_viec_tuan_toi']) ? $requestData['noi_dung_cong_viec_tuan_toi'] : null;
-                
+
                 $note = isset($requestData['kien_nghi']) ? $requestData['kien_nghi'] : null;
 
                 if (isset($workDoneValues)) {
@@ -386,7 +414,7 @@ class ReportController extends Controller
                             'end_date' => Carbon::parse($data->end_date),
                             'description' => $data->description,
                             'work_status' => $data->status_work
-                            
+
                         ]);
                     }
                 }
@@ -443,11 +471,18 @@ class ReportController extends Controller
         if($user->role == 'admin') {
             $report = Report::where('id', $id)->first();
             $department = Department::find($report->department_id);
-            $startDate = Carbon::now()->startOfWeek();
-            $endDate = Carbon::now()->endOfWeek();
-    
-            $logs = Logs::Where('department_id', $department->id)->whereBetween('created_at', [$startDate, $endDate])->first();
-    
+            $endDate = Carbon::now()->subWeek()->endOfWeek()->addDays(5);
+            $today = Carbon::now()->format('d-m-Y');
+            if($today > $endDate)
+            {
+                $startDataSat = Carbon::now()->endOfWeek()->subWeek()->addDays(6)->startOfDay();
+                $endFri = Carbon::now()->next()->endOfWeek()->subWeek()->addDays(5);
+            } else {
+                $startDataSat = Carbon::now()->startOfWeek()->subWeek()->addDays(5)->startOfDay();
+                $endFri = Carbon::now()->endOfWeek()->subWeek()->addDays(5);
+            }
+            $logs = Logs::Where('department_id', $department->id)->whereBetween('created_at', [$startDataSat, $endFri])->first();
+
             if($logs){
                 $array = json_decode($logs->values, true);
                 return view('reports.edit', ['department' => $department, 'array' => $array, 'report' => $report]);
@@ -455,13 +490,21 @@ class ReportController extends Controller
         } else {
             $department = Department::find($user->department);
             $report = Report::where('id', $id)->first();
-            $startDate = Carbon::now()->startOfWeek();
-            $endDate = Carbon::now()->endOfWeek();
-    
-            $logs = Logs::Where('department_id', $department->id)->whereBetween('created_at', [$startDate, $endDate])->first();
-    
+            $endDate = Carbon::now()->subWeek()->endOfWeek()->addDays(5);
+            $today = Carbon::now()->format('d-m-Y');
+            // $yesterday = \Carbon\Carbon::now()->subDay();
+            if($today > $endDate)
+            {
+                $startDataSat = Carbon::now()->endOfWeek()->subWeek()->addDays(6)->startOfDay();
+                $endFri = Carbon::now()->next()->endOfWeek()->subWeek()->addDays(5);
+            } else {
+                $startDataSat = Carbon::now()->startOfWeek()->subWeek()->addDays(5)->startOfDay();
+                $endFri = Carbon::now()->endOfWeek()->subWeek()->addDays(5);
+            }
+            $logs = Logs::Where('department_id', $department->id)->whereBetween('created_at', [$startDataSat, $endFri])->first();
+
             if($logs){
-    
+
                 $array = json_decode($logs->values, true);
                 return view('reports.edit', ['department' => $department, 'array' => $array, 'report' => $report]);
             }
@@ -493,7 +536,7 @@ class ReportController extends Controller
                     $endDate = isset($requestData['end_date']) ? $requestData['end_date'] : $item->end_date;
                     $statusWork = isset($requestData['trangthai_congviec']) ? $requestData['trangthai_congviec'] : $item->work_status;
                     $noteWork = isset($requestData['noi_dung_cong_viec']) ? $requestData['noi_dung_cong_viec'] : $item->description;
-                } 
+                }
                 if ($item->reports_title == 'ExpectedWork') {
                     $nextWeekWork = isset($requestData['cong_viec_tuan_toi']) ? $requestData['cong_viec_tuan_toi'] : $item->title;
                     $nextWeekStartDate = isset($requestData['start_date_tuan_toi']) ? $requestData['start_date_tuan_toi'] : $item->start_date;
@@ -607,13 +650,25 @@ class ReportController extends Controller
                             $existingTask->save();
                         }
                 }
-                
+
 
             if($user->role == "admin") {
-                $startDate = Carbon::now()->startOfWeek();
-                $startDate->subDays(3);
-                $endDate2 = Carbon::now()->setISODate(Carbon::now()->year, Carbon::now()->isoWeek(), 4)->setTime(16, 0, 0);
-                $reportCenter = ReportCenter::whereBetween('created_at', [$startDate, $endDate2])->first();
+                // $startDate = Carbon::now()->startOfWeek();
+                // $startDate->subDays(3);
+                // $endDate2 = Carbon::now()->setISODate(Carbon::now()->year, Carbon::now()->isoWeek(), 4)->setTime(16, 0, 0);
+                $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5)->format('d-m-Y');
+                $today = Carbon::now()->format('d-m-Y');
+                // $yesterday = \Carbon\Carbon::now()->subDay();
+
+                if($today > $thisThursdayFormatted)
+                {
+                    $lastFridayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5);
+                    $thisThursdayFormatted = Carbon::now()->next()->endOfWeek()->subWeek()->addDays(4);
+                } else {
+                    $lastFridayFormatted = Carbon::now()->startOfWeek()->subWeek()->addDays(4);
+                    $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(4);
+                }
+                $reportCenter = ReportCenter::whereBetween('date_start', [$lastFridayFormatted, $thisThursdayFormatted])->first();
                 $reportCenterArray = json_decode($reportCenter->values);
                 foreach ($reportCenterArray as $item) {
                     if ($item->DepartmentId == $report->department_id) {

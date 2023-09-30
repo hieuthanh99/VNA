@@ -24,37 +24,53 @@ class ReportCenterController extends Controller
         $result = Helper::reportItem();
         $mergedArray = $result['mergedArray'] ?? null;
         $startDate = $result['startDate'] ?? null;
-        $endDateWeek = $result['endDateWeek'] ?? null; 
-        $lastFriday = $startDate->copy()->subDays($startDate->dayOfWeek + 2);
-        $thisThursday = $startDate->copy()->addDays(3 - $startDate->dayOfWeek + 1);
+        $endDateWeek = $result['endDateWeek'] ?? null;
+        // $lastFriday = $startDate->copy()->subDays($startDate->dayOfWeek + 2);
+        // $thisThursday = $startDate->copy()->addDays(3 - $startDate->dayOfWeek + 1);
+        $lastFridayFormatted = Carbon::now()->startOfWeek()->subWeek()->addDays(4)->format('d-m-Y');
 
-        $lastFridayFormatted = $lastFriday->format('d-m-Y');
-        $thisThursdayFormatted = $thisThursday->format('d-m-Y');
+        $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5)->format('d-m-Y');
+        $today = Carbon::now()->format('d-m-Y');
+        // $yesterday = \Carbon\Carbon::now()->subDay();
+
+        if($today > $thisThursdayFormatted)
+        {
+            $lastFridayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5);
+            $thisThursdayFormatted = Carbon::now()->next()->endOfWeek()->subWeek()->addDays(4);
+        } else {
+            $lastFridayFormatted = Carbon::now()->startOfWeek()->subWeek()->addDays(4);
+            $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(4);
+        }
+        // $lastFridayFormatted = $lastFriday->format('d-m-Y');
+        // $thisThursdayFormatted = $thisThursday->format('d-m-Y');
         $records = $result['record'] ?? null;
         $startDate = Carbon::now()->startOfWeek();
         $startDate->subDays(3);
         $endDate2 = Carbon::now()->setISODate(Carbon::now()->year, Carbon::now()->isoWeek(), 4)->setTime(16, 0, 0);
-        $reportCenter = ReportCenter::whereBetween('created_at', [$startDate, $endDate2])->first();
+        $reportCenter = ReportCenter::whereBetween('date_start', [$lastFridayFormatted, $thisThursdayFormatted])->first();
+        $lastFridayFormatted = $lastFridayFormatted->format('d-m-Y');
+        $thisThursdayFormatted = $thisThursdayFormatted->format('d-m-Y');
+
         if(!$records->isEmpty()) {
             foreach ($records as $record) {
                 $data =  $record->date_start;
                 $dataRecord = $record;
                 $dateCarbon = Carbon::parse($data);
-                $dayOfWeek = Carbon::parse($record->date_start)->dayOfWeek;
-                if(!empty($record)) {
-                    if ($dayOfWeek > 5) {
-                        $startDateOfWeekInput = $dateCarbon->copy()->subDays($dayOfWeek - 5)->format('d-m-Y');
-                        $endDateOfWeekInput = $dateCarbon->copy()->addDays(4 - $dayOfWeek + 7)->format('d-m-Y');
-                    } else {
-                        $startDateOfWeekInput = $dateCarbon->copy()->subDays($dayOfWeek + 6 - 4)->format('d-m-Y');
-                        $endDateOfWeekInput = $dateCarbon->copy()->addDays(4 - $dayOfWeek)->format('d-m-Y');
-                    }
+                if($today > $dateCarbon)
+                {
+                    $startDateOfWeekInput = Carbon::now()->endOfWeek()->subWeek()->addDays(6)->startOfDay()->format('Y-m-d');
+                    $endDateOfWeekInput = Carbon::now()->next()->endOfWeek()->subWeek()->addDays(5)->format('Y-m-d');
+                    $data = Report::whereBetween('created_at', [$startDateOfWeekInput, $endDateOfWeekInput])->get();
+                } else {
+                    $startDateOfWeekInput = Carbon::now()->startOfWeek()->subWeek()->addDays(5)->startOfDay()->format('Y-m-d');
+                    $endDateOfWeekInput = Carbon::now()->endOfWeek()->subWeek()->addDays(6)->format('Y-m-d');
+                    $data = Report::whereBetween('created_at', [$startDateOfWeekInput, $endDateOfWeekInput])->get();
                 }
             }
             if(!empty($reportCenter)) {
-                return view('centers.index', ['record' => $dataRecord, 'mergedArray' => $mergedArray, 'reportCenter' => $reportCenter, 'startDateOfWeekInput' => $startDateOfWeekInput,'endDateOfWeekInput' => $endDateOfWeekInput , 'records' => $records, 'startDate' => $startDate->format('d-m-Y'), 'endDate' => $endDateWeek->format('d-m-Y')]);
+                return view('centers.index', ['record' => $dataRecord, 'mergedArray' => $mergedArray, 'reportCenter' => $reportCenter, 'startDateOfWeekInput' => $lastFridayFormatted,'endDateOfWeekInput' => $thisThursdayFormatted , 'records' => $records, 'startDate' => $startDate->format('d-m-Y'), 'endDate' => $endDateWeek->format('d-m-Y')]);
             } else {
-                return view('centers.index', ['record' => $dataRecord, 'mergedArray' => $mergedArray, 'startDateOfWeekInput' => $startDateOfWeekInput,'endDateOfWeekInput' => $endDateOfWeekInput , 'records' => $records, 'startDate' => $startDate->format('d-m-Y'), 'endDate' => $endDateWeek->format('d-m-Y')]);
+                return view('centers.index', ['record' => $dataRecord, 'mergedArray' => $mergedArray, 'startDateOfWeekInput' => $lastFridayFormatted,'endDateOfWeekInput' => $thisThursdayFormatted , 'records' => $records, 'startDate' => $startDate->format('d-m-Y'), 'endDate' => $endDateWeek->format('d-m-Y')]);
             }
         }
         return view('centers.index', ['records' => $records, 'mergedArray' => $mergedArray, 'startDate' => $lastFridayFormatted, 'endDate' => $thisThursdayFormatted]);
@@ -110,7 +126,7 @@ class ReportCenterController extends Controller
         //     $data =  $record->date_start;
         //     $dateCarbon = Carbon::parse($data);
         //     $dayOfWeek = Carbon::parse($record->date_start)->dayOfWeek;
-           
+
         //     if(!empty($record)) {
         //         if ($dayOfWeek > 5) {
         //             $startDateOfWeekInput = $dateCarbon->copy()->subDays($dayOfWeek - 5)->format('d-m-Y');
@@ -192,7 +208,7 @@ class ReportCenterController extends Controller
         // $jsonData = json_encode($jsonArray);
         // $reportCenter->values = $jsonData;
         // $reportCenter->save();
-        
+
         // return redirect()->route('centers.index')->with(['success' => 'Dữ liệu đã được lưu thành công.']);
     }
 

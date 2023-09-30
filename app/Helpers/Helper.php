@@ -18,21 +18,34 @@ class Helper
 {
     public static function reportWeeked()
     {
-        // $startDate = Carbon::now()->startOfWeek();
-        // $endDateWeek = Carbon::now()->endOfWeek();
-        $startDate = Carbon::now()->startOfWeek()->subWeek()->addDays(4);
-        $endDateWeek = Carbon::now()->endOfWeek()->subWeek()->addDays(4); 
-        $endDate = Carbon::now()->setISODate(Carbon::now()->year, Carbon::now()->isoWeek(), 5)->setTime(17, 0, 0);
+        // $startDate = Carbon::now()->startOfWeek()->subWeek()->addDays(4);
+        // $endDateWeek = Carbon::now()->endOfWeek()->subWeek()->addDays(4);
+        // $endDate = Carbon::now()->setISODate(Carbon::now()->year, Carbon::now()->isoWeek(), 5)->setTime(17, 0, 0);
+        $lastFridayFormatted = Carbon::now()->startOfWeek()->subWeek()->addDays(4)->format('d-m-Y');
+
+        $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5)->format('d-m-Y');
+        $today = Carbon::now()->format('d-m-Y');
+        $yesterday = \Carbon\Carbon::now()->subDay();
+        if($today > $thisThursdayFormatted)
+        {
+            $startDate = Carbon::now()->endOfWeek()->subWeek()->addDays(6)->startOfDay()->format('Y-m-d');
+            $endDateWeek = Carbon::now()->next()->endOfWeek()->subWeek()->addDays(5)->format('Y-m-d');
+            $data = ReportCenter::whereBetween('date_start', [$startDate, $endDateWeek])->get();
+        } else {
+            $startDate = Carbon::now()->startOfWeek()->subWeek()->addDays(5)->startOfDay()->format('Y-m-d');
+            $endDateWeek = Carbon::now()->endOfWeek()->subWeek()->addDays(6)->format('Y-m-d');
+            $data = ReportCenter::whereBetween('date_start', [$startDate, $endDateWeek])->get();
+        }
         $department = Department::get()->toArray();
-        $data = ReportCenter::whereBetween('created_at', [$startDate, $endDateWeek])->get();
+        // $data = ReportCenter::whereBetween('created_at', [$startDate, $endDateWeek])->get();
         $record = $data->first();
-       
+
         $data = json_decode($data->value('values'), true) ?? [];
         $mergedArray = [];
-    
+
         foreach ($department as $dept) {
             $departmentId = $dept['id'];
-           
+
             $item = array_filter($data, function ($value) use ($departmentId) {
                 return $value['DepartmentId'] == $departmentId;
             });
@@ -71,25 +84,24 @@ class Helper
         // $startDate = Carbon::now()->startOfWeek();
         // $endDateWeek = Carbon::now()->endOfWeek();
         $startDate = Carbon::now()->startOfWeek()->subWeek()->addDays(4);
-     
-        $endDateWeek = Carbon::now()->endOfWeek()->subWeek()->addDays(4); 
+
+        $endDateWeek = Carbon::now()->endOfWeek()->subWeek()->addDays(4);
         $today = Carbon::now();
-        $lastFriday = $endDateWeek->copy()->subDays($endDateWeek->dayOfWeek + 2);
-        $thisThursday = $endDateWeek->copy()->addDays(3 - $endDateWeek->dayOfWeek + 1);
-        // if ($endDateWeek->equalTo($today)) {
-        //     $lastFriday = $endDateWeek->copy()->subDays($endDateWeek->dayOfWeek + 2);
-        //     $thisThursday = $endDateWeek->copy()->addDays(3 - $endDateWeek->dayOfWeek + 1);
-        //     $data = Report::whereBetween('end_date', [$lastFriday, $thisThursday])->get();
-        // } elseif ($endDateWeek->greaterThan($today)) {
-        //     $lastFriday = $endDateWeek->copy()->subDays($endDateWeek->dayOfWeek + 2);
-        //     $thisThursday = $endDateWeek->copy()->addDays(3 - $endDateWeek->dayOfWeek + 1);
-        //     $data = Report::whereBetween('end_date', [$lastFriday, $thisThursday])->get();
-        // } else {
-        //     $lastFriday = $endDateWeek->copy()->subDays($endDateWeek->dayOfWeek + 2);
-        //     $thisThursday = $endDateWeek->copy()->addDays(3 - $endDateWeek->dayOfWeek + 1);
-            
-        // }
-        $data = Report::whereBetween('end_date', [$lastFriday, $thisThursday])->get();
+        $lastFridayFormatted = Carbon::now()->startOfWeek()->subWeek()->addDays(4)->format('d-m-Y');
+
+        $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5)->format('d-m-Y');
+        $today = Carbon::now()->format('d-m-Y');
+        $yesterday = \Carbon\Carbon::now()->subDay();
+        if($today > $thisThursdayFormatted)
+        {
+            $nowFriday = Carbon::now()->endOfWeek()->subWeek()->addDays(6)->startOfDay()->format('Y-m-d');
+            $nowThursday = Carbon::now()->next()->endOfWeek()->subWeek()->addDays(5)->format('Y-m-d');
+            $data = Report::whereBetween('created_at', [$nowFriday, $nowThursday])->get();
+        } else {
+            $lastFridayFormatted = Carbon::now()->startOfWeek()->subWeek()->addDays(5)->startOfDay()->format('Y-m-d');
+            $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(6)->format('Y-m-d');
+            $data = Report::whereBetween('created_at', [$lastFridayFormatted, $thisThursdayFormatted])->get();
+        }
 
         $endDate = Carbon::now()->setISODate(Carbon::now()->year, Carbon::now()->isoWeek(), 5)->setTime(17, 0, 0);
         $department = Department::get()->toArray();
@@ -99,10 +111,10 @@ class Helper
         }
 
         $record = $data;
-       
+
         $data = json_decode($data->value('values'), true) ?? [];
         $mergedArray = [];
-        
+
         $departmentId = [];
         foreach ($department as $dept) {
             $departmentId[] = $dept['id'];
@@ -113,7 +125,7 @@ class Helper
                 $name = Department::find($id)->name;
                 $mergedArray[] = [
                     'DepartmentId' => $id,
-                    'DepartmentName' => $name, 
+                    'DepartmentName' => $name,
                     'WorkDone' => [],
                     'ExpectedWork' => [],
                     'Request' => ''
@@ -140,14 +152,14 @@ class Helper
 
         $data = json_decode($data, true) ?? [];
         $mergedArray = [];
-    
+
         foreach ($department as $dept) {
             $departmentId = $dept['id'];
-           
+
             $item = array_filter($data, function ($value) use ($departmentId) {
                 return $value['DepartmentId'] == $departmentId;
             });
-        
+
             // Kiểm tra nếu mảng $item không rỗng
             if (!empty($item)) {
                 foreach ($item as $itemData) {
@@ -177,7 +189,23 @@ class Helper
             'record' => $dataCenter
         ];
     }
-    
+
+    public static function reportWeekedDepartment($id)
+    {
+        $data = Report::Where('id', $id)->first();
+        $date = $data->start_date;
+        $departmentId = Department::where('id', $data->department_id)->first();
+        $deparmentName = $departmentId->name;
+
+        $data = $data->values;
+        $data = json_decode($data, true) ?? [];
+        return [
+            'data' => $data,
+            'date' => $date,
+            'deparmentName' => $deparmentName
+        ];
+    }
+
     public static function pdf()
     {
         $data = Helper::reportWeeked();
@@ -216,10 +244,30 @@ class Helper
             }
         }
         $pdf = PDF::loadView('pdf.template',['department' => $data['mergedArray'],'startDateOfWeekInput' => $startDateOfWeekInput, "endDateOfWeekInput" => $endDateOfWeekInput]);
-        
+
         return $pdf->download('report.pdf');
     }
-  
+
+    public static function departmentPDF($id) {
+        $data = Helper::reportWeekedDepartment($id);
+        $record = $data['data'];
+        if(!empty($record)) {
+            $dataDate =  $data['date'];
+            $dateCarbon = Carbon::parse($dataDate);
+            $dayOfWeek = Carbon::parse($dataDate)->dayOfWeek;
+            if ($dayOfWeek > 5) {
+                $startDateOfWeekInput = $dateCarbon->copy()->subDays($dayOfWeek - 5)->format('d-m-Y');
+                $endDateOfWeekInput = $dateCarbon->copy()->addDays(4 - $dayOfWeek + 7)->format('d-m-Y');
+            } else {
+                $startDateOfWeekInput = $dateCarbon->copy()->subDays($dayOfWeek + 6 - 4)->format('d-m-Y');
+                $endDateOfWeekInput = $dateCarbon->copy()->addDays(4 - $dayOfWeek)->format('d-m-Y');
+            }
+        }
+        $pdf = PDF::loadView('pdf.departmenttpl',['data' => $data['data'],'departmentName' => $data['deparmentName'],'startDateOfWeekInput' => $startDateOfWeekInput, "endDateOfWeekInput" => $endDateOfWeekInput]);
+
+        return $pdf->download('report.pdf');
+    }
+
     public static function word() {
         // Truyền dữ liệu vào để in ra bản Word
         $data = Helper::reportWeeked();
@@ -238,7 +286,7 @@ class Helper
                 $startDateOfWeekInput = $dateCarbon->copy()->subDays($dayOfWeek + 6 - 4)->format('d-m-Y');
                 $endDateOfWeekInput = $dateCarbon->copy()->addDays(4 - $dayOfWeek)->format('d-m-Y');
             }
-            
+
             $section->addText("              BÁO CÁO CÔNG VIỆC TUẦN ($startDateOfWeekInput – $endDateOfWeekInput)", ['size' => 12, 'bold' => true]);
             $section->addTextBreak(3);
         }
@@ -297,7 +345,7 @@ class Helper
                     $section->addTextBreak(1);
                 }
 
-                
+
             } else {
                 $section->addText("II. Công việc dự kiến : Không có dữ liệu", ['size' => 11, 'bold' => true]);
                 $section->addTextBreak(1);
@@ -341,7 +389,7 @@ class Helper
                 $startDateOfWeekInput = $dateCarbon->copy()->subDays($dayOfWeek + 6 - 4)->format('d-m-Y');
                 $endDateOfWeekInput = $dateCarbon->copy()->addDays(4 - $dayOfWeek)->format('d-m-Y');
             }
-            
+
             $section->addText("              BÁO CÁO CÔNG VIỆC TUẦN ($startDateOfWeekInput – $endDateOfWeekInput)", ['size' => 12, 'bold' => true]);
             $section->addTextBreak(3);
         }
@@ -354,7 +402,7 @@ class Helper
             $STTExpectedWork = 1;
             if(!empty($item['WorkDone'])) {
 
-            
+
                 // Thêm thông tin về công việc đã làm
                 $section->addText("Công việc đã thực hiện:", ['size' => 14, 'bold' => true]);
                 foreach ($item['WorkDone'] as $workDone) {
@@ -430,66 +478,7 @@ class Helper
         $data = Helper::reportWeeked();
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
-    
-        $sheet->setCellValue('A1', 'Phòng ban');
-        $sheet->setCellValue('B1', 'Công việc đã thực hiện');
-        $sheet->setCellValue('C1', 'Ngày bắt đầu');
-        $sheet->setCellValue('D1', 'Ngày kết thúc');
-        $sheet->setCellValue('E1', 'Tiến độ');
-        $sheet->setCellValue('F1', 'Nội dung');
-        $sheet->setCellValue('G1', 'Công việc dự kiến');
-        $sheet->setCellValue('H1', 'Ngày bắt đầu');
-        $sheet->setCellValue('I1', 'Ngày kết thúc');
-        $sheet->setCellValue('J1', 'Tiến độ');
-        $sheet->setCellValue('K1', 'Nội dung');
-        $sheet->setCellValue('L1', 'Kiến nghị');
-    
-        $row = 2;
-        foreach ($data['mergedArray'] as $item) {
-            $departmentName = $item['DepartmentName'];
-            $sheet->setCellValue('A' . $row, $departmentName);
-            $startRow = $row;
-            $requestRow = $row;
-            if (!empty($item['WorkDone'])) {
-                foreach ($item['WorkDone'] as $workDone) {
-                    $sheet->setCellValue('B' . $row, $workDone['work_done']);
-                    $sheet->setCellValue('C' . $row, $workDone['start_date']);
-                    $sheet->setCellValue('D' . $row, $workDone['end_date']);
-                    $sheet->setCellValue('E' . $row, $workDone['status_work']);
-                    $sheet->setCellValue('F' . $row, $workDone['description']);
-                    $row++; 
-                }
-            }
-        
-            if (!empty($item['ExpectedWork'])) {
-                foreach ($item['ExpectedWork'] as $expectedWork) {
-                    $sheet->setCellValue('G' . $startRow, $expectedWork['next_work']);
-                    $sheet->setCellValue('H' . $startRow, $expectedWork['next_start_date']);
-                    $sheet->setCellValue('I' . $startRow, $expectedWork['next_end_date']);
-                    $sheet->setCellValue('J' . $startRow, $expectedWork['next_status_work']);
-                    $sheet->setCellValue('K' . $startRow, $expectedWork['next_description']);
-                    $startRow++;
-                }
-            }
-    
-            $request = $item['Request'];
-            $sheet->setCellValue('L' . $requestRow, $request);
-        }
-    
-        $writer = new Xlsx($spreadsheet);
-    
-        $fileName = 'report.xlsx';
-        $filePath = storage_path('app/public/') . $fileName;
-        $writer->save($filePath);
-    
-        return response()->download($filePath)->deleteFileAfterSend();
-    }
 
-    public static function excelDetail($id) {
-        $data = Helper::reportWeekedDetails($id);
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-    
         $sheet->setCellValue('A1', 'Phòng ban');
         $sheet->setCellValue('B1', 'Công việc đã thực hiện');
         $sheet->setCellValue('C1', 'Ngày bắt đầu');
@@ -502,9 +491,8 @@ class Helper
         $sheet->setCellValue('J1', 'Tiến độ');
         $sheet->setCellValue('K1', 'Nội dung');
         $sheet->setCellValue('L1', 'Kiến nghị');
-    
+
         $row = 2;
-    
         foreach ($data['mergedArray'] as $item) {
             $departmentName = $item['DepartmentName'];
             $sheet->setCellValue('A' . $row, $departmentName);
@@ -520,7 +508,7 @@ class Helper
                     $row++;
                 }
             }
-        
+
             if (!empty($item['ExpectedWork'])) {
                 foreach ($item['ExpectedWork'] as $expectedWork) {
                     $sheet->setCellValue('G' . $startRow, $expectedWork['next_work']);
@@ -531,17 +519,77 @@ class Helper
                     $startRow++;
                 }
             }
-    
+
             $request = $item['Request'];
             $sheet->setCellValue('L' . $requestRow, $request);
         }
-    
+
         $writer = new Xlsx($spreadsheet);
-    
+
         $fileName = 'report.xlsx';
         $filePath = storage_path('app/public/') . $fileName;
         $writer->save($filePath);
-    
+
+        return response()->download($filePath)->deleteFileAfterSend();
+    }
+
+    public static function excelDetail($id) {
+        $data = Helper::reportWeekedDetails($id);
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $sheet->setCellValue('A1', 'Phòng ban');
+        $sheet->setCellValue('B1', 'Công việc đã thực hiện');
+        $sheet->setCellValue('C1', 'Ngày bắt đầu');
+        $sheet->setCellValue('D1', 'Ngày kết thúc');
+        $sheet->setCellValue('E1', 'Tiến độ');
+        $sheet->setCellValue('F1', 'Nội dung');
+        $sheet->setCellValue('G1', 'Công việc dự kiến');
+        $sheet->setCellValue('H1', 'Ngày bắt đầu');
+        $sheet->setCellValue('I1', 'Ngày kết thúc');
+        $sheet->setCellValue('J1', 'Tiến độ');
+        $sheet->setCellValue('K1', 'Nội dung');
+        $sheet->setCellValue('L1', 'Kiến nghị');
+
+        $row = 2;
+
+        foreach ($data['mergedArray'] as $item) {
+            $departmentName = $item['DepartmentName'];
+            $sheet->setCellValue('A' . $row, $departmentName);
+            $startRow = $row;
+            $requestRow = $row;
+            if (!empty($item['WorkDone'])) {
+                foreach ($item['WorkDone'] as $workDone) {
+                    $sheet->setCellValue('B' . $row, $workDone['work_done']);
+                    $sheet->setCellValue('C' . $row, $workDone['start_date']);
+                    $sheet->setCellValue('D' . $row, $workDone['end_date']);
+                    $sheet->setCellValue('E' . $row, $workDone['status_work']);
+                    $sheet->setCellValue('F' . $row, $workDone['description']);
+                    $row++;
+                }
+            }
+
+            if (!empty($item['ExpectedWork'])) {
+                foreach ($item['ExpectedWork'] as $expectedWork) {
+                    $sheet->setCellValue('G' . $startRow, $expectedWork['next_work']);
+                    $sheet->setCellValue('H' . $startRow, $expectedWork['next_start_date']);
+                    $sheet->setCellValue('I' . $startRow, $expectedWork['next_end_date']);
+                    $sheet->setCellValue('J' . $startRow, $expectedWork['next_status_work']);
+                    $sheet->setCellValue('K' . $startRow, $expectedWork['next_description']);
+                    $startRow++;
+                }
+            }
+
+            $request = $item['Request'];
+            $sheet->setCellValue('L' . $requestRow, $request);
+        }
+
+        $writer = new Xlsx($spreadsheet);
+
+        $fileName = 'report.xlsx';
+        $filePath = storage_path('app/public/') . $fileName;
+        $writer->save($filePath);
+
         return response()->download($filePath)->deleteFileAfterSend();
     }
 }

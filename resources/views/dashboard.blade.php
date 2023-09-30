@@ -52,21 +52,21 @@
                                         @if(!empty($departments) || !empty($departmentList))
                                             @if(empty($departmentId))
                                                 <option value="">--Đơn vị--</option>
-                                                @if(!empty($departmentList)) 
+                                                @if(!empty($departmentList))
                                                     @foreach ($departmentList as $key => $list)
                                                         <option value="{{ $list->id }}">{{ $list->name }}</option>
                                                     @endforeach
-                                                @elseif (!empty($departments)) 
+                                                @elseif (!empty($departments))
                                                     @foreach ($departments as $key => $list)
                                                         <option value="{{ $list->id }}">{{ $list->name }}</option>
                                                     @endforeach
                                                 @endif
-                                            @else 
-                                                @if(!empty($departmentList)) 
+                                            @else
+                                                @if(!empty($departmentList))
                                                     @foreach ($departmentList as $key => $list)
                                                         <option value="{{ $list->id }}" @if(old('departmentId', $departmentId) == $list->id) selected="selected" @endif>{{ $list->name }}</option>
                                                     @endforeach
-                                                @elseif (!empty($departments)) 
+                                                @elseif (!empty($departments))
                                                     @foreach ($departments as $key => $list)
                                                         <option value="{{ $list->id }}">{{ $list->name }}</option>
                                                     @endforeach
@@ -90,10 +90,10 @@
                                         @if(!empty($reportCenter))
                                             @foreach ($reportCenter as $a)
                                                 @php
-                                                    $createdDate = \Carbon\Carbon::parse($a->created_at);
-
+                                                    $createdDate = \Carbon\Carbon::parse($a->date_start);
                                                     $dayOfWeek = $createdDate->dayOfWeek;
-                                                    if ($dayOfWeek > 6) {
+                                                    $thisThursdayFormatted = $createdDate->copy()->endOfWeek()->subWeek()->addDays(5);
+                                                    if ($createdDate > $thisThursdayFormatted) {
                                                         $lastFriday = $createdDate->copy()->subDays($dayOfWeek - 5)->format('d-m-Y');
                                                         $thisThursday = $createdDate->copy()->addDays(4 - $dayOfWeek + 7)->format('d-m-Y');
                                                     } else {
@@ -324,20 +324,20 @@
                                                                 data-bs-parent="#reportsAccordion">
                                                                 <h2 style="padding: 10px 0;">{{ $a['DepartmentName'] }}</h2>
 
-                                                
+
                                                                     @php
                                                                         $arrayValues = $a;
                                                                         $workDone = !empty($arrayValues['WorkDone']) ? $arrayValues['WorkDone'] : [];
-                                                
+
                                                                         $expectedWork = !empty($arrayValues['ExpectedWork']) ? $arrayValues['ExpectedWork'] : [];
                                                                         $requestWork = !empty($arrayValues['Request']) ? $arrayValues['Request'] : [];
                                                                         $STT = 1;
                                                                         $STT_NEXT = 1;
                                                                     @endphp
-                                                                    
+
                                                                         <div class="accordion-body">
                                                                             <h3>Mục I: Công việc đã làm</h3>
-                                                                            
+
                                                                                 @if (!empty($arrayValues))
                                                                                     @if(!empty($arrayValues['WorkDone']))
                                                                                         @foreach($arrayValues['WorkDone'] as $work)
@@ -407,7 +407,7 @@
                                                                                 @else
                                                                                     <span>Không tồn tại dữ liệu</span>
                                                                                 @endif
-                                                                    
+
                                                                                 @if (!empty($arrayValues))
                                                                                     <h3>Mục II: Công việc tuần tới</h3>
                                                                                     @if(!empty($arrayValues['ExpectedWork']))
@@ -478,7 +478,7 @@
                                                                                 @else
                                                                                     <span>Không tồn tại dữ liệu</span>
                                                                                 @endif
-                                                                        
+
                                                                             <h3>Mục III: Kiến nghị</h3>
 
                                                                             @if (!empty($arrayValues['Request']))
@@ -486,24 +486,24 @@
                                                                             @else
                                                                                 <span>Không tồn tại dữ liệu</span>
                                                                             @endif
-                                                                        
+
                                                                         <!-- Hiển thị thông tin về công việc tuần tới (Mục II) -->
-                                                                        
+
 
                                                                         </div>
-                                                                    
-                                                                    
+
+
                                                                     <p style="border-bottom: 1px solid #e5e7eb; margin-bottom: 0;"></p>
 
-                                                    
+
                                                             </div>
-                                                
+
                                                     </div>
-                                                @endforeach  
+                                                @endforeach
                                             @else
                                                 <span>Không tồn tại dữ liệu</span>
-                                            @endif              
-                                        @endif    
+                                            @endif
+                                        @endif
                                     </div>
                                 @endif
 
@@ -514,9 +514,9 @@
                                                 $resultLogDepartment = json_decode($work->values, true);
                                                 $createdDate = \Carbon\Carbon::parse($work->date_start);
                                                 $weekNumber = $createdDate->weekOfYear;
-
+                                                $thisThursdayFormatted = $createdDate->copy()->endOfWeek()->subWeek()->addDays(5);
                                                 $dayOfWeek = $createdDate->dayOfWeek;
-                                                if ($dayOfWeek > 5) {
+                                                if ($createdDate > $thisThursdayFormatted) {
                                                     $lastFriday = $createdDate->copy()->subDays($dayOfWeek - 5)->format('d-m-Y');
                                                     $thisThursday = $createdDate->copy()->addDays(4 - $dayOfWeek + 7)->format('d-m-Y');
                                                 } else {
@@ -541,20 +541,22 @@
                                                         data-bs-parent="#reportsAccordion">
                                                         <h2 style="padding: 10px 0;">{{ $departmentName }}</h2>
 
-                                        
+
                                                             @php
                                                                 $arrayValues = $resultLog;
                                                                 $workDone = !empty($arrayValues['WorkDone']) ? $arrayValues['WorkDone'] : [];
-                                        
+
                                                                 $expectedWork = !empty($arrayValues['ExpectedWork']) ? $arrayValues['ExpectedWork'] : [];
                                                                 $requestWork = !empty($arrayValues['Request']) ? $arrayValues['Request'] : [];
                                                                 $STT = 1;
                                                                 $STT_NEXT = 1;
                                                             @endphp
-                                                            <div class="accordion-body">
-                                                                <h3>Mục I: Công việc đã làm</h3>
-                                                                    @if (!empty($arrayValues))
-                                                                        @foreach($arrayValues as $item)
+                                                            @if (!empty($arrayValues))
+                                                            @foreach($arrayValues as $item)
+                                                                @if(!empty($work->id) && !empty($item) )
+                                                                    @if($item['reportId'] == $work->id)
+                                                                        <div class="accordion-body">
+                                                                            <h3>Mục I: Công việc đã làm</h3>
                                                                             @if(!empty($item['WorkDone']))
                                                                                 @foreach($item['WorkDone'] as $work)
                                                                                     <div style="padding: 10px;">
@@ -620,14 +622,8 @@
                                                                             @else
                                                                                 <span>Không tồn tại dữ liệu</span>
                                                                             @endif
-                                                                        @endforeach        
-                                                                    @else
-                                                                        <span>Không tồn tại dữ liệu</span>
-                                                                    @endif
-                                                        
-                                                                    @if (!empty($arrayValues))
-                                                                        <h3>Mục II: Công việc tuần tới</h3>
-                                                                        @foreach($arrayValues as $item)
+
+                                                                            <h3>Mục II: Công việc tuần tới</h3>
                                                                             @if(!empty($item['ExpectedWork']))
                                                                                 @foreach($item['ExpectedWork'] as $work)
                                                                                 <div style="padding: 10px;">
@@ -693,29 +689,32 @@
                                                                             @else
                                                                                 <span>Không tồn tại dữ liệu</span>
                                                                             @endif
-                                                                        @endforeach
+
+                                                                            <h3>Mục III: Kiến nghị</h3>
+
+                                                                            @if (!empty($item['Request']))
+                                                                                <p style="padding: 20px">{{ $item['Request'] }}</p>
+                                                                            @else
+                                                                                <span>Không tồn tại dữ liệu</span>
+                                                                            @endif
+
+                                                                        <!-- Hiển thị thông tin về công việc tuần tới (Mục II) -->
+                                                                        </div>
                                                                     @else
                                                                         <span>Không tồn tại dữ liệu</span>
                                                                     @endif
-                                                            
-                                                                <h3>Mục III: Kiến nghị</h3>
-
-                                                                @if (!empty($arrayValues['Request']))
-                                                                    <p style="padding: 20px">{{ $arrayValues['Request'] }}</p>
-                                                                @else
-                                                                    <span>Không tồn tại dữ liệu</span>
                                                                 @endif
-                                                            
-                                                            <!-- Hiển thị thông tin về công việc tuần tới (Mục II) -->
-                                                            </div>
-                                                            
-                                                            
+                                                            @endforeach
+                                                            @else
+                                                                <span>Không tồn tại dữ liệu</span>
+                                                            @endif
+
                                                             <p style="border-bottom: 1px solid #e5e7eb; margin-bottom: 0;"></p>
 
-                                            
+
                                                     </div>
-                                        
-                                            </div>   
+
+                                            </div>
                                         @endforeach
                                     </div>
                                 @endif
@@ -724,16 +723,20 @@
                                 @foreach ($reports as $report)
                                     <div class="accordion-item">
                                         @php
-                                            $createdDate = \Carbon\Carbon::parse($report->created_at);
+                                            $createdDate = \Carbon\Carbon::parse($report->date_start);
+
+                                            $today = \Carbon\Carbon::now();
                                             $dayOfWeek = $createdDate->dayOfWeek;
-                                            if ($dayOfWeek >= 6) {
+                                            $endDate = $createdDate->copy()->endOfWeek()->subWeek()->addDays(5);
+
+                                            if ($createdDate > $endDate) {
                                                 $lastFriday = $createdDate->copy()->subDays($dayOfWeek - 5)->format('d-m-Y');
                                                 $thisThursday = $createdDate->copy()->addDays(4 - $dayOfWeek + 7)->format('d-m-Y');
                                             } else {
                                                 $lastFriday = $createdDate->copy()->subDays($dayOfWeek + 6 - 4)->format('d-m-Y');
                                                 $thisThursday = $createdDate->copy()->addDays(4 - $dayOfWeek)->format('d-m-Y');
                                             }
-                                            
+
                                         @endphp
                                         <h2 class="accordion-header" id="heading{{ $report->id }}">
                                             <button class="accordion-button collapsed" type="button"
@@ -767,7 +770,7 @@
                                             @foreach (json_decode($report->values, true) as $repo)
                                                 @php
                                                     $arrayValues = $repo;
-                                                    
+
                                                     $workDone = !empty($arrayValues['WorkDone']) ? $arrayValues['WorkDone'] : [];
                                                     $expectedWork = !empty($arrayValues['ExpectedWork']) ? $arrayValues['ExpectedWork'] : [];
                                                     $requestWork = !empty($arrayValues['Request']) ? $arrayValues['Request'] : [];
@@ -946,24 +949,21 @@
                                 @endphp
                                   @foreach ($array as $array)
                                 <div class="accordion-item">
-                                  
+
                                     @php
-                                        $Week = 1;
-                                        // dd($array);
                                         $arrayValues = json_decode($array->values, true);
-                                        
                                         $workDone = !empty($arrayValues['WorkDone']) ? $arrayValues['WorkDone'] : [];
                                         $expectedWork = !empty($arrayValues['ExpectedWork']) ? $arrayValues['ExpectedWork'] : [];
                                         $requestWork = !empty($arrayValues['Request']) ? $arrayValues['Request'] : [];
-                                      
+
                                         $STT = 1;
                                         $STT_NEXT = 1;
                                         $nameDepartment = $arrayValues['DepartmentName'] ?? '';
                                         $createdDate = \Carbon\Carbon::parse($array->created_at);
-
+                                        $thisThursdayFormatted = $createdDate->copy()->endOfWeek()->subWeek()->addDays(5);
 
                                         $dayOfWeek = $createdDate->dayOfWeek;
-                                        if ($dayOfWeek >= 5) {
+                                        if ($createdDate > $thisThursdayFormatted) {
                                             $lastFriday = $createdDate->copy()->subDays($dayOfWeek - 5)->format('d-m-Y');
                                             $thisThursday = $createdDate->copy()->addDays(4 - $dayOfWeek + 7)->format('d-m-Y');
                                         } else {
@@ -975,7 +975,7 @@
                                         <button class="accordion-button collapsed" type="button"
                                             data-bs-toggle="collapse" data-bs-target="#collapse{{ $array->id }}"
                                             aria-expanded="false" aria-controls="collapse{{ $array->id }}">
-                                            <span style="font-size: 20px;">Công việc tuần {{ $Week++ }} (Từ ngày
+                                            <span style="font-size: 20px;">Công việc tuần (Từ ngày
                                                 {{ $lastFriday }} đến {{ $thisThursday }})</span>
 
                                         </button>
@@ -983,6 +983,21 @@
                                     <div id="collapse{{ $array->id }}" class="accordion-collapse collapse"
                                         style="visibility: unset" aria-labelledby="heading{{ $array->id }}"
                                         data-bs-parent="#reportsAccordion">
+                                        <div style="width: 100%; display: flex;justify-content: right;  align-items: center;">
+                                            <form style="text-align: right; padding: 20px;"
+                                                action="{{ route('pdf.department', $array->id) }}" method="GET">
+                                                @csrf
+                                                <button id="run-cronjob-button" class="btn btn-primary">In PDF</button>
+                                            </form>
+                                            {{-- <form style="margin-right: 20px" action="{{ route('word.details', $array->id) }}" method="GET">
+                                                @csrf
+                                                <button id="run-cronjob-button" class="btn btn-primary">In Word</button>
+                                            </form> --}}
+                                            {{-- <form style="margin-right: 20px" action="{{ route('excel.details', $a->id) }}" method="GET">
+                                                @csrf
+                                                <button id="run-cronjob-button" class="btn btn-primary">In Excel</button>
+                                            </form> --}}
+                                        </div>
                                         <div class="accordion-body">
                                             {{-- <h2 style="text-align: center">{{ $item['name'] }}</h2> --}}
                                             <!-- Hiển thị thông tin về công việc đã làm (Mục I) -->
@@ -1118,7 +1133,7 @@
                                         </div>
 
                                     </div>
-                              
+
                                 </div>
                                 @endforeach
                         </div>
