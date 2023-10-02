@@ -113,33 +113,31 @@ class ReportController extends Controller
             if($user->role == 'admin') {
                 $requestData = $request->all();
                 $reportDate = ReportDate::latest()->first();
-                if(!empty($reportDate)) {
-                    $reportDate = $reportDate->report_date;
-                    $errorMessage = '';
-
-                    if (isset($requestData['end_date'])) {
-                        $endDates = $requestData['end_date'];
-                        foreach ($endDates as $endDate) {
-
-                            $endDate = Carbon::parse($endDate);
-
-                            if ($endDate->lessThan($reportDate)) {
-                                return redirect()->back()->with('error', 'Không thể chọn ngày kết thúc trong tuần123 đã chốt.');
-                            }
-                        }
-                    }
-
-                    if(isset($requestData['end_date_tuan_toi'])) {
-                        $endDatesTuanToi = $requestData['end_date_tuan_toi'];
-                        foreach ($endDatesTuanToi as $endDateTuanToi) {
-
-                            $endDateTuanToi = Carbon::parse($endDateTuanToi);
-                            if ($endDateTuanToi->lessThan($reportDate)) {
-                                return redirect()->back()->with(['error' => 'Không thể chọn ngày kết thúc trong tuần đã chốt.']);
-                            }
-                        }
-                    }
-                }
+                // if(!empty($reportDate)) {
+                //     $reportDate = $reportDate->report_date;
+                //     $reportDate = Carbon::parse($reportDate);
+                //     $errorMessage = '';
+                //     if (isset($requestData['end_date'])) {
+                //         foreach ($requestData['end_date'] as $endDate) {
+                //             if (isset($endDate)) {
+                //                 $endDate = Carbon::parse($endDate);
+                //                 if ($endDate->greaterThan($reportDate)) {
+                //                     return redirect()->back()->with('error', 'Không thể chọn ngày kết thúc trong tuần đã chốt.');
+                //                 }
+                //             }
+                //         }
+                //     }
+                //     if (isset($requestData['end_date_tuan_toi'])) {
+                //         foreach ($requestData['end_date_tuan_toi'] as $endDateTuanToi) {
+                //             if(isset($endDateTuanToi)) {
+                //                 $endDateTuanToi = Carbon::parse($endDateTuanToi);
+                //                 if ($endDateTuanToi->lessThan($reportDate)) {
+                //                     return redirect()->back()->with(['error' => 'Không thể chọn ngày kết thúc trong tuần đã chốt.']);
+                //                 }
+                //             }
+                //         }
+                //     }
+                // }
 
                 $mapDataDone = [];
                 $mapDataNextWeek = [];
@@ -308,34 +306,33 @@ class ReportController extends Controller
                 $department = Department::find($user->department);
                 $requestData = $request->all();
                 $reportDate = ReportDate::latest()->first();
-                if(!empty($reportDate)) {
-                    $reportDate = $reportDate->report_date;
-                    $errorMessage = '';
-
-                    if (isset($requestData['end_date'])) {
-                        $endDates = $requestData['end_date'];
-                        foreach ($endDates as $endDate) {
-
-                            $endDate = Carbon::parse($endDate);
-
-                            if ($endDate->lessThan($reportDate)) {
-                                return redirect()->back()->with('error', 'Không thể chọn ngày kết thúc trong tuần đã chốt.');
-                            }
-                        }
-                    }
-
-                    if(isset($requestData['end_date_tuan_toi'])) {
-                        $endDatesTuanToi = $requestData['end_date_tuan_toi'];
-                        foreach ($endDatesTuanToi as $endDateTuanToi) {
-
-                            $endDateTuanToi = Carbon::parse($endDateTuanToi);
-
-                            if ($endDateTuanToi->lessThan($reportDate)) {
-                                return redirect()->back()->with(['error' => 'Không thể chọn ngày kết thúc trong tuần đã chốt.']);
-                            }
-                        }
-                    }
-                }
+                // if(!empty($reportDate)) {
+                //     $reportDate = $reportDate->report_date;
+                //     $reportDate = Carbon::parse($reportDate);
+                //     $errorMessage = '';
+                //     if (isset($requestData['end_date'])) {
+                //         foreach ($requestData['end_date'] as $item) {
+                //             if (isset($item)) {
+                //                 $endDate = $item;
+                //                 $endDate = Carbon::parse($endDate);
+                //                 if ($endDate->greaterThan($reportDate)) {
+                //                     return redirect()->back()->with('error', 'Không thể chọn ngày kết thúc trong tuần đã chốt.');
+                //                 }
+                //             }
+                //         }
+                //     }
+                //     if (isset($requestData['end_date_tuan_toi'])) {
+                //         foreach ($requestData['end_date_tuan_toi'] as $item) {
+                //             if(isset($item)) {
+                //                 $endDateTuanToi = $item;
+                //                 $endDateTuanToi = Carbon::parse($endDateTuanToi);
+                //                 if ($endDateTuanToi->lessThan($reportDate)) {
+                //                     return redirect()->back()->with(['error' => 'Không thể chọn ngày kết thúc trong tuần đã chốt4.']);
+                //                 }
+                //             }
+                //         }
+                //     }
+                // }
 
                 $mapDataDone = [];
                 $mapDataNextWeek = [];
