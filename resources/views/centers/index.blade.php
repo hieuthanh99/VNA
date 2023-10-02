@@ -5,17 +5,31 @@
         align-items: center;
         justify-content: space-between;">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                @if(!empty($record)) 
+                @if(!empty($record))
+                @php
+                    $time = strtotime($startDateOfWeekInput);
+                    $startDateOfWeekInput = date('d-m-Y',$time);
+
+                    $time = strtotime($endDateOfWeekInput);
+                    $endDateOfWeekInput = date('d-m-Y',$time);
+                @endphp
                     {{ __('Báo cáo tuần Khối dịch vụ (' . $startDateOfWeekInput . ' đến ' . $endDateOfWeekInput . ')') }}
-                @else 
+                @else
+                @php
+                    $time = strtotime($startDate);
+                    $startDate = date('d-m-Y',$time);
+
+                    $time = strtotime($endDate);
+                    $endDate = date('d-m-Y',$time);
+                @endphp
                     {{ __('Báo cáo tuần Khối dịch vụ (' . $startDate . ' đến ' . $endDate . ')') }}
                 @endif
             </h2>
             <div style="display: flex;">
-                <!-- <form style="margin: 0 20px;" action="{{ route('centers.run') }}" method="POST">
+                {{-- <form style="margin: 0 20px;" action="{{ route('centers.run') }}" method="POST">
                     @csrf
                     <button id="run-cronjob-button" class="custom-button">Run Job</button>
-                </form> -->
+                </form> --}}
                 @if(!empty($record))
                     @if (!empty($record->status == '2'))
                         <form action="{{ route('pdf') }}" method="GET">
@@ -181,9 +195,9 @@
             top:50%;
             background-color:#fff;
             color: #0a0a23;
-            border-radius:10px; 
+            border-radius:10px;
             padding:8px;
-            min-height:30px; 
+            min-height:30px;
             min-width: 120px;
             border: 1px solid #000;
             font-size: 14px;
@@ -209,14 +223,14 @@
         }
         .report-center-edit {
             display: inline-block;
-            padding: 10px 20px; 
-            background-image: linear-gradient(195deg,#006885 0%,#006885 100%); 
-            color: #fff; 
-            text-decoration: none; 
-            border: none; 
-            border-radius: 5px; 
+            padding: 10px 20px;
+            background-image: linear-gradient(195deg,#006885 0%,#006885 100%);
+            color: #fff;
+            text-decoration: none;
+            border: none;
+            border-radius: 5px;
             cursor: pointer;
-            font-weight: bold; 
+            font-weight: bold;
             margin-top: 22px;
             margin-right: 15px;
         }
@@ -259,17 +273,17 @@
                                         $weekNumber = $createdDate->weekOfYear;
                                         $startDateOfWeek = $createdDate->startOfWeek()->format('d-m-Y');
                                         $endDateOfWeek = $createdDate->endOfWeek()->format('d-m-Y');
-                                        
+
                                     @endphp
                                     <h2 class="accordion-header" id="heading{{ $record->id }}">
                                         <button class="accordion-button collapsed" type="button"
                                             data-bs-toggle="collapse" data-bs-target="#collapse{{ $record->id }}"
                                             aria-expanded="false" aria-controls="collapse{{ $record->id }}">
-                                            @if(!empty($record)) 
+                                            @if(!empty($record))
                                                 <span style="font-size: 20px;">Báo cáo tuần Khối dịch vụ (Từ
                                                     ngày
                                                     {{ $startDateOfWeekInput }} đến {{ $endDateOfWeekInput }})</span>
-                                            @else 
+                                            @else
                                                 <span style="font-size: 20px;">Báo cáo tuần Khối dịch vụ (Từ
                                                     ngày
                                                     {{ $startDate }} đến {{ $endDate }})</span>
@@ -443,7 +457,7 @@
                                             </div>
                                             <p style="border-bottom: 1px solid #e5e7eb;"></p>
                                         @endforeach
-                                        @if (!empty($reportCenter)) 
+                                        @if (!empty($reportCenter))
                                             @if (!empty($mergedArray))
                                                 @foreach($mergedArray as $data)
                                                     @php
@@ -601,7 +615,7 @@
                                                             <span>Chưa báo cáo</span>
                                                         @endif
                                                     </div>
-                                                    <p style="border-bottom: 1px solid #e5e7eb;"></p> 
+                                                    <p style="border-bottom: 1px solid #e5e7eb;"></p>
                                                 @endforeach
                                             @endif
                                         @endif

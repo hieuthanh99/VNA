@@ -49,16 +49,28 @@ class DashBoardController extends Controller
             $departmentUser = Department::find($user->department);
             $startDate = Carbon::now()->startOfWeek();
             $endDate = Carbon::now()->endOfWeek();
-    
+
             $array = Logs::Where('department_id', $departmentUser->id)->whereBetween('created_at', [$startDate, $endDate])->get();
             return view('dashboard', ['array' => $array, 'department' => $department, 'reports' => []]);
-        }     
+        }
     }
-    
+
     public function deleteDataWeek(){
         // Lấy ngày bắt đầu và kết thúc của tuần này
-        $startDate = Carbon::now()->startOfWeek();
-        $endDate = Carbon::now()->endOfWeek();
+        // $startDate = Carbon::now()->startOfWeek();
+        // $endDate = Carbon::now()->endOfWeek();
+
+        $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(4)->format('d-m-Y');
+        $today = Carbon::now()->format('d-m-Y');
+        $yesterday = \Carbon\Carbon::now()->subDay();
+        if($today > $thisThursdayFormatted)
+        {
+            $startDate = Carbon::now()->endOfWeek()->subWeek()->addDays(6)->startOfDay()->format('Y-m-d');
+            $endDate = Carbon::now()->next()->endOfWeek()->subWeek()->addDays(5)->format('Y-m-d');
+        } else {
+            $startDate = Carbon::now()->startOfWeek()->subWeek()->addDays(5)->startOfDay()->format('Y-m-d');
+            $endDate = Carbon::now()->endOfWeek()->subWeek()->addDays(5)->format('Y-m-d');
+        }
 
         // Xóa dữ liệu trong bảng 'tasks' từ ngày bắt đầu đến ngày kết thúc của tuần này
         DB::table('tasks')->whereBetween('created_at', [$startDate, $endDate])->delete();
@@ -67,12 +79,12 @@ class DashBoardController extends Controller
         DB::table('logs')->whereBetween('created_at', [$startDate, $endDate])->delete();
 
         // Xóa dữ liệu trong bảng 'center_wide_report' từ ngày bắt đầu đến ngày kết thúc của tuần này
-        DB::table('center_wide_report')->whereBetween('created_at', [$startDate, $endDate])->delete();
+        DB::table('center_wide_report')->whereBetween('date_start', [$startDate, $endDate])->delete();
 
         // Xóa dữ liệu trong bảng 'reports' từ ngày bắt đầu đến ngày kết thúc của tuần này
         DB::table('reports')->whereBetween('created_at', [$startDate, $endDate])->delete();
 
-        return redirect()->back()->with('success', 'Xóa dữ liệu test tuần này thành công!');
+        return redirect()->back()->with('success', 'Xóa dữ liệu tuần này thành công!');
     }
     public function search(Request $request)
     {
@@ -94,20 +106,35 @@ class DashBoardController extends Controller
             $dateStart = Carbon::now();
             $endDate = Carbon::now()->endOfWeek();
             $endDate2 = Carbon::now()->setISODate(Carbon::now()->year, Carbon::now()->isoWeek(), 4)->setTime(16, 0, 0);
-            $reportCenter = ReportCenter::whereBetween('created_at', [$startDate, $endDate2])->get();
+
+
+            $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(4)->format('d-m-Y');
+            $today = Carbon::now()->format('d-m-Y');
+            $yesterday = \Carbon\Carbon::now()->subDay();
+
+            if($today > $thisThursdayFormatted)
+            {
+                $lastFridayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(6)->format('Y-m-d');
+                $thisThursdayFormatted = Carbon::now()->next()->endOfWeek()->subWeek()->addDays(5)->format('Y-m-d');
+            } else {
+                $lastFridayFormatted = Carbon::now()->startOfWeek()->subWeek()->addDays(5)->format('Y-m-d');
+                $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5)->format('Y-m-d');
+            }
+
+            $reportCenter = ReportCenter::whereBetween('date_start', [$lastFridayFormatted, $thisThursdayFormatted])->get();
             if(!$reportCenter->isEmpty()){
                 return redirect()->back()->with('error', 'Bạn đã thực thi trong tuần này.');
             }
 
-            $records = Logs::whereBetween('created_at', [$startDate, $endDate2])->get();
+            $records = Logs::whereBetween('created_at', [$lastFridayFormatted, $thisThursdayFormatted])->get();
             if ($records->count() > 0) {
                 $dataByDepartment = [];
-            
+
                 foreach ($records as $record) {
                     $values = json_decode($record->values, true);
-                
+
                     $departmentId = $record->department_id;
-                
+
                     // Tạo một mảng mới cho phòng ban nếu chưa tồn tại
                     if (!isset($dataByDepartment[$departmentId])) {
                         $departmentName = Department::find($departmentId);
@@ -140,7 +167,7 @@ class DashBoardController extends Controller
                     'date_start' => $dateStart,
                 ]);
                 $arrayCenter = json_decode($dataReportCenter->values);
-                $departmentIds = []; 
+                $departmentIds = [];
                 foreach ($arrayCenter as $item) {
                     $departmentIds[] = $item->DepartmentId;
                 }
@@ -149,9 +176,9 @@ class DashBoardController extends Controller
                 foreach ($departmentIds as $item) {
                     $dataReport = Report::where('department_id', $item)->whereBetween('created_at', [$startDate, $endDate])->first();
                     if ($dataReport) {
-                        $status = $statusShow; 
-                        $dataReport->status = $status; 
-                        $dataReport->save(); 
+                        $status = $statusShow;
+                        $dataReport->status = $status;
+                        $dataReport->save();
                         $dataStatusDepartment[] = $dataReport;
                     }
                 }
@@ -163,7 +190,7 @@ class DashBoardController extends Controller
                 $emailArray = User::pluck('email')->filter(function ($email) {
                     return filter_var($email, FILTER_VALIDATE_EMAIL);
                 })->toArray();
-                
+
                 Mail::to($emailArray)->send(new SendReportEmail($pdfData));
                 return redirect()->back()->with('success', 'Thực thi thành công báo cáo và email.');
             }

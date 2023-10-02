@@ -46,10 +46,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/centers/search', [DashBoardController::class, 'search'])->name('centers.search');
 
     Route::post('/users/send-email', [DashBoardController::class, 'sendEmail'])->name('centers.sendEmail');
- 
+
     Route::get('generate-pdf', [PDFController::class, 'generatePDF'])->name('pdf');
     Route::get('delete', [DashBoardController::class, 'deleteDataWeek'])->name('delete.data');
     Route::get('pdf/{id}', [PDFController::class, 'generatePDFDetails'])->name('pdf.details');
+    Route::get('pdf-dep/{id}', [PDFController::class, 'departmentPDF'])->name('pdf.department');
+
     Route::get('/generate-word', [WordController::class, 'generateWord'])->name('word');
     Route::get('word/{id}', [WordController::class, 'generateWordDetails'])->name('word.details');
     Route::get('/generate-excel', [ExcelController::class, 'generateExcel'])->name('excel');
@@ -58,7 +60,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/report-dates', [ReportDateController::class, 'index'])->name('report-dates.index');
     Route::post('/report-dates', [ReportDateController::class, 'store'])->name('report-dates.store');
     Route::post('/search-report', [ReportDateController::class, 'searchReport'])->name('search.report');
-    
+
     Route::get('/show-units', [UnitController::class, 'showUnits'])->name('show.units');
 
     Route::resource('emails', EmailController::class);

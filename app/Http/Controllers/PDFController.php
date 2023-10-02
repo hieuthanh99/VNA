@@ -26,4 +26,9 @@ class PDFController extends Controller
     {
         return Helper::pdfDetails($id);
     }
+
+    public function departmentPDF($id)
+    {
+        return Helper::departmentPDF($id);
+    }
 }

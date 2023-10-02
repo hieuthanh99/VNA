@@ -5,9 +5,9 @@
         align-items: center;
         justify-content: space-between;">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                @if(!empty($record)) 
+                @if(!empty($record))
                     {{ __('Báo cáo tuần Khối dịch vụ (' . $startDateOfWeekInput . ' đến ' . $endDateOfWeekInput . ')') }}
-                @else 
+                @else
                     {{ __('Báo cáo tuần Khối dịch vụ (' . $startDate . ' đến ' . $endDate . ')') }}
                 @endif
             </h2>
@@ -179,9 +179,9 @@
             top:50%;
             background-color:#fff;
             color: #0a0a23;
-            border-radius:10px; 
+            border-radius:10px;
             padding:8px;
-            min-height:30px; 
+            min-height:30px;
             min-width: 120px;
             border: 1px solid #000;
             font-size: 14px;
@@ -206,14 +206,14 @@
         }
         .report-center-edit {
             display: inline-block;
-            padding: 10px 20px; 
-            background-image: linear-gradient(195deg,#006885 0%,#006885 100%); 
-            color: #fff; 
-            text-decoration: none; 
-            border: none; 
-            border-radius: 5px; 
+            padding: 10px 20px;
+            background-image: linear-gradient(195deg,#006885 0%,#006885 100%);
+            color: #fff;
+            text-decoration: none;
+            border: none;
+            border-radius: 5px;
             cursor: pointer;
-            font-weight: bold; 
+            font-weight: bold;
             margin-top: 22px;
 
             margin-right: 15px;
@@ -267,11 +267,11 @@
                                             <button class="accordion-button collapsed" type="button"
                                                 data-bs-toggle="collapse" data-bs-target="#collapse{{ $record->id }}"
                                                 aria-expanded="false" aria-controls="collapse{{ $record->id }}">
-                                                @if(!empty($record)) 
+                                                @if(!empty($record))
                                                     <span style="font-size: 20px;">Báo cáo tuần Khối dịch vụ (Từ
                                                         ngày
                                                         {{ $startDateOfWeekInput }} đến {{ $endDateOfWeekInput }})</span>
-                                                @else 
+                                                @else
                                                     <span style="font-size: 20px;">Báo cáo tuần Khối dịch vụ (Từ
                                                         ngày
                                                         {{ $startDate }} đến {{ $endDate }})</span>
@@ -347,7 +347,7 @@
 
                                                                         <span style="font-size:  18px; font-weight: bold">Nội
                                                                             dung:</span>
-                                                                        <textarea style="width: 90%; height: 120px; margin-left:30px;" name="noi_dung_cong_viec_tuan_nay*_*{{$key}}*_*WorkDone*_*{{$keyWorkDone}}" 
+                                                                        <textarea style="width: 90%; height: 120px; margin-left:30px;" name="noi_dung_cong_viec_tuan_nay*_*{{$key}}*_*WorkDone*_*{{$keyWorkDone}}"
                                                                         placeholder="Nhập nội dung công việc" class="form-control" style="margin-bottom: 10px;">{{$work->description}}</textarea>
                                                                     </div>
 
@@ -391,7 +391,7 @@
                                                                             <input style="padding-left: 10px;" type="date" name="end_date_tuan_toi*_*{{$key}}*_*ExpectedWork*_*{{$keyExpectedWord}}" id="end_date_tuan_toi[]" value="{{ $work->next_end_date }}" class="form-control">
 
                                                                             <div style="padding-left: 10px;">
-                                                                                
+
                                                                             </div>
                                                                         </div>
                                                                         @endif
@@ -421,7 +421,7 @@
                                                     <!-- Hiển thị thông tin về kiến nghị (Mục III) -->
                                                     <div id="requestWorkSection">
                                                         <h3>Mục III: Kiến nghị</h3>
-                                                        @if (!empty($requestWork))    
+                                                        @if (!empty($requestWork))
                                                             <textarea style="width: 96%; height: 120px; margin-left:30px; margin-top: 20px; margin-bottom: 20px;" id="kien_nghi[]" name="kien_nghi*_*{{$key}}" placeholder="Nhập ý kiến" class="form-control">{{$requestWork}}</textarea>
                                                         @else
                                                             <span>Chưa báo cáo</span>

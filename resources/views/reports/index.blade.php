@@ -223,14 +223,14 @@
                 <div class="mb-4">
                     @if(!isset($dataWideReport))
                         <a class="report-edit" href="{{ route('reports.edit', ['report' => $report->id]) }}">Chỉnh sửa báo cáo</a>
-                    @else 
+                    @else
                         <a style="display:none" class="report-edit" href="{{ route('reports.edit', ['report' => $report->id]) }}">Chỉnh sửa báo cáo</a>
                     @endif
                     <h1 class="mb-2 heading-style">I. Công việc đã thực hiện</h1>
                     <div id="cong-viec-da-lam-container">
                         @if($array['WorkDone'])
                             @forEach($array['WorkDone'] as $key => $value)
-                            @php 
+                            @php
                                 $workDone = $value['work_done'];
                                 $valueOfWork = $value['value_of_work'];
                                 $checked = ($valueOfWork == '1') ? 'checked' : '';
@@ -294,11 +294,11 @@
                         <div class="item-job-will-do form-group  cong-viec-tuan-toi-row">
                             <div class="header-report form-group">
                                 <span class="item-job cong-viec-stt">{{$rowCount2++}}. </span>
-                                <label style="padding-left: 20px;" class="item-job" for="cong_viec_tuan_toi">Tiêu đề:</label> 
+                                <label style="padding-left: 20px;" class="item-job" for="cong_viec_tuan_toi">Tiêu đề:</label>
                                 <input disabled readonly type="text" name="cong_viec_tuan_toi[]" style="flex:4" value=" {{$value['next_work']}}" class="form-control custom-input disabled" readonly> <span style="flex:2"></span>
                             </div>
                             <div class="content-report form-group" >
-                                <label class="item-job" style="vertical-align: top;" for="noi_dung_cong_viec">Nội dung:</label> 
+                                <label class="item-job" style="vertical-align: top;" for="noi_dung_cong_viec">Nội dung:</label>
                                 <textarea disabled readonly style="width: 63%; height: 80px;" name="noi_dung_cong_viec_tuan_toi[]" placeholder="Nhập nội dung công việc" class="form-control" style="margin-bottom: 10px;">{{$value['next_description']}}</textarea>
                                 <div  class="content-date">
                                     <div >
@@ -308,12 +308,12 @@
                                     <div style="margin-left: 10px;">
                                         <label class="item-job date-end" for="ngay_sinh">Kết thúc:</label>
                                         <input disabled readonly type="date" name="end_date_tuan_toi[]" value="{{$value['next_end_date']}}" id="end_date[]" class="form-control" >
-                    
+
                                     </div>
                                 </div>
                             </div>
                             <div class="form-group style-note">
-                                    <label style="padding-left: 22px;" class="item-job" for="trangthai_congviec">Tiến độ:</label> 
+                                    <label style="padding-left: 22px;" class="item-job" for="trangthai_congviec">Tiến độ:</label>
                                     <input disabled readonly style="flex:4" type="text" value="{{$value['next_status_work']}}"   name="trangthai_congviec_tuan_toi[]" placeholder="Nhập tiến độ công việc" class="form-control" required>
                                     <div class="form-check" style="margin-top: 0; flex: 2;">
                                 </div>
@@ -330,7 +330,7 @@
                         <textarea disabled style="width: 70%; height: 200px;" name="kien_nghi" disabled placeholder="Nhập ý kiến" class="form-control" style="margin-bottom: 10px;">{{$array['Request']}}</textarea>
                         @endif
                     </div>
-                
+
                 </div>
                 </div>
             @endif

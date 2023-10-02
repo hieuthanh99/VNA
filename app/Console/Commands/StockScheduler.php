@@ -43,23 +43,38 @@ class StockScheduler extends Command
         $startDate->subDays(3);
         $endDate = Carbon::now()->endOfWeek();
         $endDate2 = Carbon::now()->setISODate(Carbon::now()->year, Carbon::now()->isoWeek(), 4)->setTime(16, 0, 0);
-        $reportCenter = ReportCenter::whereBetween('created_at', [$startDate, $endDate2])->get();
+
+        $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(4)->format('d-m-Y');
+        $today = Carbon::now()->format('d-m-Y');
+        $yesterday = \Carbon\Carbon::now()->subDay();
+
+        if($today > $thisThursdayFormatted)
+        {
+            $lastFridayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(6)->format('Y-m-d');
+            $thisThursdayFormatted = Carbon::now()->next()->endOfWeek()->subWeek()->addDays(5)->format('Y-m-d');
+        } else {
+            $lastFridayFormatted = Carbon::now()->startOfWeek()->subWeek()->addDays(5)->format('Y-m-d');
+            $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5)->format('Y-m-d');
+        }
+
+        $reportCenter = ReportCenter::whereBetween('date_start', [$lastFridayFormatted, $thisThursdayFormatted])->get();
+
         if(!$reportCenter->isEmpty()){
             Mail::to('n.hieuthanhps@gmail.com')->send(new SendEmailUser());
 
             \Log::info("Tổn tại báo cáo tuần ... !".$startDate);
             exit();
         }
-       
+
         $records = Logs::whereBetween('created_at', [$startDate, $endDate2])->get();
         if ($records->count() > 0) {
             $dataByDepartment = [];
-        
+
             foreach ($records as $record) {
                 $values = json_decode($record->values, true);
-            
+
                 $departmentId = $record->department_id;
-            
+
                 // Tạo một mảng mới cho phòng ban nếu chưa tồn tại
                 if (!isset($dataByDepartment[$departmentId])) {
                     $departmentName = Department::find($departmentId);
@@ -71,17 +86,17 @@ class StockScheduler extends Command
                         'Request' => null,
                     ];
                 }
-            
+
                 // Tổng hợp dữ liệu từ WorkDone
                 if (isset($values['WorkDone'])) {
                     $dataByDepartment[$departmentId]['WorkDone'] = array_merge($dataByDepartment[$departmentId]['WorkDone'], $values['WorkDone']);
                 }
-            
+
                 // Tổng hợp dữ liệu từ ExpectedWork
                 if (isset($values['ExpectedWork'])) {
                     $dataByDepartment[$departmentId]['ExpectedWork'] = array_merge($dataByDepartment[$departmentId]['ExpectedWork'], $values['ExpectedWork']);
                 }
-            
+
                 // Lưu giá trị từ Request (nếu có)
                 if (isset($values['Request'])) {
                     $dataByDepartment[$departmentId]['Request'] = $values['Request'];
@@ -98,7 +113,7 @@ class StockScheduler extends Command
             ]);
 
             $arrayCenter = json_decode($dataReportCenter->values);
-            $departmentIds = []; 
+            $departmentIds = [];
             foreach ($arrayCenter as $item) {
                 $departmentIds[] = $item->DepartmentId;
             }
@@ -107,9 +122,9 @@ class StockScheduler extends Command
             foreach ($departmentIds as $item) {
                 $dataReport = Report::where('department_id', $item)->whereBetween('created_at', [$startDate, $endDate])->first();
                 if ($dataReport) {
-                    $status = $statusShow; 
-                    $dataReport->status = $status; 
-                    $dataReport->save(); 
+                    $status = $statusShow;
+                    $dataReport->status = $status;
+                    $dataReport->save();
                     $dataStatusDepartment[] = $dataReport;
                 }
             }
@@ -118,13 +133,13 @@ class StockScheduler extends Command
             $emailArray = Email::pluck('email')->filter(function ($email) {
                 return filter_var($email, FILTER_VALIDATE_EMAIL);
             })->toArray();
-                
+
             Mail::to($emailArray)->send(new SendEmailUser());
         }
         \Log::info("Not Fonnd Report ");
-      
- 
+
+
         exit();
-      
+
     }
 }

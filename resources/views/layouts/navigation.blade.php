@@ -11,7 +11,7 @@
                     </a>
                 </div>
 
-             
+                
                 <!-- Navigation Links -->
                 <div class="nav-item hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
@@ -144,7 +144,7 @@
     .name-user {
         background-color: unset;
     }
-    
+
     .name {
         color: #fff;
     }
