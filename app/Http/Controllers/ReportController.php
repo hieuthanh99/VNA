@@ -30,9 +30,9 @@ class ReportController extends Controller
         // $startDate = Carbon::now()->startOfWeek();
         // $endDate = Carbon::now()->endOfWeek();
 
-        $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(4)->format('d-m-Y');
+        $thisFridayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5)->format('d-m-Y');
         $today = Carbon::now()->format('d-m-Y');
-        if($today > $thisThursdayFormatted)
+        if($today > $thisFridayFormatted)
         {
             $startDate = Carbon::now()->endOfWeek()->subWeek()->addDays(6)->startOfDay();
             $endDate = Carbon::now()->next()->endOfWeek()->subWeek()->addDays(5);
