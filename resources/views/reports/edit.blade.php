@@ -332,9 +332,7 @@
                             <textarea style="width: 70%; height: 200px;" name="kien_nghi" placeholder="Nhập ý kiến" class="form-control" style="margin-bottom: 10px;">{{$array['Request']}}</textarea>
                             @endif
                         </div>
-
                     </div>
-                </div>
                 <hr style="border: none;">
                 <button class="report-edit" type="submit">Cập nhật</button>
             </form>
