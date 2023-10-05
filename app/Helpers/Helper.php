@@ -213,11 +213,11 @@ class Helper
             $dateCarbon = Carbon::parse($dataDate);
             $dayOfWeek = Carbon::parse($record->date_start)->dayOfWeek;
             if ($dayOfWeek > 5) {
-                $startDateOfWeekInput = $dateCarbon->copy()->subDays($dayOfWeek - 5)->format('d-m-Y');
-                $endDateOfWeekInput = $dateCarbon->copy()->addDays(4 - $dayOfWeek + 7)->format('d-m-Y');
+                $startDateOfWeekInput = $dateCarbon->copy()->subDays($dayOfWeek - 5)->format('d/m/Y');
+                $endDateOfWeekInput = $dateCarbon->copy()->addDays(4 - $dayOfWeek + 7)->format('d/m/Y');
             } else {
-                $startDateOfWeekInput = $dateCarbon->copy()->subDays($dayOfWeek + 6 - 4)->format('d-m-Y');
-                $endDateOfWeekInput = $dateCarbon->copy()->addDays(4 - $dayOfWeek)->format('d-m-Y');
+                $startDateOfWeekInput = $dateCarbon->copy()->subDays($dayOfWeek + 6 - 4)->format('d/m/Y');
+                $endDateOfWeekInput = $dateCarbon->copy()->addDays(4 - $dayOfWeek)->format('d/m/Y');
             }
         }
         $pdf = PDF::loadView('pdf.template',['department' => $data['mergedArray'],'startDateOfWeekInput' => $startDateOfWeekInput, "endDateOfWeekInput" => $endDateOfWeekInput]);
@@ -234,11 +234,11 @@ class Helper
             $dateCarbon = Carbon::parse($dataDate);
             $dayOfWeek = Carbon::parse($record->date_start)->dayOfWeek;
             if ($dayOfWeek > 5) {
-                $startDateOfWeekInput = $dateCarbon->copy()->subDays($dayOfWeek - 5)->format('d-m-Y');
-                $endDateOfWeekInput = $dateCarbon->copy()->addDays(4 - $dayOfWeek + 7)->format('d-m-Y');
+                $startDateOfWeekInput = $dateCarbon->copy()->subDays($dayOfWeek - 5)->format('d/m/Y');
+                $endDateOfWeekInput = $dateCarbon->copy()->addDays(4 - $dayOfWeek + 7)->format('d/m/Y');
             } else {
-                $startDateOfWeekInput = $dateCarbon->copy()->subDays($dayOfWeek + 6 - 4)->format('d-m-Y');
-                $endDateOfWeekInput = $dateCarbon->copy()->addDays(4 - $dayOfWeek)->format('d-m-Y');
+                $startDateOfWeekInput = $dateCarbon->copy()->subDays($dayOfWeek + 6 - 4)->format('d/m/Y');
+                $endDateOfWeekInput = $dateCarbon->copy()->addDays(4 - $dayOfWeek)->format('d/m/Y');
             }
         }
         $pdf = PDF::loadView('pdf.template',['department' => $data['mergedArray'],'startDateOfWeekInput' => $startDateOfWeekInput, "endDateOfWeekInput" => $endDateOfWeekInput]);
@@ -254,11 +254,11 @@ class Helper
             $dateCarbon = Carbon::parse($dataDate);
             $dayOfWeek = Carbon::parse($dataDate)->dayOfWeek;
             if ($dayOfWeek > 5) {
-                $startDateOfWeekInput = $dateCarbon->copy()->subDays($dayOfWeek - 5)->format('d-m-Y');
-                $endDateOfWeekInput = $dateCarbon->copy()->addDays(4 - $dayOfWeek + 7)->format('d-m-Y');
+                $startDateOfWeekInput = $dateCarbon->copy()->subDays($dayOfWeek - 5)->format('d/m/Y');
+                $endDateOfWeekInput = $dateCarbon->copy()->addDays(4 - $dayOfWeek + 7)->format('d/m/Y');
             } else {
-                $startDateOfWeekInput = $dateCarbon->copy()->subDays($dayOfWeek + 6 - 4)->format('d-m-Y');
-                $endDateOfWeekInput = $dateCarbon->copy()->addDays(4 - $dayOfWeek)->format('d-m-Y');
+                $startDateOfWeekInput = $dateCarbon->copy()->subDays($dayOfWeek + 6 - 4)->format('d/m/Y');
+                $endDateOfWeekInput = $dateCarbon->copy()->addDays(4 - $dayOfWeek)->format('d/m/Y');
             }
         }
         $pdf = PDF::loadView('pdf.departmenttpl',['data' => $data['data'],'departmentName' => $data['deparmentName'],'startDateOfWeekInput' => $startDateOfWeekInput, "endDateOfWeekInput" => $endDateOfWeekInput]);
@@ -278,11 +278,11 @@ class Helper
             $dateCarbon = Carbon::parse($dataDate);
             $dayOfWeek = Carbon::parse($record->date_start)->dayOfWeek;
             if ($dayOfWeek > 5) {
-                $startDateOfWeekInput = $dateCarbon->copy()->subDays($dayOfWeek - 5)->format('d-m-Y');
-                $endDateOfWeekInput = $dateCarbon->copy()->addDays(4 - $dayOfWeek + 7)->format('d-m-Y');
+                $startDateOfWeekInput = $dateCarbon->copy()->subDays($dayOfWeek - 5)->format('d/m/Y');
+                $endDateOfWeekInput = $dateCarbon->copy()->addDays(4 - $dayOfWeek + 7)->format('d/m/Y');
             } else {
-                $startDateOfWeekInput = $dateCarbon->copy()->subDays($dayOfWeek + 6 - 4)->format('d-m-Y');
-                $endDateOfWeekInput = $dateCarbon->copy()->addDays(4 - $dayOfWeek)->format('d-m-Y');
+                $startDateOfWeekInput = $dateCarbon->copy()->subDays($dayOfWeek + 6 - 4)->format('d/m/Y');
+                $endDateOfWeekInput = $dateCarbon->copy()->addDays(4 - $dayOfWeek)->format('d/m/Y');
             }
 
             $section->addText("              BÁO CÁO CÔNG VIỆC TUẦN ($startDateOfWeekInput – $endDateOfWeekInput)", ['size' => 12, 'bold' => true]);
@@ -381,11 +381,11 @@ class Helper
             $dateCarbon = Carbon::parse($dataDate);
             $dayOfWeek = Carbon::parse($record->date_start)->dayOfWeek;
             if ($dayOfWeek > 5) {
-                $startDateOfWeekInput = $dateCarbon->copy()->subDays($dayOfWeek - 5)->format('d-m-Y');
-                $endDateOfWeekInput = $dateCarbon->copy()->addDays(4 - $dayOfWeek + 7)->format('d-m-Y');
+                $startDateOfWeekInput = $dateCarbon->copy()->subDays($dayOfWeek - 5)->format('d/m/Y');
+                $endDateOfWeekInput = $dateCarbon->copy()->addDays(4 - $dayOfWeek + 7)->format('d/m/Y');
             } else {
-                $startDateOfWeekInput = $dateCarbon->copy()->subDays($dayOfWeek + 6 - 4)->format('d-m-Y');
-                $endDateOfWeekInput = $dateCarbon->copy()->addDays(4 - $dayOfWeek)->format('d-m-Y');
+                $startDateOfWeekInput = $dateCarbon->copy()->subDays($dayOfWeek + 6 - 4)->format('d/m/Y');
+                $endDateOfWeekInput = $dateCarbon->copy()->addDays(4 - $dayOfWeek)->format('d/m/Y');
             }
 
             $section->addText("              BÁO CÁO CÔNG VIỆC TUẦN ($startDateOfWeekInput – $endDateOfWeekInput)", ['size' => 12, 'bold' => true]);
@@ -489,11 +489,11 @@ class Helper
             // dd($thisThursdayFormatted);
 
             if ($dayOfWeek > 5) {
-                $startDateOfWeekInput = $dateCarbon->copy()->subDays($dayOfWeek - 5)->format('d-m-Y');
-                $endDateOfWeekInput = $dateCarbon->copy()->addDays(4 - $dayOfWeek + 7)->format('d-m-Y');
+                $startDateOfWeekInput = $dateCarbon->copy()->subDays($dayOfWeek - 5)->format('d/m/Y');
+                $endDateOfWeekInput = $dateCarbon->copy()->addDays(4 - $dayOfWeek + 7)->format('d/m/Y');
             } else {
-                $startDateOfWeekInput = $dateCarbon->copy()->subDays($dayOfWeek + 6 - 4)->format('d-m-Y');
-                $endDateOfWeekInput = $dateCarbon->copy()->addDays(4 - $dayOfWeek)->format('d-m-Y');
+                $startDateOfWeekInput = $dateCarbon->copy()->subDays($dayOfWeek + 6 - 4)->format('d/m/Y');
+                $endDateOfWeekInput = $dateCarbon->copy()->addDays(4 - $dayOfWeek)->format('d/m/Y');
             }
 
             $section->addText("              BÁO CÁO CÔNG VIỆC TUẦN ($startDateOfWeekInput – $endDateOfWeekInput)", ['size' => 12, 'bold' => true]);
