@@ -36,17 +36,20 @@ class ReportCenterController extends Controller
         {
             $lastFridayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5);
             $thisThursdayFormatted = Carbon::now()->next()->endOfWeek()->subWeek()->addDays(4);
+            $dateStart = Carbon::now()->endOfWeek()->subWeek()->addDays(6);
+            $dateEnd = Carbon::now()->next()->endOfWeek()->subWeek()->addDays(5);
         } else {
             $lastFridayFormatted = Carbon::now()->startOfWeek()->subWeek()->addDays(4);
             $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(4);
+            $dateStart = Carbon::now()->startOfWeek()->subWeek()->addDays(5);
+            $dateEnd = Carbon::now()->endOfWeek()->subWeek()->addDays(5);
         }
-        // $lastFridayFormatted = $lastFriday->format('d-m-Y');
-        // $thisThursdayFormatted = $thisThursday->format('d-m-Y');
+
         $records = $result['record'] ?? null;
         $startDate = Carbon::now()->startOfWeek();
         $startDate->subDays(3);
         $endDate2 = Carbon::now()->setISODate(Carbon::now()->year, Carbon::now()->isoWeek(), 4)->setTime(16, 0, 0);
-        $reportCenter = ReportCenter::whereBetween('date_start', [$lastFridayFormatted, $thisThursdayFormatted])->first();
+        $reportCenter = ReportCenter::whereBetween('date_start', [$dateStart, $dateEnd])->first();
         $lastFridayFormatted = $lastFridayFormatted->format('d-m-Y');
         $thisThursdayFormatted = $thisThursdayFormatted->format('d-m-Y');
 
