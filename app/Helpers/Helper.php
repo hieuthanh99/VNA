@@ -32,7 +32,7 @@ class Helper
             $data = ReportCenter::whereBetween('date_start', [$startDate, $endDateWeek])->get();
         } else {
             $startDate = Carbon::now()->startOfWeek()->subWeek()->addDays(5)->startOfDay()->format('Y-m-d');
-            $endDateWeek = Carbon::now()->endOfWeek()->subWeek()->addDays(6)->format('Y-m-d');
+            $endDateWeek = Carbon::now()->endOfWeek()->subWeek()->addDays(5)->format('Y-m-d');
             $data = ReportCenter::whereBetween('date_start', [$startDate, $endDateWeek])->get();
         }
         $department = Department::get()->toArray();
@@ -97,7 +97,7 @@ class Helper
             $data = Report::whereBetween('created_at', [$nowFriday, $nowThursday])->get();
         } else {
             $lastFridayFormatted = Carbon::now()->startOfWeek()->subWeek()->addDays(5)->startOfDay()->format('Y-m-d');
-            $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(6)->format('Y-m-d');
+            $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5)->format('Y-m-d');
             $data = Report::whereBetween('created_at', [$lastFridayFormatted, $thisThursdayFormatted])->get();
         }
 
