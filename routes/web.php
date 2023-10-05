@@ -44,7 +44,7 @@ Route::middleware('auth')->group(function () {
     // routes/web.php
     Route::post('/centers/run', [DashBoardController::class, 'run'])->name('centers.run');
     Route::post('/centers/search', [DashBoardController::class, 'search'])->name('centers.search');
-
+    Route::post('report/copy/{id}', [DashBoardController::class, 'copy'])->name('report.copy');
     Route::post('/users/send-email', [DashBoardController::class, 'sendEmail'])->name('centers.sendEmail');
 
     Route::get('generate-pdf', [PDFController::class, 'generatePDF'])->name('pdf');
@@ -54,8 +54,10 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/generate-word', [WordController::class, 'generateWord'])->name('word');
     Route::get('word/{id}', [WordController::class, 'generateWordDetails'])->name('word.details');
+    Route::get('word-dep/{id}', [WordController::class, 'departmentWord'])->name('word.department');
     Route::get('/generate-excel', [ExcelController::class, 'generateExcel'])->name('excel');
     Route::get('excel/{id}', [ExcelController::class, 'generateExcelDetails'])->name('excel.details');
+    Route::get('excel-dep/{id}', [ExcelController::class, 'departmentExcel'])->name('excel.department');
 
     Route::get('/report-dates', [ReportDateController::class, 'index'])->name('report-dates.index');
     Route::post('/report-dates', [ReportDateController::class, 'store'])->name('report-dates.store');

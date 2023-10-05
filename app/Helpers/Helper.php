@@ -25,7 +25,6 @@ class Helper
 
         $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5)->format('d-m-Y');
         $today = Carbon::now()->format('d-m-Y');
-        $yesterday = \Carbon\Carbon::now()->subDay();
         if($today > $thisThursdayFormatted)
         {
             $startDate = Carbon::now()->endOfWeek()->subWeek()->addDays(6)->startOfDay()->format('Y-m-d');
@@ -91,7 +90,6 @@ class Helper
 
         $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5)->format('d-m-Y');
         $today = Carbon::now()->format('d-m-Y');
-        $yesterday = \Carbon\Carbon::now()->subDay();
         if($today > $thisThursdayFormatted)
         {
             $nowFriday = Carbon::now()->endOfWeek()->subWeek()->addDays(6)->startOfDay()->format('Y-m-d');
@@ -351,7 +349,7 @@ class Helper
                 $section->addTextBreak(1);
             }
 
-            if(!empty($item->ExpectedWork)) {
+            if(!empty($item->Request)) {
                 $section->addText("III. Kiến nghị:", ['size' => 11, 'bold' => true]);
                 $section->addTextBreak(1);
                 $section->addText($item->Request, ['size' => 11, 'bold' => false]);
@@ -453,7 +451,7 @@ class Helper
                 $section->addTextBreak(1);
             }
 
-            if(!empty($item['ExpectedWork'])) {
+            if(!empty($item['Request'])) {
                 $section->addText("III. Kiến nghị:", ['size' => 11, 'bold' => true]);
                 $section->addTextBreak(1);
                 $section->addText($item['Request'], ['size' => 11, 'bold' => false]);
@@ -467,6 +465,114 @@ class Helper
 
         // Save the document as a Word file
         $filePath = storage_path('app/public/report-word.docx');
+
+        $phpWord->save($filePath);
+
+        // Return the generated Word file for download
+        return response()->download($filePath)->deleteFileAfterSend(true);
+    }
+
+    public static function departmentWord($id) {
+        // Truyền dữ liệu vào để in ra bản Word
+        $data = Helper::reportWeekedDepartment($id);
+        $record = $data['data'];
+        $phpWord = new PhpWord();
+        $section = $phpWord->addSection();
+        // Lặp qua mảng dữ liệu và thêm từng dòng vào tài liệu Word
+        if(!empty($record)) {
+            $dataDate =  $data['date'];
+
+            $dateCarbon = Carbon::parse($dataDate);
+            // $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5)->format('d-m-Y');
+
+            $dayOfWeek = Carbon::parse($dateCarbon)->dayOfWeek;
+            // dd($thisThursdayFormatted);
+
+            if ($dayOfWeek > 5) {
+                $startDateOfWeekInput = $dateCarbon->copy()->subDays($dayOfWeek - 5)->format('d-m-Y');
+                $endDateOfWeekInput = $dateCarbon->copy()->addDays(4 - $dayOfWeek + 7)->format('d-m-Y');
+            } else {
+                $startDateOfWeekInput = $dateCarbon->copy()->subDays($dayOfWeek + 6 - 4)->format('d-m-Y');
+                $endDateOfWeekInput = $dateCarbon->copy()->addDays(4 - $dayOfWeek)->format('d-m-Y');
+            }
+
+            $section->addText("              BÁO CÁO CÔNG VIỆC TUẦN ($startDateOfWeekInput – $endDateOfWeekInput)", ['size' => 12, 'bold' => true]);
+            $section->addTextBreak(3);
+        }
+        // $data = json_decode($data->values);
+        // Thêm thông tin về phòng
+        $section->addText($data['deparmentName'], ['size' => 11, 'bold' => true]);
+        $section->addTextBreak(1);
+        $STTWorkDone = 1;
+        $STTExpectedWork = 1;
+        $data = $data['data'];
+        if(!empty($data['WorkDone'])) {
+            // Thêm thông tin về công việc đã làm
+            $section->addText("I. Công việc đã thực hiện:", ['size' => 11, 'bold' => true]);
+            $section->addTextBreak(1);
+            foreach ($data['WorkDone'] as $workDone) {
+                $sttWorkDone = $STTWorkDone++;
+                $section->addText("$sttWorkDone. Công việc đã thực hiện: ", ['size' => 11, 'bold' => false]);
+                $section->addTextBreak(1);
+                $section->addText("- Tiêu đề : " . $workDone['work_done'], ['size' => 11, 'bold' => false]);
+                $section->addTextBreak(1);
+                $section->addText("- Nội dung : " . $workDone['description'], ['size' => 11, 'bold' => false]);
+                $section->addTextBreak(1);
+                $section->addText("- Ngày bắt đầu : " . $workDone['start_date'], ['size' => 11, 'bold' => false]);
+                $section->addTextBreak(1);
+                $section->addText("- Ngày kết thúc : " . $workDone['end_date'], ['size' => 11, 'bold' => false]);
+                $section->addTextBreak(1);
+                $section->addText("- Tiến độ : " . $workDone['status_work'], ['size' => 11, 'bold' => false]);
+                $section->addTextBreak(1);
+            }
+
+            // Thêm khoảng trắng giữa các phần
+            $section->addTextBreak(1);
+        } else {
+            $section->addText("I. Công việc đã thực hiện : Không có dữ liệu", ['size' => 11, 'bold' => true]);
+            $section->addTextBreak(1);
+        }
+        if(!empty($data['ExpectedWork'])) {
+
+            // Thêm thông tin về công việc dự kiến
+            $section->addText("II. Công việc dự kiến:", ['size' => 11, 'bold' => true]);
+            $section->addTextBreak(1);
+            foreach ($data['ExpectedWork'] as $expectedWork) {
+                $sttExpectedWork = $STTExpectedWork++;
+                $section->addText("$sttExpectedWork. Công việc dự kiến: ", ['size' => 11, 'bold' => false]);
+                $section->addTextBreak(1);
+                $section->addText("- Tiêu đề : " . $expectedWork['next_work'], ['size' => 11, 'bold' => false]);
+                $section->addTextBreak(1);
+                $section->addText("- Nội dung : " . $expectedWork['next_description'], ['size' => 11, 'bold' => false]);
+                $section->addTextBreak(1);
+                $section->addText("- Ngày bắt đầu : " . $expectedWork['next_start_date'], ['size' => 11, 'bold' => false]);
+                $section->addTextBreak(1);
+                $section->addText("- Ngày kết thúc : " . $expectedWork['next_end_date'], ['size' => 11, 'bold' => false]);
+                $section->addTextBreak(1);
+                $section->addText("- Tiến độ : " . $expectedWork['next_status_work'], ['size' => 11, 'bold' => false]);
+                $section->addTextBreak(1);
+            }
+
+
+        } else {
+            $section->addText("II. Công việc dự kiến : Không có dữ liệu", ['size' => 11, 'bold' => true]);
+            $section->addTextBreak(1);
+        }
+
+        if(!empty($data['Request'])) {
+            $section->addText("III. Kiến nghị:", ['size' => 11, 'bold' => true]);
+            $section->addTextBreak(1);
+            $section->addText($data['Request'], ['size' => 11, 'bold' => false]);
+            $section->addTextBreak(2);
+        } else {
+            $section->addText("III. Kiến nghị : " . 'Không có dữ liệu', ['size' => 11, 'bold' => true]);
+            $section->addTextBreak(2);
+        }
+
+
+
+        // Save the document as a Word file
+        $filePath = storage_path('app/public/report-word-department.docx');
 
         $phpWord->save($filePath);
 
@@ -587,6 +693,60 @@ class Helper
         $writer = new Xlsx($spreadsheet);
 
         $fileName = 'report.xlsx';
+        $filePath = storage_path('app/public/') . $fileName;
+        $writer->save($filePath);
+
+        return response()->download($filePath)->deleteFileAfterSend();
+    }
+
+    public static function departmentExcel($id) {
+        $data = Helper::reportWeekedDepartment($id);
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setCellValue('A1', 'Phòng ban');
+        $sheet->setCellValue('B1', 'Công việc đã thực hiện');
+        $sheet->setCellValue('C1', 'Ngày bắt đầu');
+        $sheet->setCellValue('D1', 'Ngày kết thúc');
+        $sheet->setCellValue('E1', 'Tiến độ');
+        $sheet->setCellValue('F1', 'Nội dung');
+        $sheet->setCellValue('G1', 'Công việc dự kiến');
+        $sheet->setCellValue('H1', 'Ngày bắt đầu');
+        $sheet->setCellValue('I1', 'Ngày kết thúc');
+        $sheet->setCellValue('J1', 'Tiến độ');
+        $sheet->setCellValue('K1', 'Nội dung');
+        $sheet->setCellValue('L1', 'Kiến nghị');
+        $row = 2;
+        if (!empty($data['data'])) {
+            $departmentName = $data['deparmentName'];
+            $sheet->setCellValue('A' . $row, $departmentName);
+            $startRow = $row;
+            $requestRow = $row;
+            $data = $data['data'];
+            if (!empty($data['WorkDone'])) {
+                foreach ($data['WorkDone'] as $workDone) {
+                    $sheet->setCellValue('B' . $row, $workDone['work_done']);
+                    $sheet->setCellValue('C' . $row, $workDone['start_date']);
+                    $sheet->setCellValue('D' . $row, $workDone['end_date']);
+                    $sheet->setCellValue('E' . $row, $workDone['status_work']);
+                    $sheet->setCellValue('F' . $row, $workDone['description']);
+                    $row++;
+                }
+            }
+            if (!empty($data['ExpectedWork'])) {
+                foreach ($data['ExpectedWork'] as $expectedWork) {
+                    $sheet->setCellValue('G' . $startRow, $expectedWork['next_work']);
+                    $sheet->setCellValue('H' . $startRow, $expectedWork['next_start_date']);
+                    $sheet->setCellValue('I' . $startRow, $expectedWork['next_end_date']);
+                    $sheet->setCellValue('J' . $startRow, $expectedWork['next_status_work']);
+                    $sheet->setCellValue('K' . $startRow, $expectedWork['next_description']);
+                    $startRow++;
+                }
+            }
+            $request = $data['Request'];
+            $sheet->setCellValue('L' . $requestRow, $request);
+        }
+        $writer = new Xlsx($spreadsheet);
+        $fileName = 'report-department.xlsx';
         $filePath = storage_path('app/public/') . $fileName;
         $writer->save($filePath);
 

@@ -32,7 +32,6 @@ class ReportController extends Controller
 
         $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(4)->format('d-m-Y');
         $today = Carbon::now()->format('d-m-Y');
-        $yesterday = \Carbon\Carbon::now()->subDay();
         if($today > $thisThursdayFormatted)
         {
             $startDate = Carbon::now()->endOfWeek()->subWeek()->addDays(6)->startOfDay();
@@ -60,7 +59,6 @@ class ReportController extends Controller
     {
         $endDate = Carbon::now()->endOfWeek()->subWeek()->addDays(5);
         $today = Carbon::now()->format('d-m-Y');
-        // $yesterday = \Carbon\Carbon::now()->subDay();
 
         if($today > $endDate)
         {
@@ -254,7 +252,6 @@ class ReportController extends Controller
 
                 $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5)->format('d-m-Y');
                 $today = Carbon::now()->format('d-m-Y');
-                // $yesterday = \Carbon\Carbon::now()->subDay();
 
                 if($today > $thisThursdayFormatted)
                 {
@@ -489,7 +486,6 @@ class ReportController extends Controller
             $report = Report::where('id', $id)->first();
             $endDate = Carbon::now()->subWeek()->endOfWeek()->addDays(5);
             $today = Carbon::now()->format('d-m-Y');
-            // $yesterday = \Carbon\Carbon::now()->subDay();
             if($today > $endDate)
             {
                 $startDataSat = Carbon::now()->endOfWeek()->subWeek()->addDays(6)->startOfDay();
@@ -650,12 +646,8 @@ class ReportController extends Controller
 
 
             if($user->role == "admin") {
-                // $startDate = Carbon::now()->startOfWeek();
-                // $startDate->subDays(3);
-                // $endDate2 = Carbon::now()->setISODate(Carbon::now()->year, Carbon::now()->isoWeek(), 4)->setTime(16, 0, 0);
                 $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5)->format('d-m-Y');
                 $today = Carbon::now()->format('d-m-Y');
-                // $yesterday = \Carbon\Carbon::now()->subDay();
 
                 if($today > $thisThursdayFormatted)
                 {

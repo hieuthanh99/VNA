@@ -44,17 +44,16 @@ class StockScheduler extends Command
         $endDate = Carbon::now()->endOfWeek();
         $endDate2 = Carbon::now()->setISODate(Carbon::now()->year, Carbon::now()->isoWeek(), 4)->setTime(16, 0, 0);
 
-        $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(4)->format('d-m-Y');
+        $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5)->format('d-m-Y');
         $today = Carbon::now()->format('d-m-Y');
-        $yesterday = \Carbon\Carbon::now()->subDay();
 
         if($today > $thisThursdayFormatted)
         {
-            $lastFridayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(6)->format('Y-m-d');
-            $thisThursdayFormatted = Carbon::now()->next()->endOfWeek()->subWeek()->addDays(5)->format('Y-m-d');
+            $lastFridayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(6);
+            $thisThursdayFormatted = Carbon::now()->next()->endOfWeek()->subWeek()->addDays(5);
         } else {
-            $lastFridayFormatted = Carbon::now()->startOfWeek()->subWeek()->addDays(5)->format('Y-m-d');
-            $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5)->format('Y-m-d');
+            $lastFridayFormatted = Carbon::now()->startOfWeek()->subWeek()->addDays(5);
+            $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5);
         }
 
         $reportCenter = ReportCenter::whereBetween('date_start', [$lastFridayFormatted, $thisThursdayFormatted])->get();
@@ -120,7 +119,7 @@ class StockScheduler extends Command
             $dataStatusDepartment = [];
             $statusShow = 2;
             foreach ($departmentIds as $item) {
-                $dataReport = Report::where('department_id', $item)->whereBetween('created_at', [$startDate, $endDate])->first();
+                $dataReport = Report::where('department_id', $item)->whereBetween('created_at', [$lastFridayFormatted, $thisThursdayFormatted])->first();
                 if ($dataReport) {
                     $status = $statusShow;
                     $dataReport->status = $status;
