@@ -46,7 +46,7 @@
             margin-bottom: 0.5rem;
         }
 
-        .item-job-done {
+        .cong-viec-da-lam-row {
             background: #fff none repeat scroll 0 0;
             border: 1px solid #ede9e9;
             border-radius: 15px;
@@ -56,7 +56,7 @@
             padding: 20px;
         }
 
-        .item-job-will-do {
+        .cong-viec-tuan-toi-row {
             background: #fff none repeat scroll 0 0;
             border: 1px solid #ede9e9;
             border-radius: 15px;
@@ -230,13 +230,13 @@
                         <div id="cong-viec-da-lam-container">
                             @if($array['WorkDone'])
                                 @forEach($array['WorkDone'] as $key => $value)
-                                @php 
+                                @php
                                     $workDone = $value['work_done'];
                                     $valueOfWork = $value['value_of_work'];
                                     $checked = ($valueOfWork == '1') ? 'checked' : '';
                                 @endphp
                                     <div class="form-group cong-viec-da-lam-row">
-                                        <div class="item-job-done form-group cong-viec-da-lam-row">
+                                        {{-- <div class="item-job-done form-group cong-viec-da-lam-row"> --}}
                                             <div class="header-report form-group">
                                                 <span class="item-job cong-viec-stt">{{$rowCount++}}. </span>
                                                 <label style="padding-left: 20px;" class="item-job" for="cong_viec_da_lam">Tiêu đề:</label>
@@ -280,6 +280,7 @@
                                                 <div class="form-check" style="margin-top: 0; flex: 2;">
                                                 </div>
                                             </div>
+                                        {{-- </div> --}}
                                     </div>
                                 @endforeach
                             @endif
@@ -294,11 +295,11 @@
                             <div class="item-job-will-do form-group  cong-viec-tuan-toi-row">
                                 <div class="header-report form-group">
                                     <span class="item-job cong-viec-stt">{{$rowCount2++}}. </span>
-                                    <label style="padding-left: 20px;" class="item-job" for="cong_viec_tuan_toi">Tiêu đề:</label> 
+                                    <label style="padding-left: 20px;" class="item-job" for="cong_viec_tuan_toi">Tiêu đề:</label>
                                     <input type="text" name="cong_viec_tuan_toi[]" style="flex:4" value=" {{$value['next_work']}}" class="form-control custom-input disabled"> <span style="flex:2"></span>
                                 </div>
                                 <div class="content-report form-group" >
-                                    <label class="item-job" style="vertical-align: top;" for="noi_dung_cong_viec">Nội dung:</label> 
+                                    <label class="item-job" style="vertical-align: top;" for="noi_dung_cong_viec">Nội dung:</label>
                                     <textarea style="width: 63%; height: 80px;" name="noi_dung_cong_viec_tuan_toi[]" placeholder="Nhập nội dung công việc" class="form-control" style="margin-bottom: 10px;">{{$value['next_description']}}</textarea>
                                     <div  class="content-date">
                                         <div >
@@ -308,18 +309,19 @@
                                         <div style="margin-left: 10px;">
                                             <label class="item-job date-end" for="ngay_sinh">Kết thúc:</label>
                                             <input type="date" name="end_date_tuan_toi[]" value="{{$value['next_end_date']}}" id="end_date[]" class="form-control" >
-                        
+
                                         </div>
                                     </div>
                                 </div>
                                 <div class="form-group style-note">
-                                        <label style="padding-left: 22px;" class="item-job" for="trangthai_congviec">Tiến độ:</label> 
+                                        <label style="padding-left: 22px;" class="item-job" for="trangthai_congviec">Tiến độ:</label>
                                         <input style="flex:4" type="text" value="{{$value['next_status_work']}}"   name="trangthai_congviec_tuan_toi[]" placeholder="Nhập tiến độ công việc" class="form-control">
                                         <div class="form-check" style="margin-top: 0; flex: 2;">
-                                    </div>
+                                        </div>
+                                </div>
                             </div>
-                        @endforeach
-                        @endif
+                            @endforeach
+                            @endif
                         </div>
                     </div>
                     <hr style="border: none;">
@@ -330,9 +332,7 @@
                             <textarea style="width: 70%; height: 200px;" name="kien_nghi" placeholder="Nhập ý kiến" class="form-control" style="margin-bottom: 10px;">{{$array['Request']}}</textarea>
                             @endif
                         </div>
-                    
                     </div>
-                </div>
                 <hr style="border: none;">
                 <button class="report-edit" type="submit">Cập nhật</button>
             </form>
@@ -341,7 +341,7 @@
     </div>
 </div>
     <script>
-        
+
         function progessCheckbox(checkbox) {
 
             var row = checkbox.closest('.cong-viec-da-lam-row');

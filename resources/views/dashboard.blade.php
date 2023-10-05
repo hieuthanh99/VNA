@@ -989,14 +989,28 @@
                                                 @csrf
                                                 <button id="run-cronjob-button" class="btn btn-primary">In PDF</button>
                                             </form>
-                                            {{-- <form style="margin-right: 20px" action="{{ route('word.details', $array->id) }}" method="GET">
+                                            <form style="margin-right: 20px" action="{{ route('word.department', $array->id) }}" method="GET">
                                                 @csrf
                                                 <button id="run-cronjob-button" class="btn btn-primary">In Word</button>
-                                            </form> --}}
-                                            {{-- <form style="margin-right: 20px" action="{{ route('excel.details', $a->id) }}" method="GET">
+                                            </form>
+                                            <form style="margin-right: 20px" action="{{ route('excel.department', $array->id) }}" method="GET">
                                                 @csrf
                                                 <button id="run-cronjob-button" class="btn btn-primary">In Excel</button>
-                                            </form> --}}
+                                            </form>
+                                            @php
+                                                $reportId = $array->report_id;
+                                                $thisSundayFormatted = \Carbon\Carbon::now()->startOfWeek()->subWeek()->addDays(5);
+                                                $thisFridayFormatted = \Carbon\Carbon::now()->endOfWeek()->subWeek()->addDays(5);
+                                                $dataReport = \App\Models\Report::whereBetween('created_at', [$thisSundayFormatted, $thisFridayFormatted])
+                                                    ->where('department_id', $array->department_id)
+                                                    ->first();
+                                            @endphp
+                                            @if(empty($dataReport))
+                                                <form style="margin-right: 20px" action="{{ route('report.copy', $array->id) }}" method="POST">
+                                                    @csrf
+                                                    <button id="run-cronjob-button" class="btn btn-primary">Copy báo cáo</button>
+                                                </form>
+                                            @endif
                                         </div>
                                         <div class="accordion-body">
                                             {{-- <h2 style="text-align: center">{{ $item['name'] }}</h2> --}}

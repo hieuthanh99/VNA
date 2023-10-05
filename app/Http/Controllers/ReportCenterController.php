@@ -31,7 +31,6 @@ class ReportCenterController extends Controller
 
         $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5)->format('d-m-Y');
         $today = Carbon::now()->format('d-m-Y');
-        // $yesterday = \Carbon\Carbon::now()->subDay();
 
         if($today > $thisThursdayFormatted)
         {

@@ -32,6 +32,16 @@ class DashBoardController extends Controller
             return redirect()->back()->with('error', 'Chưa có thông tin bản báo cáo, không gửi được email');
         }
     }
+
+    public function copy($id)
+    {
+        $dataReportCopy = Logs::Where('id', $id)->first();
+        $arrayCopy = json_decode($dataReportCopy->values, true);
+        //Role
+        $user = Auth::user();
+        $department = Department::find($user->department);
+        return view('reports.create', ['department' => $department,'arrayCopy' => $arrayCopy, 'expectedWorkValues' => null ]);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -49,8 +59,7 @@ class DashBoardController extends Controller
             $departmentUser = Department::find($user->department);
             $startDate = Carbon::now()->startOfWeek();
             $endDate = Carbon::now()->endOfWeek();
-
-            $array = Logs::Where('department_id', $departmentUser->id)->whereBetween('created_at', [$startDate, $endDate])->get();
+            $array = Logs::Where('department_id', $departmentUser->id)->get();
             return view('dashboard', ['array' => $array, 'department' => $department, 'reports' => []]);
         }
     }
@@ -60,16 +69,15 @@ class DashBoardController extends Controller
         // $startDate = Carbon::now()->startOfWeek();
         // $endDate = Carbon::now()->endOfWeek();
 
-        $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(4)->format('d-m-Y');
+        $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5)->format('d-m-Y');
         $today = Carbon::now()->format('d-m-Y');
-        $yesterday = \Carbon\Carbon::now()->subDay();
         if($today > $thisThursdayFormatted)
         {
-            $startDate = Carbon::now()->endOfWeek()->subWeek()->addDays(6)->startOfDay()->format('Y-m-d');
-            $endDate = Carbon::now()->next()->endOfWeek()->subWeek()->addDays(5)->format('Y-m-d');
+            $startDate = Carbon::now()->endOfWeek()->subWeek()->addDays(6)->startOfDay();
+            $endDate = Carbon::now()->next()->endOfWeek()->subWeek()->addDays(5);
         } else {
-            $startDate = Carbon::now()->startOfWeek()->subWeek()->addDays(5)->startOfDay()->format('Y-m-d');
-            $endDate = Carbon::now()->endOfWeek()->subWeek()->addDays(5)->format('Y-m-d');
+            $startDate = Carbon::now()->startOfWeek()->subWeek()->addDays(5)->startOfDay();
+            $endDate = Carbon::now()->endOfWeek()->subWeek()->addDays(5);
         }
 
         // Xóa dữ liệu trong bảng 'tasks' từ ngày bắt đầu đến ngày kết thúc của tuần này
@@ -108,17 +116,16 @@ class DashBoardController extends Controller
             $endDate2 = Carbon::now()->setISODate(Carbon::now()->year, Carbon::now()->isoWeek(), 4)->setTime(16, 0, 0);
 
 
-            $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(4)->format('d-m-Y');
+            $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5)->format('d-m-Y');
             $today = Carbon::now()->format('d-m-Y');
-            $yesterday = \Carbon\Carbon::now()->subDay();
 
             if($today > $thisThursdayFormatted)
             {
-                $lastFridayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(6)->format('Y-m-d');
-                $thisThursdayFormatted = Carbon::now()->next()->endOfWeek()->subWeek()->addDays(5)->format('Y-m-d');
+                $lastFridayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(6);
+                $thisThursdayFormatted = Carbon::now()->next()->endOfWeek()->subWeek()->addDays(5);
             } else {
-                $lastFridayFormatted = Carbon::now()->startOfWeek()->subWeek()->addDays(5)->format('Y-m-d');
-                $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5)->format('Y-m-d');
+                $lastFridayFormatted = Carbon::now()->startOfWeek()->subWeek()->addDays(5);
+                $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5);
             }
 
             $reportCenter = ReportCenter::whereBetween('date_start', [$lastFridayFormatted, $thisThursdayFormatted])->get();
@@ -174,7 +181,7 @@ class DashBoardController extends Controller
                 $dataStatusDepartment = [];
                 $statusShow = 2;
                 foreach ($departmentIds as $item) {
-                    $dataReport = Report::where('department_id', $item)->whereBetween('created_at', [$startDate, $endDate])->first();
+                    $dataReport = Report::where('department_id', $item)->whereBetween('created_at', [$lastFridayFormatted, $thisThursdayFormatted])->first();
                     if ($dataReport) {
                         $status = $statusShow;
                         $dataReport->status = $status;
