@@ -27,12 +27,12 @@ class Helper
         $today = Carbon::now()->format('d-m-Y');
         if($today > $thisThursdayFormatted)
         {
-            $startDate = Carbon::now()->endOfWeek()->subWeek()->addDays(6)->startOfDay()->format('Y-m-d');
-            $endDateWeek = Carbon::now()->next()->endOfWeek()->subWeek()->addDays(5)->format('Y-m-d');
+            $startDate = Carbon::now()->endOfWeek()->subWeek()->addDays(6)->startOfDay();
+            $endDateWeek = Carbon::now()->next()->endOfWeek()->subWeek()->addDays(5);
             $data = ReportCenter::whereBetween('date_start', [$startDate, $endDateWeek])->get();
         } else {
-            $startDate = Carbon::now()->startOfWeek()->subWeek()->addDays(5)->startOfDay()->format('Y-m-d');
-            $endDateWeek = Carbon::now()->endOfWeek()->subWeek()->addDays(5)->format('Y-m-d');
+            $startDate = Carbon::now()->startOfWeek()->subWeek()->addDays(5)->startOfDay();
+            $endDateWeek = Carbon::now()->endOfWeek()->subWeek()->addDays(5);
             $data = ReportCenter::whereBetween('date_start', [$startDate, $endDateWeek])->get();
         }
         $department = Department::get()->toArray();
@@ -92,15 +92,14 @@ class Helper
         $today = Carbon::now()->format('d-m-Y');
         if($today > $thisThursdayFormatted)
         {
-            $nowFriday = Carbon::now()->endOfWeek()->subWeek()->addDays(6)->startOfDay()->format('Y-m-d');
-            $nowThursday = Carbon::now()->next()->endOfWeek()->subWeek()->addDays(5)->format('Y-m-d');
+            $nowFriday = Carbon::now()->endOfWeek()->subWeek()->addDays(6)->startOfDay();
+            $nowThursday = Carbon::now()->next()->endOfWeek()->subWeek()->addDays(5);
             $data = Report::whereBetween('created_at', [$nowFriday, $nowThursday])->get();
         } else {
-            $lastFridayFormatted = Carbon::now()->startOfWeek()->subWeek()->addDays(5)->startOfDay()->format('Y-m-d');
-            $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5)->format('Y-m-d');
+            $lastFridayFormatted = Carbon::now()->startOfWeek()->subWeek()->addDays(5)->startOfDay();
+            $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5);
             $data = Report::whereBetween('created_at', [$lastFridayFormatted, $thisThursdayFormatted])->get();
         }
-
         $endDate = Carbon::now()->setISODate(Carbon::now()->year, Carbon::now()->isoWeek(), 5)->setTime(17, 0, 0);
         $department = Department::get()->toArray();
         $arrayDepartmentIds = [];
