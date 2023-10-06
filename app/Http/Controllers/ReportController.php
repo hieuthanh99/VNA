@@ -111,32 +111,6 @@ class ReportController extends Controller
             if($user->role == 'admin') {
                 $requestData = $request->all();
                 $reportDate = ReportDate::latest()->first();
-                // if(!empty($reportDate)) {
-                //     $reportDate = $reportDate->report_date;
-                //     $reportDate = Carbon::parse($reportDate);
-                //     $errorMessage = '';
-                //     if (isset($requestData['end_date'])) {
-                //         foreach ($requestData['end_date'] as $endDate) {
-                //             if (isset($endDate)) {
-                //                 $endDate = Carbon::parse($endDate);
-                //                 if ($endDate->greaterThan($reportDate)) {
-                //                     return redirect()->back()->with('error', 'Không thể chọn ngày kết thúc trong tuần đã chốt.');
-                //                 }
-                //             }
-                //         }
-                //     }
-                //     if (isset($requestData['end_date_tuan_toi'])) {
-                //         foreach ($requestData['end_date_tuan_toi'] as $endDateTuanToi) {
-                //             if(isset($endDateTuanToi)) {
-                //                 $endDateTuanToi = Carbon::parse($endDateTuanToi);
-                //                 if ($endDateTuanToi->lessThan($reportDate)) {
-                //                     return redirect()->back()->with(['error' => 'Không thể chọn ngày kết thúc trong tuần đã chốt.']);
-                //                 }
-                //             }
-                //         }
-                //     }
-                // }
-
                 $mapDataDone = [];
                 $mapDataNextWeek = [];
 
@@ -153,7 +127,7 @@ class ReportController extends Controller
                 $nextWeekStatusWork = isset($requestData['trangthai_congviec_tuan_toi']) ? $requestData['trangthai_congviec_tuan_toi'] : null;
                 $nextWeekNoteWork = isset($requestData['noi_dung_cong_viec_tuan_toi']) ? $requestData['noi_dung_cong_viec_tuan_toi'] : null;
 
-                $note = isset($requestData['kien_nghi']) ? $requestData['kien_nghi'] : null;
+                $note = isset($requestData['kien_nghi']) ? $requestData['kien_nghi'] : 'Chưa báo cáo';
 
                 if (isset($workDoneValues)) {
                     foreach ($workDone as $index => $value) {
@@ -255,15 +229,15 @@ class ReportController extends Controller
 
                 if($today > $thisThursdayFormatted)
                 {
-                    $lastFridayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5);
-                    $thisThursdayFormatted = Carbon::now()->next()->endOfWeek()->subWeek()->addDays(4);
+                    $lastFridayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(6);
+                    $thisThursdayFormatted = Carbon::now()->next()->endOfWeek()->subWeek()->addDays(5);
                 } else {
-                    $lastFridayFormatted = Carbon::now()->startOfWeek()->subWeek()->addDays(4);
-                    $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(4);
+                    $lastFridayFormatted = Carbon::now()->startOfWeek()->subWeek()->addDays(5);
+                    $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5);
                 }
 
-
                 $reportCenter = ReportCenter::whereBetween('date_start', [$lastFridayFormatted, $thisThursdayFormatted])->first();
+
                 $departmentId = $record->department_id;
                 $dataByDepartment = [];
                 // Tạo một mảng mới cho phòng ban nếu chưa tồn tại
@@ -303,34 +277,6 @@ class ReportController extends Controller
                 $department = Department::find($user->department);
                 $requestData = $request->all();
                 $reportDate = ReportDate::latest()->first();
-                // if(!empty($reportDate)) {
-                //     $reportDate = $reportDate->report_date;
-                //     $reportDate = Carbon::parse($reportDate);
-                //     $errorMessage = '';
-                //     if (isset($requestData['end_date'])) {
-                //         foreach ($requestData['end_date'] as $item) {
-                //             if (isset($item)) {
-                //                 $endDate = $item;
-                //                 $endDate = Carbon::parse($endDate);
-                //                 if ($endDate->greaterThan($reportDate)) {
-                //                     return redirect()->back()->with('error', 'Không thể chọn ngày kết thúc trong tuần đã chốt.');
-                //                 }
-                //             }
-                //         }
-                //     }
-                //     if (isset($requestData['end_date_tuan_toi'])) {
-                //         foreach ($requestData['end_date_tuan_toi'] as $item) {
-                //             if(isset($item)) {
-                //                 $endDateTuanToi = $item;
-                //                 $endDateTuanToi = Carbon::parse($endDateTuanToi);
-                //                 if ($endDateTuanToi->lessThan($reportDate)) {
-                //                     return redirect()->back()->with(['error' => 'Không thể chọn ngày kết thúc trong tuần đã chốt4.']);
-                //                 }
-                //             }
-                //         }
-                //     }
-                // }
-
                 $mapDataDone = [];
                 $mapDataNextWeek = [];
 
@@ -572,7 +518,7 @@ class ReportController extends Controller
                 $jsonData = json_encode([
                     'WorkDone' =>  isset($mapDataDone) ? $mapDataDone : null,
                     'ExpectedWork' =>  isset($nextWeekWork) ? $mapDataNextWeek : null,
-                    'Request' => $note,
+                    'Request' => isset($note) ? $note : null,
                 ], JSON_PRETTY_PRINT);
 
                 $jsonData = json_decode($jsonData);
@@ -651,11 +597,11 @@ class ReportController extends Controller
 
                 if($today > $thisThursdayFormatted)
                 {
-                    $lastFridayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5);
-                    $thisThursdayFormatted = Carbon::now()->next()->endOfWeek()->subWeek()->addDays(4);
+                    $lastFridayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(6);
+                    $thisThursdayFormatted = Carbon::now()->next()->endOfWeek()->subWeek()->addDays(5);
                 } else {
-                    $lastFridayFormatted = Carbon::now()->startOfWeek()->subWeek()->addDays(4);
-                    $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(4);
+                    $lastFridayFormatted = Carbon::now()->startOfWeek()->subWeek()->addDays(5);
+                    $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5);
                 }
                 $reportCenter = ReportCenter::whereBetween('date_start', [$lastFridayFormatted, $thisThursdayFormatted])->first();
                 $reportCenterArray = json_decode($reportCenter->values);
