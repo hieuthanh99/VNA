@@ -1004,8 +1004,10 @@
                                                 $dataReport = \App\Models\Report::whereBetween('created_at', [$thisSundayFormatted, $thisFridayFormatted])
                                                     ->where('department_id', $array->department_id)
                                                     ->first();
+                                                $dataCenter = \App\Models\ReportCenter::whereBetween('date_start', [$thisSundayFormatted, $thisFridayFormatted])
+                                                    ->first();
                                             @endphp
-                                            @if(empty($dataReport))
+                                            @if(empty($dataReport) && empty($dataCenter))
                                                 <form style="margin-right: 20px" action="{{ route('report.copy', $array->id) }}" method="POST">
                                                     @csrf
                                                     <button id="run-cronjob-button" class="btn btn-primary">Copy báo cáo</button>

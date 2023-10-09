@@ -65,7 +65,7 @@ class StockScheduler extends Command
             exit();
         }
 
-        $records = Logs::whereBetween('created_at', [$startDate, $endDate2])->get();
+        $records = Logs::whereBetween('created_at', [$lastFridayFormatted, $thisThursdayFormatted])->get();
         if ($records->count() > 0) {
             $dataByDepartment = [];
 

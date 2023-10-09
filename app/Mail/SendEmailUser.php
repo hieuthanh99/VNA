@@ -71,7 +71,7 @@ class SendEmailUser extends Mailable
     public function envelope()
     {
         return new Envelope(
-            subject: 'Send Email User',
+            subject: 'Báo cáo công việc tuần khối Dịch vụ.',
         );
     }
 
