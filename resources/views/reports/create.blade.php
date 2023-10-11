@@ -295,18 +295,17 @@
                                                 </div>
                                                 <div class="content-report form-group" >
                                                     <label class="item-job" style="vertical-align: top;"  for="noi_dung_cong_viec">Nội dung:</label>
-                                                        <textarea style="width: 55%; height: 80px; margin-left:30px;" name="noi_dung_cong_viec_tuan_toi[]" placeholder="Nhập nội dung công việc" class="form-control" style="margin-bottom: 10px;">{{$item['next_description']}}</textarea>
-                                                        <div class="content-date">
-                                                            <div >
-                                                                <label class="item-job" for="ngay_sinh">Ngày bắt đầu:</label>
-                                                                <input value="{{$item['next_start_date']}}" type="date" name="start_date_tuan_toi[]" id="start_date_tuan_toi[]" class="form-control" value="{{ old('start_date[]') }}">
+                                                    <textarea style="width: 55%; height: 80px; margin-left:30px;" name="noi_dung_cong_viec_tuan_toi[]" placeholder="Nhập nội dung công việc" class="form-control" style="margin-bottom: 10px;">{{$item['next_description']}}</textarea>
+                                                    <div class="content-date">
+                                                        <div >
+                                                            <label class="item-job" for="ngay_sinh">Ngày bắt đầu:</label>
+                                                            <input value="{{$item['next_start_date']}}" type="date" name="start_date_tuan_toi[]" id="start_date_tuan_toi[]" class="form-control" value="{{ old('start_date[]') }}">
 
-                                                            </div>
-                                                            <div style="margin-left: 50px;">
-                                                                <label class="item-job" for="ngay_sinh">Kết thúc:</label>
-                                                                <input value="{{$item['next_end_date']}}" type="date" name="end_date_tuan_toi[]" id="end_date_tuan_toi[]" class="form-control" value="{{ old('end_date[]') }}">
+                                                        </div>
+                                                        <div style="margin-left: 50px;">
+                                                            <label class="item-job" for="ngay_sinh">Kết thúc:</label>
+                                                            <input value="{{$item['next_end_date']}}" type="date" name="end_date_tuan_toi[]" id="end_date_tuan_toi[]" class="form-control" value="{{ old('end_date[]') }}">
 
-                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
