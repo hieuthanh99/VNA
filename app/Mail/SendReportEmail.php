@@ -67,7 +67,7 @@ class SendReportEmail extends Mailable
         file_put_contents($pdfPath, $pdfContent);
        // dd($pdfPath);
         // Đính kèm tệp PDF vào email
-        return $this->from('n.hieuthanhps@gmail.com')->view('email.email_report')
+        return $this->from('psd.vietnamarilines@yopmail.com')->view('email.email_report')
                     ->attach($pdfPath, [
                         'as' => 'report.pdf',
                         'mime' => 'application/pdf',
@@ -82,7 +82,7 @@ class SendReportEmail extends Mailable
     public function envelope()
     {
         return new Envelope(
-            subject: 'Send Report Email',
+            subject: 'Báo cáo công việc tuần khối Dịch vụ.',
         );
     }
 
