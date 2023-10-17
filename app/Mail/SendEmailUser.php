@@ -56,7 +56,7 @@ class SendEmailUser extends Mailable
         file_put_contents($pdfPath, $pdfContent);
        // dd($pdfPath);
         // Đính kèm tệp PDF vào email
-        return $this->from('system@yopmail.com')->view('email.email_report')
+        return $this->from('psd.vietnamarilines@yopmail.com')->view('email.email_report')
                     ->attach($pdfPath, [
                         'as' => 'report.pdf',
                         'mime' => 'application/pdf',
