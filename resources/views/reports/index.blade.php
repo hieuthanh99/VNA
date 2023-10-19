@@ -313,10 +313,10 @@
                                 </div>
                             </div>
                             <div class="form-group style-note">
-                                    <label style="padding-left: 22px;" class="item-job" for="trangthai_congviec">Tiến độ:</label>
-                                    <input disabled readonly style="flex:4" type="text" value="{{$value['next_status_work']}}"   name="trangthai_congviec_tuan_toi[]" placeholder="Nhập tiến độ công việc" class="form-control" required>
-                                    <div class="form-check" style="margin-top: 0; flex: 2;">
-                                </div>
+                                <label style="padding-left: 22px;" class="item-job" for="trangthai_congviec">Tiến độ:</label>
+                                <input disabled readonly style="flex:4" type="text" value="{{$value['next_status_work']}}"   name="trangthai_congviec_tuan_toi[]" placeholder="Nhập tiến độ công việc" class="form-control" required>
+                                <div class="form-check" style="margin-top: 0; flex: 2;"></div>
+                            </div>
                         </div>
                     @endforeach
                     @endif
