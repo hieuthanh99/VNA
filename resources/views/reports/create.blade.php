@@ -241,6 +241,7 @@
                                                 <input type="checkbox" checked name="cong_viec_da_lam_completed[]" class="form-check-input" onchange="handleCongViecDaLamChange(this)">
                                                 <input type="hidden" id="hiddenInput" name="cong_viec_da_lam_values[]" value="{{$item['value_of_work']}}">
                                                 <label class="form-check-label">Đã hoàn thành</label>
+                                                <button style="margin-left: 20px; flex: 5;" type="button" class="btn-delete" onclick="deleteCongViecDaLam(this)">Xóa</button>
                                                 </div>
                                                 </div>
                                                 <div class="content-report form-group" >
@@ -312,7 +313,7 @@
                                                 <div class="form-group style-note">
                                                     <label class="item-job" for="trangthai_congviec">Tiến độ:</label>
                                                     <input value="{{$item['next_status_work']}}" style="flex:4; margin-left: 46px" type="text"  name="trangthai_congviec_tuan_toi[]" placeholder="Nhập tiến độ công việc" class="form-control">
-                                                    <div class="form-check" style="margin-top: 0; flex: 2;">
+                                                    <div class="form-check" style="margin-top: 0; flex: 2;"></div>
                                                 </div>
                                             </div>
                                         </div>
