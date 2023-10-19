@@ -229,8 +229,8 @@
                             @csrf
                             @if(!empty($arrayCopy['WorkDone']))
                                 <div class="mb-4">
+                                    <h1 class="mb-2 heading-style">I. Công việc đã thực hiện</h1>
                                     @foreach ($arrayCopy['WorkDone'] as $key => $item)
-                                        <h1 class="mb-2 heading-style">I. Công việc đã thực hiện</h1>
                                         <div id="cong-viec-da-lam-container">
                                             <div class="form-group cong-viec-da-lam-row">
                                                 <div class="header-report form-group">
@@ -238,7 +238,7 @@
                                                 <label class="item-job"  style="padding-left: 15px;" for="cong_viec_da_lam">Tiêu đề:</label>
                                                 <input value="{{$item['work_done']}}" style="flex: 4;margin-left: 46px" type="text" name="cong_viec_da_lam[]" placeholder="Nhập tiêu đề công việc" class="form-control" required>
                                                 <div class="form-check" style="margin-top: 0; flex: 2;">
-                                                <input type="checkbox" checked name="cong_viec_da_lam_completed[]" class="form-check-input" onchange="handleCongViecDaLamChange(this)">
+                                                <input type="checkbox" @if ($item['value_of_work'] == 1) checked @endif name="cong_viec_da_lam_completed[]" class="form-check-input" onchange="handleCongViecDaLamChange(this)">
                                                 <input type="hidden" id="hiddenInput" name="cong_viec_da_lam_values[]" value="{{$item['value_of_work']}}">
                                                 <label class="form-check-label">Đã hoàn thành</label>
                                                 <button style="margin-left: 20px; flex: 5;" type="button" class="btn-delete" onclick="deleteCongViecDaLam(this)">Xóa</button>
@@ -284,8 +284,8 @@
                             <hr style="border: none;">
                             @if(!empty($arrayCopy['ExpectedWork']))
                                 <div class="mb-4">
+                                    <h1 class="mb-2 heading-style">II. Công việc dự kiến</h1>
                                     @foreach ($arrayCopy['ExpectedWork'] as $key => $item)
-                                        <h1 class="mb-2 heading-style">II. Công việc dự kiến</h1>
                                         <div id="cong-viec-tuan-toi-container">
                                             <div class="form-group  cong-viec-tuan-toi-row">
                                                 <div class="header-report form-group">
