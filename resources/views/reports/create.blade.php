@@ -634,41 +634,41 @@
                     workStatus.value = 'Đã hoàn thành';
                     return;
                 }
-                var rowCount = congViecTuanToiRows.length + 1;
-                workStatus.value = '';
+            //     var rowCount = congViecTuanToiRows.length + 1;
+            //     workStatus.value = '';
 
-                checkbox.checked = false;
-                hiddenInput.value = 0;
-                var newCongViecTuanToiRow = document.createElement('div');
-                newCongViecTuanToiRow.className = 'form-group cong-viec-tuan-toi-row';
+            //     checkbox.checked = false;
+            //     hiddenInput.value = 0;
+            //     var newCongViecTuanToiRow = document.createElement('div');
+            //     newCongViecTuanToiRow.className = 'form-group cong-viec-tuan-toi-row';
 
-                newCongViecTuanToiRow.innerHTML = `
-            <div class="header-report form-group">
-                <span class="item-job" class="cong-viec-stt">${rowCount}.</span>
-                <label class="item-job" style="padding-left: 15px;" for="cong_viec_tuan_toi">Tiêu đề:</label>
-                <input type="text" name="cong_viec_tuan_toi[]" style="flex:4;" value="${row.querySelector('input[name="cong_viec_da_lam[]"]').value}" class="form-control custom-input"> <span style="flex:2"></span>
-            </div>
-            <div class="content-report form-group" >
-                <label class="item-job" style="vertical-align: top;"  for="noi_dung_cong_viec">Nội dung:</label>
-                <textarea style="width: 55%; height: 80px; margin-left:30px;" name="noi_dung_cong_viec_tuan_toi[]" placeholder="Nhập nội dung công việc" class="form-control" style="margin-bottom: 10px;">${row.querySelector('textarea').value}</textarea>
-                <div  class="content-date">
-                    <div >
-                        <label class="item-job" for="ngay_sinh">Ngày bắt đầu:</label>
-                        <input type="date" name="start_date_tuan_toi[]" id="start_date_tuan_toi[]" value="${row.querySelector('input[name="start_date[]"]').value}" class="form-control">
-                    </div>
-                    <div style="margin-left: 50px;">
-                        <label class="item-job" for="ngay_sinh">Kết thúc:</label>
-                        <input type="date" name="end_date_tuan_toi[]" value="${row.querySelector('input[name="end_date[]"]').value}" id="end_date[]" class="form-control" >
+            //     newCongViecTuanToiRow.innerHTML = `
+            // <div class="header-report form-group">
+            //     <span class="item-job" class="cong-viec-stt">${rowCount}.</span>
+            //     <label class="item-job" style="padding-left: 15px;" for="cong_viec_tuan_toi">Tiêu đề:</label>
+            //     <input type="text" name="cong_viec_tuan_toi[]" style="flex:4;" value="${row.querySelector('input[name="cong_viec_da_lam[]"]').value}" class="form-control custom-input"> <span style="flex:2"></span>
+            // </div>
+            // <div class="content-report form-group" >
+            //     <label class="item-job" style="vertical-align: top;"  for="noi_dung_cong_viec">Nội dung:</label>
+            //     <textarea style="width: 55%; height: 80px; margin-left:30px;" name="noi_dung_cong_viec_tuan_toi[]" placeholder="Nhập nội dung công việc" class="form-control" style="margin-bottom: 10px;">${row.querySelector('textarea').value}</textarea>
+            //     <div  class="content-date">
+            //         <div >
+            //             <label class="item-job" for="ngay_sinh">Ngày bắt đầu:</label>
+            //             <input type="date" name="start_date_tuan_toi[]" id="start_date_tuan_toi[]" value="${row.querySelector('input[name="start_date[]"]').value}" class="form-control">
+            //         </div>
+            //         <div style="margin-left: 50px;">
+            //             <label class="item-job" for="ngay_sinh">Kết thúc:</label>
+            //             <input type="date" name="end_date_tuan_toi[]" value="${row.querySelector('input[name="end_date[]"]').value}" id="end_date[]" class="form-control" >
 
-                    </div>
-                </div>
-            </div>
-            <div class="form-group style-note">
-                    <label class="item-job" for="trangthai_congviec">Tiến độ:</label>
-                    <input style="flex:4; margin-left: 46px" type="text" value="${row.querySelector('input[name="trangthai_congviec[]"]').value}"   name="trangthai_congviec_tuan_toi[]" placeholder="Tiêu đề công việc" class="form-control">
-                    <div class="form-check" style="margin-top: 0; flex: 2;">
-                </div>
-            `;
+            //         </div>
+            //     </div>
+            // </div>
+            // <div class="form-group style-note">
+            //         <label class="item-job" for="trangthai_congviec">Tiến độ:</label>
+            //         <input style="flex:4; margin-left: 46px" type="text" value="${row.querySelector('input[name="trangthai_congviec[]"]').value}"   name="trangthai_congviec_tuan_toi[]" placeholder="Tiêu đề công việc" class="form-control">
+            //         <div class="form-check" style="margin-top: 0; flex: 2;">
+            //     </div>
+            // `;
                 newCongViecTuanToiRow.setAttribute('data-row-id', row.getAttribute('data-row-id'));
                 congViecTuanToiContainer.appendChild(newCongViecTuanToiRow);
                 // if (workDone && startDate && endDate && workStatus && descriptionWork) {

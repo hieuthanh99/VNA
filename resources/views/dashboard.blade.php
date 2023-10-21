@@ -999,8 +999,16 @@
                                             </form>
                                             @php
                                                 $reportId = $array->report_id;
+                                                $today = \Carbon\Carbon::now()->format('d-m-Y');
                                                 $thisSundayFormatted = \Carbon\Carbon::now()->startOfWeek()->subWeek()->addDays(5);
-                                                $thisFridayFormatted = \Carbon\Carbon::now()->endOfWeek()->subWeek()->addDays(5);
+                                                $thisFridayFormatted = \Carbon\Carbon::now()->endOfWeek()->subWeek()->addDays(5)->format('d-m-Y');
+                                                if ($today > $thisFridayFormatted) {
+                                                    $thisSundayFormatted = \Carbon\Carbon::now()->endOfWeek()->subWeek()->addDays(6)->startOfDay();
+                                                    $thisFridayFormatted = \Carbon\Carbon::now()->next()->endOfWeek()->subWeek()->addDays(5);
+                                                } else {
+                                                    $thisSundayFormatted = \Carbon\Carbon::now()->startOfWeek()->subWeek()->addDays(5)->startOfDay();
+                                                    $thisFridayFormatted = \Carbon\Carbon::now()->endOfWeek()->subWeek()->addDays(5);
+                                                }
                                                 $dataReport = \App\Models\Report::whereBetween('created_at', [$thisSundayFormatted, $thisFridayFormatted])
                                                     ->where('department_id', $array->department_id)
                                                     ->first();
