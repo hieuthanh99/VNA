@@ -58,7 +58,7 @@ class ReportController extends Controller
     public function create()
     {
         $endDate = Carbon::now()->endOfWeek()->subWeek()->addDays(5);
-        $today = Carbon::now()->format('d-m-Y');
+        $today = Carbon::now();
 
         if($today > $endDate)
         {
@@ -72,7 +72,6 @@ class ReportController extends Controller
         $department = Department::find($user->department);
         $expectedWorkValues = null;
         $reportCenter = ReportCenter::whereBetween('created_at', [$startDataSat, $endFri])->get();
-
 
         $existingRecord = Report::Where('department_id', $department->id)->whereBetween('created_at', [$startDataSat, $endFri]);
         if ($existingRecord->exists()) {
@@ -412,7 +411,7 @@ class ReportController extends Controller
             $report = Report::where('id', $id)->first();
             $department = Department::find($report->department_id);
             $endDate = Carbon::now()->subWeek()->endOfWeek()->addDays(5);
-            $today = Carbon::now()->format('d-m-Y');
+            $today = Carbon::now();
             if($today > $endDate)
             {
                 $startDataSat = Carbon::now()->endOfWeek()->subWeek()->addDays(6)->startOfDay();
@@ -431,7 +430,7 @@ class ReportController extends Controller
             $department = Department::find($user->department);
             $report = Report::where('id', $id)->first();
             $endDate = Carbon::now()->subWeek()->endOfWeek()->addDays(5);
-            $today = Carbon::now()->format('d-m-Y');
+            $today = Carbon::now();
             if($today > $endDate)
             {
                 $startDataSat = Carbon::now()->endOfWeek()->subWeek()->addDays(6)->startOfDay();
@@ -441,7 +440,6 @@ class ReportController extends Controller
                 $endFri = Carbon::now()->endOfWeek()->subWeek()->addDays(5);
             }
             $logs = Logs::Where('department_id', $department->id)->whereBetween('created_at', [$startDataSat, $endFri])->first();
-
             if($logs){
 
                 $array = json_decode($logs->values, true);
