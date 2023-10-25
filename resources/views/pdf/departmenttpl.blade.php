@@ -53,7 +53,14 @@
         @if (!empty($data['WorkDone']))
             @if (count($data['WorkDone']) > 0)
                 <ul>
+                    @php
+                        $STTWorkDone = 1;
+                    @endphp
                     @foreach ($data['WorkDone'] as $work)
+                        @php
+                        $sttWorkDone = $STTWorkDone++;
+                        @endphp
+                        <p><strong><span style="font-size: 15px;">{{$sttWorkDone }}.Công việc đã thực hiện:</span></strong></p>
                         <li>
                             <strong>Tiêu đề:</strong> {{ $work['work_done'] }}<br>
                             <strong>Nội dung:</strong> {{ $work['description'] }}<br>
@@ -75,7 +82,14 @@
         @if (!empty($data['ExpectedWork']))
             @if (count($data['ExpectedWork']) > 0)
                 <ul>
+                    @php
+                        $STTExpectedWork = 1;
+                    @endphp
                     @foreach ($data['ExpectedWork'] as $work)
+                        @php
+                        $sttExpectedWork = $STTExpectedWork++;
+                        @endphp
+                        <p><strong><span style="font-size: 15px;">{{$sttExpectedWork }}.Công việc dự kiến:</span></strong></p>
                         <li>
                             <strong>Tiêu đề:</strong> {{ $work['next_work'] }}<br>
                             <strong>Nội dung:</strong> {{ $work['next_description'] }}<br>
