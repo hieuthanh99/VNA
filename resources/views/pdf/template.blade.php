@@ -61,9 +61,8 @@
                         @php
                         $sttWorkDone = $STTWorkDone++;
                         @endphp
-                        <p><strong><span style="font-size: 15px;">{{$sttWorkDone }}.Công việc đã thực hiện:</span></strong></p>
                         <li>
-                            <strong>Tiêu đề:</strong> {{ $work['work_done'] }}<br>
+                            <strong>{{$sttWorkDone }}. </strong> {{ $work['work_done'] }}<br>
                             <strong>Nội dung:</strong> {{ $work['description'] }}<br>
                             <strong>Ngày bắt đầu:</strong> {{ $work['start_date'] }}<br>
                             <strong>Kết thúc:</strong> {{ $work['end_date'] }}<br>
@@ -90,9 +89,8 @@
                         @php
                         $sttExpectedWork = $STTExpectedWork++;
                         @endphp
-                        <p><strong><span style="font-size: 15px;">{{$sttExpectedWork }}.Công việc dự kiến:</span></strong></p>
                         <li>
-                            <strong>Tiêu đề:</strong> {{ $work['next_work'] }}<br>
+                            <strong>{{$sttExpectedWork }}. </strong> {{ $work['next_work'] }}<br>
                             <strong>Nội dung:</strong> {{ $work['next_description'] }}<br>
                             <strong>Ngày bắt đầu:</strong> {{ $work['next_start_date'] }}<br>
                             <strong>Kết thúc:</strong> {{ $work['next_end_date'] }}<br>
