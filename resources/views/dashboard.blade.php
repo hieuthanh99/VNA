@@ -999,9 +999,9 @@
                                             </form>
                                             @php
                                                 $reportId = $array->report_id;
-                                                $today = \Carbon\Carbon::now()->format('d-m-Y');
+                                                $today = \Carbon\Carbon::now();
                                                 $thisSundayFormatted = \Carbon\Carbon::now()->startOfWeek()->subWeek()->addDays(5);
-                                                $thisFridayFormatted = \Carbon\Carbon::now()->endOfWeek()->subWeek()->addDays(5)->format('d-m-Y');
+                                                $thisFridayFormatted = \Carbon\Carbon::now()->endOfWeek()->subWeek()->addDays(5);
                                                 if ($today > $thisFridayFormatted) {
                                                     $thisSundayFormatted = \Carbon\Carbon::now()->endOfWeek()->subWeek()->addDays(6)->startOfDay();
                                                     $thisFridayFormatted = \Carbon\Carbon::now()->next()->endOfWeek()->subWeek()->addDays(5);

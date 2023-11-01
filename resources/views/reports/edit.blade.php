@@ -247,6 +247,7 @@
                                                     <input type="hidden" id="hiddenInput"
                                                         name="cong_viec_da_lam_values[]" value="{{$value['value_of_work']}}">
                                                     <label class="form-check-label">Đã hoàn thành</label>
+                                                    <button style="margin-left: 20px; flex: 5;" type="button" class="btn-delete" onclick="deleteCongViecDaLam(this)">Xóa</button>
                                                 </div>
                                             </div>
                                             <div class="content-report form-group">
@@ -285,6 +286,8 @@
                                 @endforeach
                             @endif
                         </div>
+                        <button type="button" class="btn btn-primary"
+                                        onclick="addNewRow('cong-viec-da-lam-container')">Thêm</button>
                     </div>
                     <hr style="border: none;">
                     <div class="mb-4">
@@ -297,6 +300,7 @@
                                     <span class="item-job cong-viec-stt">{{$rowCount2++}}. </span>
                                     <label style="padding-left: 20px;" class="item-job" for="cong_viec_tuan_toi">Tiêu đề:</label>
                                     <input type="text" name="cong_viec_tuan_toi[]" style="flex:4" value=" {{$value['next_work']}}" class="form-control custom-input disabled"> <span style="flex:2"></span>
+                                    <button style="margin-left: 20px; flex: 5;" type="button" class="btn-delete" onclick="deleteCongViecTuanToi(this)">Xóa</button>
                                 </div>
                                 <div class="content-report form-group" >
                                     <label class="item-job" style="vertical-align: top;" for="noi_dung_cong_viec">Nội dung:</label>
@@ -323,6 +327,8 @@
                             @endforeach
                             @endif
                         </div>
+                        <button type="button" style="margin-top: 5px;" class="btn btn-primary"
+                                        onclick="validateAndAddCongViecTuanToi()">Thêm</button>
                     </div>
                     <hr style="border: none;">
                     <div class="mb-4">
@@ -383,6 +389,287 @@
                 checkbox.value = 0;
                 hiddenInput.value = 0;
             }
+        }
+
+        function addNewRow(containerId) {
+
+            var container = document.getElementById(containerId);
+            var rowCount = container.getElementsByClassName('cong-viec-da-lam-row').length + 1;
+
+            var newRow = document.createElement('div');
+            newRow.className = 'form-group cong-viec-da-lam-row';
+            newRow.innerHTML = `
+            <div class="header-report form-group">
+                <span class="item-job" class="cong-viec-stt">${rowCount}.</span>
+            <label class="item-job" style="padding-left: 15px;" for="cong_viec_da_lam">Tiêu đề:</label>
+            <input style="flex: 4; margin-left: 46px" type="text" name="cong_viec_da_lam[]" placeholder="Nhập tiêu đề công việc" class="form-control" required>
+            <div class="form-check" style="margin-top: 0; flex: 2;">
+            <input id="completed" type="checkbox" name="cong_viec_da_lam_completed[]" class="form-check-input" value="" onchange="handleCongViecDaLamChange(this)">
+            <input  type="hidden" id="hiddenInput" name="cong_viec_da_lam_values[]" value="1">
+            <label class="form-check-label">Đã hoàn thành</label>
+            <button style="margin-left: 20px; flex: 5;" type="button" class="btn-delete" onclick="deleteCongViecDaLam(this)">Xóa</button>
+            </div>
+            </div>
+            <div class="content-report form-group" >
+                <label class="item-job" style="vertical-align: top;"  for="noi_dung_cong_viec">Nội dung:</label>
+                <textarea style="width: 62%; height: 80px; margin-left:30px;" name="noi_dung_cong_viec[]" placeholder="Nhập nội dung công việc" class="form-control" style="margin-bottom: 10px;"></textarea>
+                <div class="content-date">
+                    <div >
+                        <label class="item-job" for="ngay_sinh">Ngày bắt đầu:</label>
+                        <input type="date" name="start_date[]" id="start_date" class="form-control" value="{{ old('start_date[]') }}">
+
+                    </div>
+                    <div style="margin-left: 50px;">
+                        <label class="item-job" for="ngay_sinh">Kết thúc:</label>
+                        <input type="date" name="end_date[]" id="end_date" class="form-control" value="{{ old('end_date[]') }}">
+
+                    </div>
+                </div>
+
+            </div>
+            <div  class="form-group style-note">
+                    <label class="item-job" for="trangthai_congviec">Tiến độ:</label>
+                    <input id="progress" style="flex:4; margin-left: 46px" type="text"  name="trangthai_congviec[]" placeholder="Nhập tiến độ công việc" class="form-control" onchange="progressInput(this)">
+                    <div class="form-check" style="margin-top: 0; flex: 2;">
+                </div>
+            `;
+
+            container.appendChild(newRow);
+
+            // Kiểm tra nếu checkbox không được chọn thì thêm dòng tương ứng vào công việc tuần tới
+            var checkbox = newRow.querySelector('input[type="checkbox"]');
+            var hiddenInput = newRow.querySelector('input[name="cong_viec_da_lam_values[]"]');
+            var workStatus = newRow.querySelector('input[name="trangthai_congviec[]"]');
+            // checkbox.checked = true;
+            if (checkbox.checked) {
+                workStatus.value = 'Đã hoàn thành';
+                hiddenInput.value = 1;
+            }
+            if (!checkbox.checked) {
+                hiddenInput.value = 0;
+                var congViecTuanToiContainer = document.getElementById('cong-viec-tuan-toi-container');
+                var newCongViecTuanToiRow = document.createElement('div');
+                newCongViecTuanToiRow.className = 'form-group cong-viec-tuan-toi-row';
+                newCongViecTuanToiRow.innerHTML = `
+                <div class="header-report form-group">
+                <span class="item-job" class="cong-viec-stt">${rowCount}.</span>
+                <label class="item-job" style="padding-left: 15px;" for="cong_viec_tuan_toi">Tiêu đề:</label>
+                <input readonly type="text" name="cong_viec_tuan_toi[]" style="flex:4" value="${row.querySelector('input[name="cong_viec_da_lam[]"]').value}" class="form-control custom-input" readonly> <span style="flex:2"></span>
+            </div>
+            <div class="content-report form-group" >
+                <label class="item-job" style="vertical-align: top;"  for="noi_dung_cong_viec">Nội dung:</label>
+                <textarea readonly style="width: 55%; height: 80px; margin-left:30px;" name="noi_dung_cong_viec_tuan_toi[]" placeholder="Nhập nội dung công việc" class="form-control" style="margin-bottom: 10px;">${row.querySelector('textarea').value}</textarea>
+                <div  class="content-date">
+                    <div >
+                        <label class="item-job" for="start_date_tuan_toi">Ngày bắt đầu:</label>
+                        <input readonly type="date" name="start_date_tuan_toi" id="start_date_tuan_toi[]" value="${row.querySelector('input[name="start_date[]"]').value}" class="form-control">
+
+                    </div>
+                    <div style="margin-left: 50px;">
+                        <label class="item-job" for="end_date_tuan_toi">Kết thúc:</label>
+                        <input readonly type="date" name="end_date_tuan_toi" value="${row.querySelector('input[name="end_date[]"]').value}" id="end_date_tuan_toi[]" class="form-control">
+
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="form-group style-note">
+                    <label class="item-job" for="trangthai_congviec">Tiến độ:</label>
+                    <input readonly style="flex:4; margin-left: 46px" type="text" value="${row.querySelector('input[name="trangthai_congviec[]"]').value}"   name="trangthai_congviec_tuan_toi[]" placeholder="Nhập tiến độ công việc" class="form-control">
+                    <div class="form-check" style="margin-top: 0; flex: 2;">
+                </div>
+            `;
+                newCongViecTuanToiRow.setAttribute('data-row-id', rowCount);
+                congViecTuanToiContainer.appendChild(newCongViecTuanToiRow);
+            }
+            }
+
+        function validateAndAddCongViecTuanToi() {
+            var input = document.querySelector('#cong-viec-tuan-toi-container input[name="cong_viec_tuan_toi[]"]');
+            var container = document.getElementById('cong-viec-tuan-toi-container');
+            var rowCount = container.querySelectorAll('.cong-viec-tuan-toi-row').length;
+
+            if (rowCount === 0 || (rowCount > 0 && input.value.trim() !== '')) {
+                addCongViecTuanToi();
+            } else {
+                alert('Vui lòng nhập giá trị trước khi thêm công việc tuần tới.');
+            }
+            }
+
+        function addCongViecTuanToi() {
+            var container = document.getElementById('cong-viec-tuan-toi-container');
+            var rowCount = container.getElementsByClassName('cong-viec-tuan-toi-row').length + 1;
+
+            var newRow = document.createElement('div');
+            newRow.className = 'form-group  cong-viec-tuan-toi-row';
+            newRow.innerHTML = `
+            <div class="header-report form-group">
+            <span class="item-job" class="cong-viec-stt">${rowCount}.</span>
+            <label class="item-job" style="padding-left: 15px;" for="cong_viec_tuan_toi">Tiêu đề:</label>
+            <input style="flex: 4; margin-left: 46px" type="text" name="cong_viec_tuan_toi[]" placeholder="Nhập tiêu đề công việc" class="form-control" required>
+            <button style="margin-left: 20px; flex: 5;" type="button" class="btn-delete" onclick="deleteCongViecTuanToi(this)">Xóa</button>
+            </div>
+            <div class="content-report form-group" >
+            <label class="item-job" style="vertical-align: top;"  for="noi_dung_cong_viec">Nội dung:</label>
+                <textarea style="width: 55%; height: 80px; margin-left:30px;" name="noi_dung_cong_viec_tuan_toi[]" placeholder="Nhập nội dung công việc" class="form-control" style="margin-bottom: 10px;"></textarea>
+                <div class="content-date">
+                    <div >
+                        <label class="item-job" for="ngay_sinh">Ngày bắt đầu:</label>
+                        <input type="date" name="start_date_tuan_toi[]" id="start_date_tuan_toi[]" class="form-control" value="{{ old('start_date[]') }}">
+
+                    </div>
+                    <div style="margin-left: 50px;">
+                        <label class="item-job" for="ngay_sinh">Kết thúc:</label>
+                        <input type="date" name="end_date_tuan_toi[]" id="end_date_tuan_toi[]" class="form-control" value="{{ old('end_date[]') }}">
+
+                    </div>
+                </div>
+            </div>
+
+            </div>
+            <div class="form-group style-note">
+                    <label class="item-job" for="trangthai_congviec">Tiến độ:</label>
+                    <input style="flex:4; margin-left: 46px" type="text"  name="trangthai_congviec_tuan_toi[]" placeholder="Nhập tiến độ công việc" class="form-control">
+                    <div class="form-check" style="margin-top: 0; flex: 2;">
+                </div>
+            `;
+
+            container.appendChild(newRow);
+            }
+            function deleteCongViecTuanToi(button) {
+            var row = button.closest('.cong-viec-tuan-toi-row');
+            row.remove();
+            updateSTT();
+        }
+        function deleteCongViecDaLam(button) {
+            var row = button.closest('.cong-viec-da-lam-row');
+            var checkbox = row.querySelector('input[name="cong_viec_da_lam_completed[]"]');
+            checkbox.click();
+            // console.log(checkbox);
+            // handleCongViecDaLamChange(checkbox);
+            row.remove();
+            updateSTTDaLam();
+        }
+
+        function handleCongViecDaLamChange(checkbox) {
+            var row = checkbox.parentNode.parentNode.parentNode;
+
+            //var row2 = checkbox.parentNode.parentNode.parentNode;
+            var workDone = row.querySelector('input[name="cong_viec_da_lam[]"]');
+            var startDate = row.querySelector('input[name="start_date[]"]');
+            var endDate = row.querySelector('input[name="end_date[]"]');
+            var workStatus = row.querySelector('input[name="trangthai_congviec[]"]');
+            var descriptionWork = row.querySelector('textarea');
+            // var workDone = row.querySelector('input[name="cong_viec_da_lam[]"]');
+
+
+            //  console.log("hasText");
+            var congViecTuanToiContainer = document.getElementById('cong-viec-tuan-toi-container');
+            var congViecTuanToiRows = congViecTuanToiContainer.getElementsByClassName('cong-viec-tuan-toi-row');
+            var hiddenInput = row.querySelector('input[name="cong_viec_da_lam_values[]"]');
+            if (!checkbox.checked) {
+                // Check if the workDone has text
+                var startDateValue = startDate.value.trim() !== '';
+                var endDateValue = endDate.value.trim() !== '';
+                var descriptionWorkValue = descriptionWork.value.trim() !== '';
+                var workStatusValue = workStatus.value.trim() !== '';
+                var hasText = workDone.value.trim() !== '';
+                const errorSpan = document.getElementById('error');
+                // if (!hasText || !startDateValue || !descriptionWorkValue || !endDateValue || !workStatusValue) {
+                if (!hasText || !workStatusValue) {
+                    const errorMessage = 'Vui lòng nhập dữ liệu.';
+                    errorSpan.style.backgroundColor = '#f1c9c9';
+                    errorSpan.innerHTML = '<span>' + errorMessage + '</span>';
+                    checkbox.checked = true;
+                    const delayTime = 800;
+                    setTimeout(hideErrorMessage, delayTime);
+                    workStatus.value = 'Đã hoàn thành';
+                    return;
+                }
+            //     var rowCount = congViecTuanToiRows.length + 1;
+            //     workStatus.value = '';
+
+            //     checkbox.checked = false;
+            //     hiddenInput.value = 0;
+            //     var newCongViecTuanToiRow = document.createElement('div');
+            //     newCongViecTuanToiRow.className = 'form-group cong-viec-tuan-toi-row';
+
+            //     newCongViecTuanToiRow.innerHTML = `
+            // <div class="header-report form-group">
+            //     <span class="item-job" class="cong-viec-stt">${rowCount}.</span>
+            //     <label class="item-job" style="padding-left: 15px;" for="cong_viec_tuan_toi">Tiêu đề:</label>
+            //     <input type="text" name="cong_viec_tuan_toi[]" style="flex:4;" value="${row.querySelector('input[name="cong_viec_da_lam[]"]').value}" class="form-control custom-input"> <span style="flex:2"></span>
+            // </div>
+            // <div class="content-report form-group" >
+            //     <label class="item-job" style="vertical-align: top;"  for="noi_dung_cong_viec">Nội dung:</label>
+            //     <textarea style="width: 55%; height: 80px; margin-left:30px;" name="noi_dung_cong_viec_tuan_toi[]" placeholder="Nhập nội dung công việc" class="form-control" style="margin-bottom: 10px;">${row.querySelector('textarea').value}</textarea>
+            //     <div  class="content-date">
+            //         <div >
+            //             <label class="item-job" for="ngay_sinh">Ngày bắt đầu:</label>
+            //             <input type="date" name="start_date_tuan_toi[]" id="start_date_tuan_toi[]" value="${row.querySelector('input[name="start_date[]"]').value}" class="form-control">
+            //         </div>
+            //         <div style="margin-left: 50px;">
+            //             <label class="item-job" for="ngay_sinh">Kết thúc:</label>
+            //             <input type="date" name="end_date_tuan_toi[]" value="${row.querySelector('input[name="end_date[]"]').value}" id="end_date[]" class="form-control" >
+
+            //         </div>
+            //     </div>
+            // </div>
+            // <div class="form-group style-note">
+            //         <label class="item-job" for="trangthai_congviec">Tiến độ:</label>
+            //         <input style="flex:4; margin-left: 46px" type="text" value="${row.querySelector('input[name="trangthai_congviec[]"]').value}"   name="trangthai_congviec_tuan_toi[]" placeholder="Tiêu đề công việc" class="form-control">
+            //         <div class="form-check" style="margin-top: 0; flex: 2;">
+            //     </div>
+            // `;
+                newCongViecTuanToiRow.setAttribute('data-row-id', row.getAttribute('data-row-id'));
+                congViecTuanToiContainer.appendChild(newCongViecTuanToiRow);
+                // if (workDone && startDate && endDate && workStatus && descriptionWork) {
+                //     // Disabled các trường input và textarea
+                //     workDone.disabled = true;
+                //     startDate.disabled = true;
+                //     endDate.disabled = true;
+                //     workStatus.disabled = true;
+                //     descriptionWork.disabled = true;
+                // } else {
+                //     console.error('Không tìm thấy các trường input và textarea.');
+                // }
+                // Cập nhật lại số thứ tự của các dòng còn lại
+                for (var i = 0; i < congViecTuanToiRows.length; i++) {
+                    var sttSpan = congViecTuanToiRows[i].querySelector('.cong-viec-stt');
+                    sttSpan.innerText = i + 1 + '.';
+                }
+            } else {
+                checkbox.checked = true;
+                workStatus.value = 'Đã hoàn thành';
+                hiddenInput.value = 1;
+                var rowId = row.getAttribute('data-row-id');
+                var congViecTuanToiRow = congViecTuanToiContainer.querySelector(`[data-row-id="${rowId}"]`);
+                if (congViecTuanToiRow) {
+                    congViecTuanToiContainer.removeChild(congViecTuanToiRow);
+
+                    // Cập nhật lại số thứ tự của các dòng còn lại
+                    for (var i = 0; i < congViecTuanToiRows.length; i++) {
+                        var sttSpan = congViecTuanToiRows[i].querySelector('.cong-viec-stt');
+                        sttSpan.innerText = i + 1 + '.';
+                    }
+                }
+            }
+        }
+
+        function updateSTT() {
+            var rows = document.querySelectorAll('.cong-viec-tuan-toi-row');
+            rows.forEach(function(row, index) {
+                var sttElement = row.querySelector('.cong-viec-stt');
+                sttElement.textContent = (index + 1) + '.';
+            });
+        }
+        function updateSTTDaLam() {
+            var rows = document.querySelectorAll('.cong-viec-da-lam-row');
+            rows.forEach(function(row, index) {
+                var sttElement = row.querySelector('.cong-viec-stt');
+                sttElement.textContent = (index + 1) + '.';
+            });
         }
     </script>
 </x-app-layout>

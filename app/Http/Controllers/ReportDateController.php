@@ -58,9 +58,8 @@ class ReportDateController extends Controller
 
         // $startDateOfWeekInput = $startTime->startOfWeek();
         // $endDateOfWeekInput = $endTime->endOfWeek();
-        $lastFridayFormatted = $startTime->startOfWeek()->addDays(5);
-        $thisThursdayFormatted = $endTime->endOfWeek()->subWeek()->addDays(5);
-
+        $lastFridayFormatted = $startTime->copy()->startOfWeek()->subWeek()->addDays(5)->startOfDay();
+        $thisThursdayFormatted = $endTime->copy()->endOfWeek()->subWeek()->addDays(5)->endOfDay();
         // $thisThursdayFormatted = $startTime->copy()->endOfWeek()->subWeek()->addDays(5);
 
         // if($startTime > $thisThursdayFormatted)
@@ -75,10 +74,9 @@ class ReportDateController extends Controller
         } else {
             $endDateOfWeekInput = $endTime->copy()->addDays(4 - $dayOfWeek);
         }
-
-        $reportDates = Logs::whereBetween('created_at', [$startDate, $endDate])->get();
+        $reportDates = Logs::whereBetween('created_at', [$startTime, $endTime])->get();
         $reportData = Logs::all();
-        $report = ReportCenter::whereBetween('date_start', [$lastFridayFormatted, $thisThursdayFormatted])->get();
+        $report = ReportCenter::whereBetween('date_start', [$startTime, $endTime])->get();
 
         $departmentId = $request->input('departmentInput');
         $dataReportCenter = ReportCenter::where('status', '1')->get();
@@ -112,7 +110,7 @@ class ReportDateController extends Controller
         }
 
         if(!empty($startDate) && !empty($endDate) && !empty($departmentId)) {
-            $reportCen = ReportCenter::whereBetween('date_start', [$lastFridayFormatted, $thisThursdayFormatted])
+            $reportCen = ReportCenter::whereBetween('date_start', [$startTime, $endTime])
             ->where('status', '1')
             ->get()->all();
             $data = [];

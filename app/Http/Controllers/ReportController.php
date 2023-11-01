@@ -30,8 +30,8 @@ class ReportController extends Controller
         // $startDate = Carbon::now()->startOfWeek();
         // $endDate = Carbon::now()->endOfWeek();
 
-        $thisFridayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5)->format('d-m-Y');
-        $today = Carbon::now()->format('d-m-Y');
+        $thisFridayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5);
+        $today = Carbon::now();
         if($today > $thisFridayFormatted)
         {
             $startDate = Carbon::now()->endOfWeek()->subWeek()->addDays(6)->startOfDay();
@@ -155,7 +155,7 @@ class ReportController extends Controller
                 $jsonData = json_encode([
                     'WorkDone' => $mapDataDone,
                     'ExpectedWork' => $mapDataNextWeek,
-                    'Request' => $note,
+                    'Request' => isset($note) ? $note : 'Chưa báo cáo',
                 ], JSON_PRETTY_PRINT);
                 $jsonData = json_decode($jsonData);
                 //dd($jsonData);
@@ -223,8 +223,8 @@ class ReportController extends Controller
                 $values = json_decode($record->values, true);
 
 
-                $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5)->format('d-m-Y');
-                $today = Carbon::now()->format('d-m-Y');
+                $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5);
+                $today = Carbon::now();
 
                 if($today > $thisThursdayFormatted)
                 {
@@ -292,9 +292,8 @@ class ReportController extends Controller
                 $nextWeekStatusWork = isset($requestData['trangthai_congviec_tuan_toi']) ? $requestData['trangthai_congviec_tuan_toi'] : null;
                 $nextWeekNoteWork = isset($requestData['noi_dung_cong_viec_tuan_toi']) ? $requestData['noi_dung_cong_viec_tuan_toi'] : null;
 
-                $note = isset($requestData['kien_nghi']) ? $requestData['kien_nghi'] : null;
-
-                if (isset($workDoneValues)) {
+                $note = isset($requestData['kien_nghi']) ? $requestData['kien_nghi'] : 'Chưa báo cáo';
+                if (isset($workDone)) {
                     foreach ($workDone as $index => $value) {
                         $mapDataDone[$index] = [
                             'work_done' => $value,
@@ -321,7 +320,7 @@ class ReportController extends Controller
                 $jsonData = json_encode([
                     'WorkDone' => $mapDataDone,
                     'ExpectedWork' => $mapDataNextWeek,
-                    'Request' => $note,
+                    'Request' => isset($note) ? $note : 'Chưa báo cáo',
                 ], JSON_PRETTY_PRINT);
 
                 $jsonData = json_decode($jsonData);
@@ -464,134 +463,163 @@ class ReportController extends Controller
             $department = Department::find($user->department);
             $requestData = $request->all();
             $report = Report::find($id);
-            $task = Task::where('report_id', $id)->get();
-            foreach ($task as $item) {
-                if($item->reports_title == 'WorkDone') {
-                    $workDone = isset($requestData['cong_viec_da_lam']) ? $requestData['cong_viec_da_lam'] : $item->title;
-                    $workDoneValues = isset($requestData['cong_viec_da_lam_values']) ? $requestData['cong_viec_da_lam_values'] : $item->status;
-                    $startDate = isset($requestData['start_date']) ? $requestData['start_date'] : $item->start_date;
-                    $endDate = isset($requestData['end_date']) ? $requestData['end_date'] : $item->end_date;
-                    $statusWork = isset($requestData['trangthai_congviec']) ? $requestData['trangthai_congviec'] : $item->work_status;
-                    $noteWork = isset($requestData['noi_dung_cong_viec']) ? $requestData['noi_dung_cong_viec'] : $item->description;
+            $tasks = Task::where('report_id', $id)->delete();
+
+            $workDone = isset($requestData['cong_viec_da_lam']) ? $requestData['cong_viec_da_lam'] : null;
+            $workDoneValues = isset($requestData['cong_viec_da_lam_values']) ? $requestData['cong_viec_da_lam_values'] : null;
+            $startDate = isset($requestData['start_date']) ? $requestData['start_date'] : null;
+            $endDate = isset($requestData['end_date']) ? $requestData['end_date'] : null;
+            $statusWork = isset($requestData['trangthai_congviec']) ? $requestData['trangthai_congviec'] : null;
+            $noteWork = isset($requestData['noi_dung_cong_viec']) ? $requestData['noi_dung_cong_viec'] : null;
+
+            $nextWeekWork = isset($requestData['cong_viec_tuan_toi']) ? $requestData['cong_viec_tuan_toi'] : null;
+            $nextWeekStartDate = isset($requestData['start_date_tuan_toi']) ? $requestData['start_date_tuan_toi'] : null;
+            $nextWeekEndDate = isset($requestData['end_date_tuan_toi']) ? $requestData['end_date_tuan_toi'] : null;
+            $nextWeekStatusWork = isset($requestData['trangthai_congviec_tuan_toi']) ? $requestData['trangthai_congviec_tuan_toi'] : null;
+            $nextWeekNoteWork = isset($requestData['noi_dung_cong_viec_tuan_toi']) ? $requestData['noi_dung_cong_viec_tuan_toi'] : null;
+
+            $note = isset($requestData['kien_nghi']) ? $requestData['kien_nghi'] : 'Chưa báo cáo';
+            if (isset($workDone)) {
+                foreach ($workDone as $index => $value) {
+                    $mapDataDone[$index] = [
+                        'work_done' => $value,
+                        'value_of_work' => $workDoneValues[$index] ?? null,
+                        'start_date' => $startDate[$index] ?? null,
+                        'end_date' => $endDate[$index] ?? null,
+                        'status_work' => $statusWork[$index] ?? null,
+                        'description' => $noteWork[$index] ?? null,
+                    ];
                 }
-                if ($item->reports_title == 'ExpectedWork') {
-                    $nextWeekWork = isset($requestData['cong_viec_tuan_toi']) ? $requestData['cong_viec_tuan_toi'] : $item->title;
-                    $nextWeekStartDate = isset($requestData['start_date_tuan_toi']) ? $requestData['start_date_tuan_toi'] : $item->start_date;
-                    $nextWeekEndDate = isset($requestData['end_date_tuan_toi']) ? $requestData['end_date_tuan_toi'] : $item->end_date;
-                    $nextWeekStatusWork = isset($requestData['trangthai_congviec_tuan_toi']) ? $requestData['trangthai_congviec_tuan_toi'] : $item->work_status;
-                    $nextWeekNoteWork = isset($requestData['noi_dung_cong_viec_tuan_toi']) ? $requestData['noi_dung_cong_viec_tuan_toi'] : $item->description;
-                }
-                if ($item->reports_title == 'Request') {
-                    $note = isset($requestData['kien_nghi']) ? $requestData['kien_nghi'] : 'Chưa báo cáo';
+            }
+            if (isset($nextWeekWork)) {
+                foreach ($nextWeekWork as $index => $value) {
+                    $mapDataNextWeek[$index] = [
+                        'next_work' => $value,
+                        'next_start_date' => $nextWeekStartDate[$index] ?? null,
+                        'next_end_date' => $nextWeekEndDate[$index] ?? null,
+                        'next_status_work' => $nextWeekStatusWork[$index] ?? null,
+                        'next_description' => $nextWeekNoteWork[$index] ?? null,
+                    ];
                 }
             }
 
-                if (isset($workDoneValues)) {
-                    foreach ($workDone as $index => $value) {
-                        $mapDataDone[$index] = [
-                            'work_done' => $value,
-                            'value_of_work' => $workDoneValues[$index] ?? null,
-                            'start_date' => $startDate[$index] ?? null,
-                            'end_date' => $endDate[$index] ?? null,
-                            'status_work' => $statusWork[$index] ?? null,
-                            'description' => $noteWork[$index] ?? null,
-                        ];
-                    }
+            // Tạo chuỗi JSON
+            $jsonData = json_encode([
+                'WorkDone' =>  isset($mapDataDone) ? $mapDataDone : null,
+                'ExpectedWork' =>  isset($nextWeekWork) ? $mapDataNextWeek : null,
+                'Request' => isset($note) ? $note : 'Chưa báo cáo',
+            ], JSON_PRETTY_PRINT);
+
+            $jsonData = json_decode($jsonData);
+            $currentDateTime = Carbon::now();
+            $report = Report::find($id);
+            $report->start_date = $currentDateTime;
+            $report->end_date = $currentDateTime;
+            $report->update([
+                'values' => json_encode($jsonData)
+            ]);
+
+            $dataLogId = Logs::where('report_id', $id)->first();
+
+            $log = Logs::find($dataLogId)->first();
+
+            $log->update([
+                'values' => json_encode($jsonData)
+            ]);
+
+            if (isset($jsonData->WorkDone)) {
+                foreach ($jsonData->WorkDone as $data) {
+                    Task::create([
+                        'report_id' => $id,
+                        'title' => $data->work_done,
+                        'reports_title' => 'WorkDone',
+                        'status' => $data->value_of_work,
+                        'start_date' => Carbon::parse($data->start_date),
+                        'end_date' => Carbon::parse($data->end_date),
+                        'description' => $data->description,
+                        'work_status' => $data->status_work
+
+                    ]);
                 }
+            }
 
-                if (isset($nextWeekWork)) {
-                    foreach ($nextWeekWork as $index => $value) {
-                        $mapDataNextWeek[$index] = [
-                            'next_work' => $value,
-                            'next_start_date' => $nextWeekStartDate[$index] ?? null,
-                            'next_end_date' => $nextWeekEndDate[$index] ?? null,
-                            'next_status_work' => $nextWeekStatusWork[$index] ?? null,
-                            'next_description' => $nextWeekNoteWork[$index] ?? null,
-                        ];
-                    }
+            if (isset($jsonData->ExpectedWork)) {
+                foreach ($jsonData->ExpectedWork as $data) {
+                    Task::create([
+                        'report_id' => $id,
+                        'title' => $data->next_work,
+                        'reports_title' => 'ExpectedWork',
+                        'start_date' => Carbon::parse($data->next_start_date),
+                        'end_date' => Carbon::parse($data->next_end_date),
+                        'description' => $data->next_description,
+                        'work_status' => $data->next_status_work
+                    ]);
                 }
+            }
 
-
-                // Tạo chuỗi JSON
-                $jsonData = json_encode([
-                    'WorkDone' =>  isset($mapDataDone) ? $mapDataDone : null,
-                    'ExpectedWork' =>  isset($nextWeekWork) ? $mapDataNextWeek : null,
-                    'Request' => isset($note) ? $note : null,
-                ], JSON_PRETTY_PRINT);
-
-                $jsonData = json_decode($jsonData);
-                $report = Report::find($id);
-                $report->update($request->start_date);
-                $report->update($request->end_date);
-                $report->update([
-                    'values' => json_encode($jsonData)
+            if (isset($jsonData->Request)) {
+                Task::create([
+                    'report_id' => $id,
+                    'description' => $jsonData->Request,
+                    'reports_title' => 'Request',
+                    'title' => 'Request',
                 ]);
+            }
+            // if (isset($jsonData->WorkDone)) {
+            //     foreach ($jsonData->WorkDone as $index => $data) {
+            //         // Kiểm tra xem bản ghi trong mảng $tasks có tồn tại không
+            //         if (isset($tasks[$index])) {
+            //             $task = $tasks[$index];
 
-                $dataLogId = Logs::where('report_id', $id)->first();
+            //             $task->update([
+            //                 'title' => $data->work_done,
+            //                 'status' => $data->value_of_work,
+            //                 'start_date' => Carbon::parse($data->start_date),
+            //                 'end_date' => Carbon::parse($data->end_date),
+            //                 'description' => $data->description,
+            //                 'work_status' => $data->status_work
+            //             ]);
+            //             $task->save();
+            //         }
+            //     }
+            // }
 
-                $log = Logs::find($dataLogId)->first();
+            // if (isset($jsonData->ExpectedWork)) {
+            //     $tasks = Task::where('reports_title', 'ExpectedWork')
+            //     ->where('report_id', $id)
+            //     ->get();
+            //     foreach ($jsonData->ExpectedWork as $index => $data) {
+            //         if (isset($tasks[$index])) {
+            //             $task = $tasks[$index];
+            //             $task->update([
+            //                 'title' => $data->next_work,
+            //                 'start_date' => Carbon::parse($data->next_start_date),
+            //                 'end_date' => Carbon::parse($data->next_end_date),
+            //                 'description' => $data->next_description,
+            //                 'work_status' => $data->next_status_work
+            //             ]);
+            //             $task->save();
+            //         }
+            //     }
+            // }
 
-                $log->update([
-                    'values' => json_encode($jsonData)
-                ]);
-
-                $tasks = Task::where('report_id', $id)->get();
-
-                if (isset($jsonData->WorkDone)) {
-                    foreach ($jsonData->WorkDone as $index => $data) {
-                        // Kiểm tra xem bản ghi trong mảng $tasks có tồn tại không
-                        if (isset($tasks[$index])) {
-                            $task = $tasks[$index];
-
-                            $task->update([
-                                'title' => $data->work_done,
-                                'status' => $data->value_of_work,
-                                'start_date' => Carbon::parse($data->start_date),
-                                'end_date' => Carbon::parse($data->end_date),
-                                'description' => $data->description,
-                                'work_status' => $data->status_work
-                            ]);
-                            $task->save();
-                        }
-                    }
-                }
-
-                if (isset($jsonData->ExpectedWork)) {
-                    $tasks = Task::where('reports_title', 'ExpectedWork')
-                    ->where('report_id', $id)
-                    ->get();
-                    foreach ($jsonData->ExpectedWork as $index => $data) {
-                        if (isset($tasks[$index])) {
-                            $task = $tasks[$index];
-                            $task->update([
-                                'title' => $data->next_work,
-                                'start_date' => Carbon::parse($data->next_start_date),
-                                'end_date' => Carbon::parse($data->next_end_date),
-                                'description' => $data->next_description,
-                                'work_status' => $data->next_status_work
-                            ]);
-                            $task->save();
-                        }
-                    }
-                }
-
-                if (isset($jsonData->Request)) {
-                    $existingTask = Task::where('reports_title', 'Request')
-                    ->where('report_id', $id)
-                    ->first();
-                        $request = $jsonData->Request;
-                        if($existingTask) {
-                            $existingTask->update([
-                                'description' => $request,
-                            ]);
-                            $existingTask->save();
-                        }
-                }
+            // if (isset($jsonData->Request)) {
+            //     $existingTask = Task::where('reports_title', 'Request')
+            //     ->where('report_id', $id)
+            //     ->first();
+            //         $request = $jsonData->Request;
+            //         if($existingTask) {
+            //             $existingTask->update([
+            //                 'description' => $request,
+            //             ]);
+            //             $existingTask->save();
+            //         }
+            // }
 
 
             if($user->role == "admin") {
-                $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5)->format('d-m-Y');
-                $today = Carbon::now()->format('d-m-Y');
+                $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5);
+                $today = Carbon::now();
 
                 if($today > $thisThursdayFormatted)
                 {

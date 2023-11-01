@@ -69,8 +69,8 @@ class DashBoardController extends Controller
         // $startDate = Carbon::now()->startOfWeek();
         // $endDate = Carbon::now()->endOfWeek();
 
-        $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5)->format('d-m-Y');
-        $today = Carbon::now()->format('d-m-Y');
+        $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5);
+        $today = Carbon::now();
         if($today > $thisThursdayFormatted)
         {
             $startDate = Carbon::now()->endOfWeek()->subWeek()->addDays(6)->startOfDay();
@@ -116,9 +116,8 @@ class DashBoardController extends Controller
             $endDate2 = Carbon::now()->setISODate(Carbon::now()->year, Carbon::now()->isoWeek(), 4)->setTime(16, 0, 0);
 
 
-            $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5)->format('d-m-Y');
-            $today = Carbon::now()->format('d-m-Y');
-
+            $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5);
+            $today = Carbon::now();
             if($today > $thisThursdayFormatted)
             {
                 $lastFridayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(6);

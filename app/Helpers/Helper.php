@@ -21,10 +21,10 @@ class Helper
         // $startDate = Carbon::now()->startOfWeek()->subWeek()->addDays(4);
         // $endDateWeek = Carbon::now()->endOfWeek()->subWeek()->addDays(4);
         // $endDate = Carbon::now()->setISODate(Carbon::now()->year, Carbon::now()->isoWeek(), 5)->setTime(17, 0, 0);
-        $lastFridayFormatted = Carbon::now()->startOfWeek()->subWeek()->addDays(4)->format('d-m-Y');
+        $lastFridayFormatted = Carbon::now()->startOfWeek()->subWeek()->addDays(4);
 
-        $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5)->format('d-m-Y');
-        $today = Carbon::now()->format('d-m-Y');
+        $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5);
+        $today = Carbon::now();
         if($today > $thisThursdayFormatted)
         {
             $startDate = Carbon::now()->endOfWeek()->subWeek()->addDays(6)->startOfDay();
@@ -86,10 +86,10 @@ class Helper
 
         $endDateWeek = Carbon::now()->endOfWeek()->subWeek()->addDays(4);
         $today = Carbon::now();
-        $lastFridayFormatted = Carbon::now()->startOfWeek()->subWeek()->addDays(4)->format('d-m-Y');
+        $lastFridayFormatted = Carbon::now()->startOfWeek()->subWeek()->addDays(4);
 
-        $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5)->format('d-m-Y');
-        $today = Carbon::now()->format('d-m-Y');
+        $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5);
+        $today = Carbon::now();
         if($today > $thisThursdayFormatted)
         {
             $nowFriday = Carbon::now()->endOfWeek()->subWeek()->addDays(6)->startOfDay();
