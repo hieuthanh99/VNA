@@ -44,8 +44,8 @@ class StockScheduler extends Command
         $endDate = Carbon::now()->endOfWeek();
         $endDate2 = Carbon::now()->setISODate(Carbon::now()->year, Carbon::now()->isoWeek(), 4)->setTime(16, 0, 0);
 
-        $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5)->format('d-m-Y');
-        $today = Carbon::now()->format('d-m-Y');
+        $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5);
+        $today = Carbon::now();
 
         if($today > $thisThursdayFormatted)
         {

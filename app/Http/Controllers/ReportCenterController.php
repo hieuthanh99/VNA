@@ -27,10 +27,10 @@ class ReportCenterController extends Controller
         $endDateWeek = $result['endDateWeek'] ?? null;
         // $lastFriday = $startDate->copy()->subDays($startDate->dayOfWeek + 2);
         // $thisThursday = $startDate->copy()->addDays(3 - $startDate->dayOfWeek + 1);
-        $lastFridayFormatted = Carbon::now()->startOfWeek()->subWeek()->addDays(4)->format('d-m-Y');
+        $lastFridayFormatted = Carbon::now()->startOfWeek()->subWeek()->addDays(4);
 
-        $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5)->format('d-m-Y');
-        $today = Carbon::now()->format('d-m-Y');
+        $thisThursdayFormatted = Carbon::now()->endOfWeek()->subWeek()->addDays(5);
+        $today = Carbon::now();
 
         if($today > $thisThursdayFormatted)
         {
