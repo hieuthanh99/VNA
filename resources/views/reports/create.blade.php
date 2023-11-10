@@ -230,8 +230,8 @@
                             @if(!empty($arrayCopy['WorkDone']))
                                 <div class="mb-4">
                                     <h1 class="mb-2 heading-style">I. Công việc đã thực hiện</h1>
-                                    @foreach ($arrayCopy['WorkDone'] as $key => $item)
-                                        <div id="cong-viec-da-lam-container">
+                                    <div id="cong-viec-da-lam-container">
+                                        @foreach ($arrayCopy['WorkDone'] as $key => $item)
                                             <div class="form-group cong-viec-da-lam-row">
                                                 <div class="header-report form-group">
                                                     <span class="cong-viec-stt">{{$rowCount++}}. </span>
@@ -268,8 +268,8 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    @endforeach
+                                        @endforeach
+                                    </div>
                                     <button type="button" class="btn btn-primary"
                                         onclick="addNewRow('cong-viec-da-lam-container')">Thêm</button>
                                 </div>
@@ -285,8 +285,8 @@
                             @if(!empty($arrayCopy['ExpectedWork']))
                                 <div class="mb-4">
                                     <h1 class="mb-2 heading-style">II. Công việc dự kiến</h1>
-                                    @foreach ($arrayCopy['ExpectedWork'] as $key => $item)
-                                        <div id="cong-viec-tuan-toi-container">
+                                    <div id="cong-viec-tuan-toi-container">
+                                        @foreach ($arrayCopy['ExpectedWork'] as $key => $item)
                                             <div class="form-group  cong-viec-tuan-toi-row">
                                                 <div class="header-report form-group">
                                                     <span class="item-job" class="cong-viec-stt">{{$rowNextCount++}}.</span>
@@ -316,8 +316,8 @@
                                                     <div class="form-check" style="margin-top: 0; flex: 2;"></div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    @endforeach
+                                        @endforeach
+                                    </div>
                                     <button type="button" style="margin-top: 5px;" class="btn btn-primary"
                                         onclick="validateAndAddCongViecTuanToi()">Thêm</button>
                                 </div>
