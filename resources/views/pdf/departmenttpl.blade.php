@@ -62,10 +62,18 @@
                         @endphp
                         <li>
                             <strong>{{$sttWorkDone }}. </strong> {{ $work['work_done'] }}<br>
-                            <strong>Nội dung:</strong> {{ $work['description'] }}<br>
-                            <strong>Ngày bắt đầu:</strong> {{ $work['start_date'] }}<br>
-                            <strong>Kết thúc:</strong> {{ $work['end_date'] }}<br>
-                            <strong>Tiến độ:</strong> {{ $work['status_work'] }}
+                            @if ($work['description'])
+                                <strong>Nội dung:</strong> {{ $work['description'] }}<br>
+                            @endif
+                            @if ($work['start_date'])
+                                <strong>Ngày bắt đầu:</strong> {{ $work['start_date'] }}<br>
+                            @endif
+                            @if ($work['end_date'])
+                                <strong>Kết thúc:</strong> {{ $work['end_date'] }}<br>
+                            @endif
+                            @if ($work['status_work'])
+                                <strong>Tiến độ:</strong> {{ $work['status_work'] }}
+                            @endif
                         </li>
                     @endforeach
                 </ul>
@@ -90,10 +98,18 @@
                         @endphp
                         <li>
                             <strong>{{$sttExpectedWork }}. </strong> {{ $work['next_work'] }}<br>
-                            <strong>Nội dung:</strong> {{ $work['next_description'] }}<br>
-                            <strong>Ngày bắt đầu:</strong> {{ $work['next_start_date'] }}<br>
-                            <strong>Kết thúc:</strong> {{ $work['next_end_date'] }}<br>
-                            <strong>Tiến độ:</strong> {{ $work['next_status_work'] }}
+                            @if ($work['next_description'])
+                                <strong>Nội dung:</strong> {{ $work['next_description'] }}<br>
+                            @endif
+                            @if ($work['next_start_date'])
+                                <strong>Ngày bắt đầu:</strong> {{ $work['next_start_date'] }}<br>
+                            @endif
+                            @if ($work['next_end_date'])
+                                <strong>Kết thúc:</strong> {{ $work['next_end_date'] }}<br>
+                            @endif
+                            @if ($work['next_status_work'])
+                                <strong>Tiến độ:</strong> {{ $work['next_status_work'] }}
+                            @endif
                         </li>
                     @endforeach
                 </ul>
