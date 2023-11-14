@@ -36,10 +36,16 @@ class Helper
             $data = ReportCenter::whereBetween('date_start', [$startDate, $endDateWeek])->get();
         }
         $department = Department::get()->toArray();
+        if (!$data->isEmpty()) {
+            $record = $data->first();
+            $data = json_decode($data->value('values'), true) ?? [];
+        } else {
+            $record = ReportCenter::latest()->first();
+            $values = $record->values;
+            $data = json_decode($values, true) ?? [];
+        }
         // $data = ReportCenter::whereBetween('created_at', [$startDate, $endDateWeek])->get();
-        $record = $data->first();
 
-        $data = json_decode($data->value('values'), true) ?? [];
         $mergedArray = [];
 
         foreach ($department as $dept) {
@@ -305,14 +311,22 @@ class Helper
                     $section->addTextBreak(1);
                     $section->addText("- Tiêu đề : " . $workDone->work_done, ['size' => 11, 'bold' => false]);
                     $section->addTextBreak(1);
-                    $section->addText("- Nội dung : " . $workDone->description, ['size' => 11, 'bold' => false]);
-                    $section->addTextBreak(1);
-                    $section->addText("- Ngày bắt đầu : " . $workDone->start_date, ['size' => 11, 'bold' => false]);
-                    $section->addTextBreak(1);
-                    $section->addText("- Ngày kết thúc : " . $workDone->end_date, ['size' => 11, 'bold' => false]);
-                    $section->addTextBreak(1);
-                    $section->addText("- Tiến độ : " . $workDone->status_work, ['size' => 11, 'bold' => false]);
-                    $section->addTextBreak(1);
+                    if($workDone->description) {
+                        $section->addText("- Nội dung : " . $workDone->description, ['size' => 11, 'bold' => false]);
+                        $section->addTextBreak(1);
+                    }
+                    if($workDone->start_date) {
+                        $section->addText("- Ngày bắt đầu : " . $workDone->start_date, ['size' => 11, 'bold' => false]);
+                        $section->addTextBreak(1);
+                    }
+                    if($workDone->end_date) {
+                        $section->addText("- Ngày kết thúc : " . $workDone->end_date, ['size' => 11, 'bold' => false]);
+                        $section->addTextBreak(1);
+                    }
+                    if($workDone->status_work) {
+                        $section->addText("- Tiến độ : " . $workDone->status_work, ['size' => 11, 'bold' => false]);
+                        $section->addTextBreak(1);
+                    }
                 }
 
                 // Thêm khoảng trắng giữa các phần
@@ -332,14 +346,22 @@ class Helper
                     $section->addTextBreak(1);
                     $section->addText("- Tiêu đề : " . $expectedWork->next_work, ['size' => 11, 'bold' => false]);
                     $section->addTextBreak(1);
-                    $section->addText("- Nội dung : " . $expectedWork->next_description, ['size' => 11, 'bold' => false]);
-                    $section->addTextBreak(1);
-                    $section->addText("- Ngày bắt đầu : " . $expectedWork->next_start_date, ['size' => 11, 'bold' => false]);
-                    $section->addTextBreak(1);
-                    $section->addText("- Ngày kết thúc : " . $expectedWork->next_end_date, ['size' => 11, 'bold' => false]);
-                    $section->addTextBreak(1);
-                    $section->addText("- Tiến độ : " . $expectedWork->next_status_work, ['size' => 11, 'bold' => false]);
-                    $section->addTextBreak(1);
+                    if ($expectedWork->next_description) {
+                        $section->addText("- Nội dung : " . $expectedWork->next_description, ['size' => 11, 'bold' => false]);
+                        $section->addTextBreak(1);
+                    }
+                    if ($expectedWork->next_start_date) {
+                        $section->addText("- Ngày bắt đầu : " . $expectedWork->next_start_date, ['size' => 11, 'bold' => false]);
+                        $section->addTextBreak(1);
+                    }
+                    if ($expectedWork->next_end_date) {
+                        $section->addText("- Ngày kết thúc : " . $expectedWork->next_end_date, ['size' => 11, 'bold' => false]);
+                        $section->addTextBreak(1);
+                    }
+                    if ($expectedWork->next_status_work) {
+                        $section->addText("- Tiến độ : " . $expectedWork->next_status_work, ['size' => 11, 'bold' => false]);
+                        $section->addTextBreak(1);
+                    }
                 }
 
 
@@ -408,14 +430,22 @@ class Helper
                     $section->addTextBreak(1);
                     $section->addText("- Tiêu đề : " . $workDone['work_done'], ['size' => 11, 'bold' => false]);
                     $section->addTextBreak(1);
-                    $section->addText("- Nội dung : " . $workDone['description'], ['size' => 11, 'bold' => false]);
-                    $section->addTextBreak(1);
-                    $section->addText("- Ngày bắt đầu : " . $workDone['start_date'], ['size' => 11, 'bold' => false]);
-                    $section->addTextBreak(1);
-                    $section->addText("- Ngày kết thúc : " . $workDone['end_date'], ['size' => 11, 'bold' => false]);
-                    $section->addTextBreak(1);
-                    $section->addText("- Tiến độ : " . $workDone['status_work'], ['size' => 11, 'bold' => false]);
-                    $section->addTextBreak(1);
+                    if($workDone['description']) {
+                        $section->addText("- Nội dung : " . $workDone['description'], ['size' => 11, 'bold' => false]);
+                        $section->addTextBreak(1);
+                    }
+                    if($workDone['start_date']) {
+                        $section->addText("- Ngày bắt đầu : " . $workDone['start_date'], ['size' => 11, 'bold' => false]);
+                        $section->addTextBreak(1);
+                    }
+                    if($workDone['end_date']) {
+                        $section->addText("- Ngày kết thúc : " . $workDone['end_date'], ['size' => 11, 'bold' => false]);
+                        $section->addTextBreak(1);
+                    }
+                    if($workDone['status_work']) {
+                        $section->addText("- Tiến độ : " . $workDone['status_work'], ['size' => 11, 'bold' => false]);
+                        $section->addTextBreak(1);
+                    }
                 }
 
                 // Thêm khoảng trắng giữa các phần
@@ -435,14 +465,22 @@ class Helper
                      $section->addTextBreak(1);
                      $section->addText("- Tiêu đề : " . $expectedWork['next_work'], ['size' => 11, 'bold' => false]);
                      $section->addTextBreak(1);
-                     $section->addText("- Nội dung : " . $expectedWork['next_description'], ['size' => 11, 'bold' => false]);
-                     $section->addTextBreak(1);
-                     $section->addText("- Ngày bắt đầu : " . $expectedWork['next_start_date'], ['size' => 11, 'bold' => false]);
-                     $section->addTextBreak(1);
-                     $section->addText("- Ngày kết thúc : " . $expectedWork['next_end_date'], ['size' => 11, 'bold' => false]);
-                     $section->addTextBreak(1);
-                     $section->addText("- Tiến độ : " . $expectedWork['next_status_work'], ['size' => 11, 'bold' => false]);
-                     $section->addTextBreak(1);
+                     if($expectedWork['next_description']) {
+                        $section->addText("- Nội dung : " . $expectedWork['next_description'], ['size' => 11, 'bold' => false]);
+                        $section->addTextBreak(1);
+                     }
+                     if($expectedWork['next_start_date']) {
+                        $section->addText("- Ngày bắt đầu : " . $expectedWork['next_start_date'], ['size' => 11, 'bold' => false]);
+                        $section->addTextBreak(1);
+                     }
+                     if($expectedWork['next_end_date']) {
+                        $section->addText("- Ngày kết thúc : " . $expectedWork['next_end_date'], ['size' => 11, 'bold' => false]);
+                        $section->addTextBreak(1);
+                     }
+                     if($expectedWork['next_status_work']) {
+                        $section->addText("- Tiến độ : " . $expectedWork['next_status_work'], ['size' => 11, 'bold' => false]);
+                        $section->addTextBreak(1);
+                     }
                  }
 
             } else {
@@ -515,14 +553,22 @@ class Helper
                 $section->addTextBreak(1);
                 $section->addText("- Tiêu đề : " . $workDone['work_done'], ['size' => 11, 'bold' => false]);
                 $section->addTextBreak(1);
-                $section->addText("- Nội dung : " . $workDone['description'], ['size' => 11, 'bold' => false]);
-                $section->addTextBreak(1);
-                $section->addText("- Ngày bắt đầu : " . $workDone['start_date'], ['size' => 11, 'bold' => false]);
-                $section->addTextBreak(1);
-                $section->addText("- Ngày kết thúc : " . $workDone['end_date'], ['size' => 11, 'bold' => false]);
-                $section->addTextBreak(1);
-                $section->addText("- Tiến độ : " . $workDone['status_work'], ['size' => 11, 'bold' => false]);
-                $section->addTextBreak(1);
+                if($workDone['description']) {
+                    $section->addText("- Nội dung : " . $workDone['description'], ['size' => 11, 'bold' => false]);
+                    $section->addTextBreak(1);
+                }
+                if($workDone['start_date']) {
+                    $section->addText("- Ngày bắt đầu : " . $workDone['start_date'], ['size' => 11, 'bold' => false]);
+                    $section->addTextBreak(1);
+                }
+                if($workDone['end_date']) {
+                    $section->addText("- Ngày kết thúc : " . $workDone['end_date'], ['size' => 11, 'bold' => false]);
+                    $section->addTextBreak(1);
+                }
+                if($workDone['status_work']) {
+                    $section->addText("- Tiến độ : " . $workDone['status_work'], ['size' => 11, 'bold' => false]);
+                    $section->addTextBreak(1);
+                }
             }
 
             // Thêm khoảng trắng giữa các phần
@@ -542,14 +588,22 @@ class Helper
                 $section->addTextBreak(1);
                 $section->addText("- Tiêu đề : " . $expectedWork['next_work'], ['size' => 11, 'bold' => false]);
                 $section->addTextBreak(1);
-                $section->addText("- Nội dung : " . $expectedWork['next_description'], ['size' => 11, 'bold' => false]);
-                $section->addTextBreak(1);
-                $section->addText("- Ngày bắt đầu : " . $expectedWork['next_start_date'], ['size' => 11, 'bold' => false]);
-                $section->addTextBreak(1);
-                $section->addText("- Ngày kết thúc : " . $expectedWork['next_end_date'], ['size' => 11, 'bold' => false]);
-                $section->addTextBreak(1);
-                $section->addText("- Tiến độ : " . $expectedWork['next_status_work'], ['size' => 11, 'bold' => false]);
-                $section->addTextBreak(1);
+                if($expectedWork['next_description']) {
+                    $section->addText("- Nội dung : " . $expectedWork['next_description'], ['size' => 11, 'bold' => false]);
+                    $section->addTextBreak(1);
+                }
+                if($expectedWork['next_start_date']) {
+                    $section->addText("- Ngày bắt đầu : " . $expectedWork['next_start_date'], ['size' => 11, 'bold' => false]);
+                    $section->addTextBreak(1);
+                }
+                if($expectedWork['next_end_date']) {
+                    $section->addText("- Ngày kết thúc : " . $expectedWork['next_end_date'], ['size' => 11, 'bold' => false]);
+                    $section->addTextBreak(1);
+                }
+                if($expectedWork['next_status_work']) {
+                    $section->addText("- Tiến độ : " . $expectedWork['next_status_work'], ['size' => 11, 'bold' => false]);
+                    $section->addTextBreak(1);
+                }
             }
 
 
