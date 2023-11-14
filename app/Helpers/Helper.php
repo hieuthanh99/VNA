@@ -312,7 +312,7 @@ class Helper
                     $section->addText("- Tiêu đề : " . $workDone->work_done, ['size' => 11, 'bold' => false]);
                     $section->addTextBreak(1);
                     if($workDone->description) {
-                        $section->addText("- Nội dung : " . $workDone->description, ['size' => 11, 'bold' => false]);
+                        $section->addText("- Nội dung : " .htmlspecialchars($workDone->description), ['size' => 11, 'bold' => false]);
                         $section->addTextBreak(1);
                     }
                     if($workDone->start_date) {
@@ -347,7 +347,7 @@ class Helper
                     $section->addText("- Tiêu đề : " . $expectedWork->next_work, ['size' => 11, 'bold' => false]);
                     $section->addTextBreak(1);
                     if ($expectedWork->next_description) {
-                        $section->addText("- Nội dung : " . $expectedWork->next_description, ['size' => 11, 'bold' => false]);
+                        $section->addText("- Nội dung : " . htmlspecialchars($expectedWork->next_description), ['size' => 11, 'bold' => false]);
                         $section->addTextBreak(1);
                     }
                     if ($expectedWork->next_start_date) {
@@ -431,7 +431,7 @@ class Helper
                     $section->addText("- Tiêu đề : " . $workDone['work_done'], ['size' => 11, 'bold' => false]);
                     $section->addTextBreak(1);
                     if($workDone['description']) {
-                        $section->addText("- Nội dung : " . $workDone['description'], ['size' => 11, 'bold' => false]);
+                        $section->addText("- Nội dung : " . htmlspecialchars($workDone['description']), ['size' => 11, 'bold' => false]);
                         $section->addTextBreak(1);
                     }
                     if($workDone['start_date']) {
@@ -466,7 +466,7 @@ class Helper
                      $section->addText("- Tiêu đề : " . $expectedWork['next_work'], ['size' => 11, 'bold' => false]);
                      $section->addTextBreak(1);
                      if($expectedWork['next_description']) {
-                        $section->addText("- Nội dung : " . $expectedWork['next_description'], ['size' => 11, 'bold' => false]);
+                        $section->addText("- Nội dung : " . htmlspecialchars($expectedWork['next_description']), ['size' => 11, 'bold' => false]);
                         $section->addTextBreak(1);
                      }
                      if($expectedWork['next_start_date']) {
@@ -554,7 +554,7 @@ class Helper
                 $section->addText("- Tiêu đề : " . $workDone['work_done'], ['size' => 11, 'bold' => false]);
                 $section->addTextBreak(1);
                 if($workDone['description']) {
-                    $section->addText("- Nội dung : " . $workDone['description'], ['size' => 11, 'bold' => false]);
+                    $section->addText("- Nội dung : " . htmlspecialchars($workDone['description']), ['size' => 11, 'bold' => false]);
                     $section->addTextBreak(1);
                 }
                 if($workDone['start_date']) {
@@ -589,7 +589,7 @@ class Helper
                 $section->addText("- Tiêu đề : " . $expectedWork['next_work'], ['size' => 11, 'bold' => false]);
                 $section->addTextBreak(1);
                 if($expectedWork['next_description']) {
-                    $section->addText("- Nội dung : " . $expectedWork['next_description'], ['size' => 11, 'bold' => false]);
+                    $section->addText("- Nội dung : " . htmlspecialchars($expectedWork['next_description']), ['size' => 11, 'bold' => false]);
                     $section->addTextBreak(1);
                 }
                 if($expectedWork['next_start_date']) {
