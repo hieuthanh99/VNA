@@ -521,7 +521,7 @@ class ReportController extends Controller
 
             $dataLogId = Logs::where('report_id', $id)->first();
 
-            $log = Logs::find($dataLogId)->first();
+            $log = Logs::find($dataLogId->id);
 
             $log->update([
                 'values' => json_encode($jsonData)
